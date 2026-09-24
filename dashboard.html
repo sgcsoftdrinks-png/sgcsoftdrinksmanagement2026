@@ -986,9 +986,14 @@
                 <span data-i18n="dashboard">Dashboard</span>
             </button>
 
-            <button id="productsNavBtn">
+            <button id="stockNavBtn">
                 <span class="nav-icon">📦</span>
                 <span data-i18n="stock">Stock</span>
+            </button>
+
+            <button id="receivedStockNavBtn">
+                <span class="nav-icon">📥</span>
+                <span data-i18n="received_stock">Received Stock</span>
             </button>
 
             <button>
@@ -1573,7 +1578,7 @@
             main_menu: "Main Menu",
             dashboard: "Dashboard",
             overview_text: "Muhtasari wa biashara yako",
-            stock: "Stock", sales: "Mauzo", customers: "Wateja", suppliers: "Suppliers",
+            stock: "Stock", received_stock: "Stock Iliyoingia", sales: "Mauzo", customers: "Wateja", suppliers: "Suppliers",
             finance: "Fedha", expenses: "Matumizi", payments: "Malipo", reports: "Ripoti", reports_menu: "Ripoti",
             administration: "Usimamizi", users: "Watumiaji", settings: "Mipangilio", logout: "Toka",
             welcome: "Karibu",
@@ -1605,7 +1610,7 @@
         },
 
         en: {
-            main_menu: "Main Menu", dashboard: "Dashboard", overview_text: "Overview of your business", stock: "Stock", sales: "Sales",
+            main_menu: "Main Menu", dashboard: "Dashboard", overview_text: "Overview of your business", stock: "Stock", received_stock: "Received Stock", sales: "Sales",
             customers: "Customers", suppliers: "Suppliers", finance: "Finance", expenses: "Expenses", payments: "Payments", reports: "Reports",
             reports_menu: "Reports", administration: "Administration", users: "Users", settings: "Settings", logout: "Logout", welcome: "Welcome",
             welcome_message: "Welcome to SGC SOFT DRINKS MANAGEMENT. Manage your business with ease.", today_sales: "Today's Sales",
@@ -1896,7 +1901,7 @@
        ========================================== */
 
     const stockPage = document.getElementById("stockPage");
-    const stockNavBtn = document.getElementById("productsNavBtn");
+    const stockNavBtn = document.getElementById("receivedStockNavBtn");
     const receiveStockTab = document.getElementById("receiveStockTab");
     const receiptsTab = document.getElementById("receiptsTab");
     const receiveStockPanel = document.getElementById("receiveStockPanel");
@@ -2772,13 +2777,13 @@
         showDashboardPage();
     });
 
-    productsNavBtn.addEventListener("click", () => {
+    receivedStockNavBtn.addEventListener("click", () => {
         showStockPage();
     });
 
 
 
-    document.getElementById("quickProductsBtn").addEventListener("click", showProductsPage);
+    document.getElementById("quickProductsBtn").addEventListener("click", showStockPage);
 
 
     /* ==========================================
@@ -2795,7 +2800,6 @@
 
     loadDashboardSummary();
 
-    
 </script>
 
 </body>
