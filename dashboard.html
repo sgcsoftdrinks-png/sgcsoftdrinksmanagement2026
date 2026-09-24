@@ -350,15 +350,6 @@
             font-size: 15px;
         }
 
-        .section-head button {
-            border: 0;
-            background: var(--blue);
-            color: white;
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-size: 11px;
-        }
-
         .quick-actions {
             padding: 18px;
             display: grid;
@@ -390,42 +381,6 @@
         .quick-action span {
             font-size: 11px;
             color: var(--gray);
-        }
-
-        .activity {
-            padding: 10px 20px 20px;
-        }
-
-        .activity-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 13px 0;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .activity-item:last-child {
-            border-bottom: 0;
-        }
-
-        .activity-icon {
-            width: 35px;
-            height: 35px;
-            border-radius: 10px;
-            background: #e0f2fe;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .activity-text strong {
-            display: block;
-            font-size: 12px;
-        }
-
-        .activity-text span {
-            color: var(--gray);
-            font-size: 10px;
         }
 
         .empty-state {
@@ -559,41 +514,43 @@
                 <span data-i18n="suppliers">Suppliers</span>
             </button>
 
-            <div class="nav-title" data-i18n="finance">Finance</div>
+            <div class="nav-title" data-i18n="finance">Fedha</div>
 
             <button>
                 <span class="nav-icon">💰</span>
-                <span data-i18n="expenses">Expenses</span>
+                <span data-i18n="expenses">Matumizi</span>
             </button>
 
             <button>
                 <span class="nav-icon">💳</span>
-                <span data-i18n="payments">Payments</span>
+                <span data-i18n="payments">Malipo</span>
             </button>
 
-            <div class="nav-title" data-i18n="reports">Reports</div>
+            <div class="nav-title" data-i18n="reports">Ripoti</div>
 
             <button>
                 <span class="nav-icon">📈</span>
-                <span data-i18n="reports_menu">Reports</span>
+                <span data-i18n="reports_menu">Ripoti</span>
             </button>
 
-            <div class="nav-title" data-i18n="administration">Administration</div>
+            <div class="nav-title" data-i18n="administration">
+                Usimamizi
+            </div>
 
             <button>
                 <span class="nav-icon">👤</span>
-                <span data-i18n="users">Users</span>
+                <span data-i18n="users">Watumiaji</span>
             </button>
 
             <button>
                 <span class="nav-icon">⚙️</span>
-                <span data-i18n="settings">Settings</span>
+                <span data-i18n="settings">Mipangilio</span>
             </button>
 
         </nav>
 
         <button class="logout-btn" id="logoutBtn">
-            🚪 <span data-i18n="logout">Logout</span>
+            🚪 <span data-i18n="logout">Toka</span>
         </button>
 
     </aside>
@@ -608,6 +565,7 @@
 
             <div class="page-title">
                 <h1 data-i18n="dashboard">Dashboard</h1>
+
                 <p data-i18n="overview_text">
                     Muhtasari wa biashara yako
                 </p>
@@ -627,8 +585,15 @@
                     </div>
 
                     <div class="user-info">
-                        <strong id="userName">Owner</strong>
-                        <span id="userRole">OWNER</span>
+
+                        <strong id="userName">
+                            Owner
+                        </strong>
+
+                        <span id="userRole">
+                            OWNER
+                        </span>
+
                     </div>
 
                 </div>
@@ -644,12 +609,18 @@
             <div class="welcome">
 
                 <h2>
-                    <span data-i18n="welcome">Karibu</span>,
-                    <span id="welcomeName">Owner</span> 👋
+                    <span data-i18n="welcome">
+                        Karibu
+                    </span>,
+                    <span id="welcomeName">
+                        Owner
+                    </span>
+                    👋
                 </h2>
 
                 <p data-i18n="welcome_message">
-                    Karibu kwenye SGC SOFT DRINKS MANAGEMENT. Dhibiti biashara yako kwa urahisi.
+                    Karibu kwenye SGC SOFT DRINKS MANAGEMENT.
+                    Dhibiti biashara yako kwa urahisi.
                 </p>
 
             </div>
@@ -658,46 +629,74 @@
             <!-- STAT CARDS -->
             <div class="cards">
 
+                <!-- TODAY SALES -->
                 <div class="card stat-card">
 
-                    <div class="stat-icon blue">💰</div>
+                    <div class="stat-icon blue">
+                        💰
+                    </div>
 
-                    <span data-i18n="today_sales">Mauzo ya Leo</span>
+                    <span data-i18n="today_sales">
+                        Mauzo ya Leo
+                    </span>
 
-                    <strong>TZS 0</strong>
+                    <strong id="todaySales">
+                        TZS 0
+                    </strong>
 
                 </div>
 
 
+                <!-- STOCK VALUE -->
                 <div class="card stat-card">
 
-                    <div class="stat-icon green">📦</div>
+                    <div class="stat-icon green">
+                        📦
+                    </div>
 
-                    <span data-i18n="stock_value">Thamani ya Stock</span>
+                    <span data-i18n="stock_value">
+                        Thamani ya Stock
+                    </span>
 
-                    <strong>TZS 0</strong>
+                    <strong id="stockValue">
+                        TZS 0
+                    </strong>
 
                 </div>
 
 
+                <!-- TODAY TRANSACTIONS -->
                 <div class="card stat-card">
 
-                    <div class="stat-icon orange">🛒</div>
+                    <div class="stat-icon orange">
+                        🛒
+                    </div>
 
-                    <span data-i18n="today_transactions">Transactions Leo</span>
+                    <span data-i18n="today_transactions">
+                        Transactions Leo
+                    </span>
 
-                    <strong>0</strong>
+                    <strong id="todayTransactions">
+                        0
+                    </strong>
 
                 </div>
 
 
+                <!-- CUSTOMERS -->
                 <div class="card stat-card">
 
-                    <div class="stat-icon purple">👥</div>
+                    <div class="stat-icon purple">
+                        👥
+                    </div>
 
-                    <span data-i18n="customers_count">Wateja</span>
+                    <span data-i18n="customers_count">
+                        Wateja
+                    </span>
 
-                    <strong>0</strong>
+                    <strong id="customersCount">
+                        0
+                    </strong>
 
                 </div>
 
@@ -713,7 +712,7 @@
                     <div class="section-head">
 
                         <h3 data-i18n="quick_actions">
-                            Quick Actions
+                            Vitendo vya Haraka
                         </h3>
 
                     </div>
@@ -723,7 +722,10 @@
                         <button class="quick-action">
 
                             <strong>
-                                📦 <span data-i18n="receive_stock">Pokea Stock</span>
+                                📦
+                                <span data-i18n="receive_stock">
+                                    Pokea Stock
+                                </span>
                             </strong>
 
                             <span data-i18n="receive_stock_desc">
@@ -736,7 +738,10 @@
                         <button class="quick-action">
 
                             <strong>
-                                🛒 <span data-i18n="new_sale">Mauzo Mapya</span>
+                                🛒
+                                <span data-i18n="new_sale">
+                                    Mauzo Mapya
+                                </span>
                             </strong>
 
                             <span data-i18n="new_sale_desc">
@@ -749,7 +754,10 @@
                         <button class="quick-action">
 
                             <strong>
-                                👤 <span data-i18n="new_customer">Mteja Mpya</span>
+                                👤
+                                <span data-i18n="new_customer">
+                                    Mteja Mpya
+                                </span>
                             </strong>
 
                             <span data-i18n="new_customer_desc">
@@ -762,7 +770,10 @@
                         <button class="quick-action">
 
                             <strong>
-                                💸 <span data-i18n="new_expense">Expense Mpya</span>
+                                💸
+                                <span data-i18n="new_expense">
+                                    Expense Mpya
+                                </span>
                             </strong>
 
                             <span data-i18n="new_expense_desc">
@@ -782,7 +793,7 @@
                     <div class="section-head">
 
                         <h3 data-i18n="recent_activity">
-                            Recent Activity
+                            Shughuli za Karibuni
                         </h3>
 
                     </div>
@@ -812,7 +823,7 @@
 
     /* ==========================================
        SGC SOFT DRINKS MANAGEMENT
-       DASHBOARD FOUNDATION
+       DASHBOARD
        ========================================== */
 
     const SUPABASE_URL =
@@ -820,6 +831,9 @@
 
     const SUPABASE_AUTH_URL =
         `${SUPABASE_URL}/auth/v1`;
+
+    const SUPABASE_PUBLISHABLE_KEY =
+        "sb_publishable_M1j6cLFnEVGULYaCfssaZg_KkFCLAcQ";
 
 
     /* ==========================================
@@ -918,6 +932,7 @@
             language
         );
 
+
         document
             .querySelectorAll("[data-i18n]")
             .forEach(element => {
@@ -929,8 +944,10 @@
                     translations[language] &&
                     translations[language][key]
                 ) {
+
                     element.textContent =
                         translations[language][key];
+
                 }
 
             });
@@ -942,6 +959,7 @@
                 "active",
                 language === "sw"
             );
+
 
         document
             .getElementById("enBtn")
@@ -982,12 +1000,14 @@
 
     if (!accessToken) {
 
-        window.location.href = "index.html";
+        window.location.href =
+            "index.html";
 
     }
 
 
     let user = null;
+
 
     try {
 
@@ -1020,18 +1040,124 @@
             email.split("@")[0] ||
             "Owner";
 
+
         document
             .getElementById("userName")
             .textContent = name;
+
 
         document
             .getElementById("welcomeName")
             .textContent = name;
 
+
         document
             .getElementById("userAvatar")
             .textContent =
             name.charAt(0).toUpperCase();
+
+    }
+
+
+    /* ==========================================
+       DASHBOARD REAL DATA
+       ========================================== */
+
+    async function loadDashboardSummary() {
+
+        try {
+
+            const response =
+                await fetch(
+                    `${SUPABASE_URL}/rest/v1/rpc/get_owner_dashboard_summary`,
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json",
+
+                            "apikey":
+                                SUPABASE_PUBLISHABLE_KEY,
+
+                            "Authorization":
+                                `Bearer ${accessToken}`
+                        },
+
+                        body: JSON.stringify({})
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (!response.ok) {
+
+                console.error(
+                    "Dashboard summary error:",
+                    data
+                );
+
+                return;
+
+            }
+
+
+            const summary =
+                Array.isArray(data)
+                    ? data[0]
+                    : data;
+
+
+            if (!summary) {
+
+                return;
+
+            }
+
+
+            document
+                .getElementById("todaySales")
+                .textContent =
+                `TZS ${Number(
+                    summary.today_sales || 0
+                ).toLocaleString()}`;
+
+
+            document
+                .getElementById("stockValue")
+                .textContent =
+                `TZS ${Number(
+                    summary.stock_value || 0
+                ).toLocaleString()}`;
+
+
+            document
+                .getElementById("todayTransactions")
+                .textContent =
+                Number(
+                    summary.today_transactions || 0
+                ).toLocaleString();
+
+
+            document
+                .getElementById("customersCount")
+                .textContent =
+                Number(
+                    summary.customers_count || 0
+                ).toLocaleString();
+
+
+        } catch (error) {
+
+            console.error(
+                "Dashboard loading error:",
+                error
+            );
+
+        }
 
     }
 
@@ -1054,11 +1180,13 @@
                             `${SUPABASE_AUTH_URL}/logout`,
                             {
                                 method: "POST",
+
                                 headers: {
                                     "Authorization":
                                         `Bearer ${accessToken}`,
+
                                     "apikey":
-                                        "sb_publishable_M1j6cLFnEVGULYaCfssaZg_KkFCLAcQ"
+                                        SUPABASE_PUBLISHABLE_KEY
                                 }
                             }
                         );
@@ -1110,7 +1238,9 @@
         "click",
         () => {
 
-            sidebar.classList.toggle("open");
+            sidebar.classList.toggle(
+                "open"
+            );
 
         }
     );
@@ -1122,7 +1252,11 @@
 
     displayUser();
 
-    applyLanguage(currentLanguage);
+    applyLanguage(
+        currentLanguage
+    );
+
+    loadDashboardSummary();
 
 </script>
 
