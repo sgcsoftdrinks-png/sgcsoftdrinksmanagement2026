@@ -1608,16 +1608,22 @@
                         <table class="products-table">
                             <thead>
                                 <tr>
-                                    <th data-i18n="product">Bidhaa</th>
-                                    <th data-i18n="selling_price">Bei ya Mauzo</th>
-                                    <th data-i18n="low_stock">Low Stock</th>
-                                    <th data-i18n="status">Hali</th>
-                                    <th data-i18n="actions">Vitendo</th>
+                                    <th>Product</th>
+                                    <th>SKU</th>
+                                    <th>Brand</th>
+                                    <th>Category</th>
+                                    <th>Unit</th>
+                                    <th>Volume</th>
+                                    <th>Selling Price</th>
+                                    <th>Current Stock</th>
+                                    <th>Low Stock</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="productsTableBody">
                                 <tr>
-                                    <td colspan="5" class="loading-row" data-i18n="loading">Inapakia...</td>
+                                    <td colspan="7" class="loading-row" data-i18n="loading">Inapakia...</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -1687,21 +1693,78 @@
                     <input type="hidden" id="productId">
 
                     <div class="form-group">
-                        <label for="productName" data-i18n="product_name">Jina la Bidhaa</label>
-                        <input id="productName" type="text" required>
+                        <label for="productName">Product Name</label>
+                        <input id="productName" type="text" required placeholder="Mfano Coca-Cola 500 mls">
                     </div>
 
-                    <div class="form-group">
-                        <label for="productSellingPrice" data-i18n="selling_price_label">Bei ya Mauzo</label>
-                        <input id="productSellingPrice" type="number" min="0" step="0.01" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="productLowStock" data-i18n="low_stock_label">Kiwango cha Low Stock</label>
-                        <input id="productLowStock" type="number" min="0" step="0.01" value="0" required>
-                        <div class="form-hint">
-                            <span data-i18n="low_stock_label">Low Stock Level</span>
+                    <div class="form-grid" style="grid-template-columns:1fr 1fr;">
+                        <div class="form-group">
+                            <label for="productSku">SKU / Product Code</label>
+                            <input id="productSku" type="text" placeholder="Mfano SGC-COKE-500">
                         </div>
+                        <div class="form-group">
+                            <label for="productBrand">Brand</label>
+                            <input id="productBrand" type="text" placeholder="Mfano Coca-Cola">
+                        </div>
+                    </div>
+
+                    <div class="form-grid" style="grid-template-columns:1fr 1fr;">
+                        <div class="form-group">
+                            <label for="productCategory">Category</label>
+                            <select id="productCategory" required>
+                                <option value="water">Water</option>
+                                <option value="soda">Soda</option>
+                                <option value="juice">Juice</option>
+                                <option value="energy_drink">Energy Drink</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="productUnit">Unit</label>
+                            <select id="productUnit" required>
+                                <option value="crates">Crates</option>
+                                <option value="cotton">Cotton</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-grid" style="grid-template-columns:1fr 1fr;">
+                        <div class="form-group">
+                            <label for="productVolume">Volume</label>
+                            <input id="productVolume" type="number" min="0.01" step="0.01" placeholder="Mfano 500" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="productVolumeUnit">Volume Unit</label>
+                            <select id="productVolumeUnit" required>
+                                <option value="ml">ml</option>
+                                <option value="litre">Litre</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-grid" style="grid-template-columns:1fr 1fr;">
+                        <div class="form-group">
+                            <label for="productSellingPrice">Selling Price</label>
+                            <input id="productSellingPrice" type="number" min="0" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="productLowStock">Low Stock Level</label>
+                            <input id="productLowStock" type="number" min="0" step="0.01" value="0" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="productImageUrl">Product Image URL <span style="font-weight:400;opacity:.65">(optional)</span></label>
+                        <input id="productImageUrl" type="url" placeholder="https://...">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="productNotes">Notes <span style="font-weight:400;opacity:.65">(optional)</span></label>
+                        <textarea id="productNotes" rows="3" placeholder="Maelezo ya ziada ya bidhaa..."></textarea>
+                    </div>
+
+                    <div class="form-hint" style="margin-top:4px;padding:10px;border-radius:10px;background:rgba(22,163,74,.08);">
+                        💡 <strong>Buying Price</strong> itawekwa kwenye <strong>Received Stock</strong>. Mfumo utatunza Last Buying Price na Average Buying Cost baada ya stock kuthibitishwa.
                     </div>
 
                     <div class="modal-actions">
@@ -2691,6 +2754,14 @@
     const productForm = document.getElementById("productForm");
     const productId = document.getElementById("productId");
     const productName = document.getElementById("productName");
+    const productSku = document.getElementById("productSku");
+    const productBrand = document.getElementById("productBrand");
+    const productCategory = document.getElementById("productCategory");
+    const productImageUrl = document.getElementById("productImageUrl");
+    const productNotes = document.getElementById("productNotes");
+    const productUnit = document.getElementById("productUnit");
+    const productVolume = document.getElementById("productVolume");
+    const productVolumeUnit = document.getElementById("productVolumeUnit");
     const productSellingPrice = document.getElementById("productSellingPrice");
     const productLowStock = document.getElementById("productLowStock");
 
@@ -2754,78 +2825,57 @@
     }
 
     async function loadProducts() {
-        productsTableBody.innerHTML = `
-            <tr>
-                <td colspan="5" class="loading-row">${t("loading")}</td>
-            </tr>
-        `;
-
+        productsTableBody.innerHTML = `<tr><td colspan="11" class="loading-row">${t("loading")}</td></tr>`;
         try {
-            const data = await supabaseRPC("get_products_for_owner");
-            products = Array.isArray(data) ? data : [];
+            const [data, variants] = await Promise.all([
+                supabaseRPC("get_products_for_owner"),
+                supabaseRPC("get_variant_stock_summary")
+            ]);
+            const base = Array.isArray(data) ? data : [];
+            const byProduct = new Map();
+            (Array.isArray(variants) ? variants : []).forEach(v => {
+                const id = v.product_id;
+                if (!byProduct.has(id)) byProduct.set(id, v);
+            });
+            products = base.map(p => ({...p, ...(byProduct.get(p.id) || {})}));
             renderProducts();
         } catch (error) {
             console.error("Products loading error:", error);
-            productsTableBody.innerHTML = `
-                <tr>
-                    <td colspan="5" class="empty-row">${t("product_error")}</td>
-                </tr>
-            `;
+            productsTableBody.innerHTML = `<tr><td colspan="11" class="empty-row">${escapeHtml(error.message || t("product_error"))}</td></tr>`;
         }
     }
 
     function renderProducts() {
         const query = (productSearch.value || "").trim().toLowerCase();
-
         const filtered = products.filter(product =>
-            String(product.name || "").toLowerCase().includes(query)
+            [product.name, product.sku, product.brand, product.category].some(v => String(v || "").toLowerCase().includes(query))
         );
-
         productCount.textContent = `${filtered.length}/${products.length}`;
-
         if (!filtered.length) {
-            productsTableBody.innerHTML = `
-                <tr>
-                    <td colspan="5" class="empty-row">${t("no_products")}</td>
-                </tr>
-            `;
+            productsTableBody.innerHTML = `<tr><td colspan="11" class="empty-row">${t("no_products")}</td></tr>`;
             return;
         }
-
         productsTableBody.innerHTML = filtered.map(product => {
             const active = product.is_active === true;
-            const price = Number(product.selling_price || 0).toLocaleString();
-
-            return `
-                <tr>
-                    <td>
-                        <span class="product-name">${escapeHtml(product.name)}</span>
-                    </td>
-                    <td>
-                        <span class="price">TZS ${price}</span>
-                    </td>
-                    <td>${Number(product.low_stock_level || 0).toLocaleString()}</td>
-                    <td>
-                        <span class="status-badge ${active ? "status-active" : "status-inactive"}">
-                            ${active ? "● " + t("active") : "● " + t("inactive")}
-                        </span>
-                    </td>
-                    <td>
-                        <div class="table-actions">
-                            <button class="small-btn edit" data-action="edit" data-id="${product.id}">
-                                ✏️ ${t("edit")}
-                            </button>
-                            <button
-                                class="small-btn ${active ? "deactivate" : "activate"}"
-                                data-action="toggle"
-                                data-id="${product.id}"
-                            >
-                                ${active ? "⏸️ " + t("deactivate") : "▶️ " + t("activate")}
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-            `;
+            const categoryNames = {water:"Water",soda:"Soda",juice:"Juice",energy_drink:"Energy Drink",other:"Other"};
+            const stock = Number(product.current_stock || 0);
+            const low = Number(product.low_stock_level || 0);
+            return `<tr>
+                <td><span class="product-name">${escapeHtml(product.name)}</span></td>
+                <td>${escapeHtml(product.sku || "—")}</td>
+                <td>${escapeHtml(product.brand || "—")}</td>
+                <td>${escapeHtml(categoryNames[product.category] || product.category || "—")}</td>
+                <td>${escapeHtml(product.unit || "—")}</td>
+                <td>${product.volume_value ? `${escapeHtml(String(product.volume_value))} ${escapeHtml(product.volume_unit || "")}` : "—"}</td>
+                <td><span class="price">TZS ${Number(product.selling_price || 0).toLocaleString()}</span></td>
+                <td>${stock.toLocaleString()}</td>
+                <td>${low.toLocaleString()}</td>
+                <td><span class="status-badge ${active ? "status-active" : "status-inactive"}">${active ? "● " + t("active") : "● " + t("inactive")}</span></td>
+                <td><div class="table-actions">
+                    <button class="small-btn edit" data-action="edit" data-id="${product.id}">✏️ ${t("edit")}</button>
+                    <button class="small-btn ${active ? "deactivate" : "activate"}" data-action="toggle" data-id="${product.id}">${active ? "⏸️ " + t("deactivate") : "▶️ " + t("activate")}</button>
+                </div></td>
+            </tr>`;
         }).join("");
     }
 
@@ -2838,26 +2888,38 @@
             .replaceAll("'", "&#039;");
     }
 
-    function openProductModal(product = null) {
+    async function openProductModal(product = null) {
         editingProduct = product;
-
         productModalMessage.className = "modal-message";
         productModalMessage.textContent = "";
-
+        productCategory.value = product?.category || "other";
+        productSku.value = product?.sku || "";
+        productBrand.value = product?.brand || "";
+        productImageUrl.value = product?.image_url || "";
+        productNotes.value = product?.notes || "";
+        productUnit.value = "crates";
+        productVolume.value = "";
+        productVolumeUnit.value = "ml";
+        productSellingPrice.value = product?.selling_price ?? "";
+        productLowStock.value = product?.low_stock_level ?? 0;
         if (product) {
             productModalTitle.textContent = t("edit_product_title");
             productId.value = product.id;
-            productName.value = product.name || "";
-            productSellingPrice.value = product.selling_price ?? 0;
-            productLowStock.value = product.low_stock_level ?? 0;
+            try {
+                const variants = await supabaseRPC("get_product_variants", {p_product_id: product.id});
+                const v = Array.isArray(variants) ? variants[0] : null;
+                if (v) {
+                    productUnit.value = v.unit || "crates";
+                    productVolume.value = v.volume_value ?? "";
+                    productVolumeUnit.value = v.volume_unit || "ml";
+                    productSellingPrice.value = v.selling_price ?? product.selling_price ?? 0;
+                    productLowStock.value = v.low_stock_level ?? product.low_stock_level ?? 0;
+                }
+            } catch (e) { console.warn("Could not load product variant:", e); }
         } else {
             productModalTitle.textContent = t("add_product_title");
             productId.value = "";
-            productName.value = "";
-            productSellingPrice.value = "";
-            productLowStock.value = 0;
         }
-
         productModal.classList.add("show");
         setTimeout(() => productName.focus(), 50);
     }
@@ -2867,6 +2929,13 @@
         editingProduct = null;
         productForm.reset();
         productId.value = "";
+        productSku.value = "";
+        productBrand.value = "";
+        productCategory.value = "other";
+        productImageUrl.value = "";
+        productNotes.value = "";
+        productUnit.value = "crates";
+        productVolumeUnit.value = "ml";
         productLowStock.value = 0;
     }
 
@@ -2928,68 +2997,65 @@
         }
     });
 
+    async function updateProductMetadata(productIdValue, metadata) {
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/products?id=eq.${encodeURIComponent(productIdValue)}`, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+                "Prefer": "return=minimal",
+                "apikey": SUPABASE_PUBLISHABLE_KEY,
+                "Authorization": `Bearer ${accessToken}`
+            },
+            body: JSON.stringify(metadata)
+        });
+        if (!response.ok) { const d = await response.json().catch(() => ({})); throw new Error(d?.message || d?.hint || d?.details || "Product metadata update failed"); }
+    }
+
     productForm.addEventListener("submit", async event => {
         event.preventDefault();
-
         const name = productName.value.trim();
+        const sku = productSku.value.trim() || null;
+        const brand = productBrand.value.trim() || null;
+        const category = productCategory.value;
+        const imageUrl = productImageUrl.value.trim() || null;
+        const notes = productNotes.value.trim() || null;
+        const unit = productUnit.value;
+        const volume = Number(productVolume.value);
+        const volumeUnit = productVolumeUnit.value;
         const sellingPrice = Number(productSellingPrice.value);
         const lowStock = Number(productLowStock.value);
-
-        if (!name) {
-            showProductMessage(t("name_required"), "error");
-            productName.focus();
-            return;
-        }
-
-        if (!Number.isFinite(sellingPrice) || sellingPrice < 0) {
-            showProductMessage(t("product_error"), "error");
-            return;
-        }
-
-        if (!Number.isFinite(lowStock) || lowStock < 0) {
-            showProductMessage(t("product_error"), "error");
-            return;
-        }
-
+        if (!name) return showProductMessage(t("name_required"), "error");
+        if (!Number.isFinite(volume) || volume <= 0) return showProductMessage(currentLanguage === "sw" ? "Weka Volume sahihi." : "Enter a valid volume.", "error");
+        if (!Number.isFinite(sellingPrice) || sellingPrice < 0) return showProductMessage(currentLanguage === "sw" ? "Selling Price si sahihi." : "Selling Price is invalid.", "error");
+        if (!Number.isFinite(lowStock) || lowStock < 0) return showProductMessage(t("product_error"), "error");
         const saveButton = document.getElementById("saveProductBtn");
         saveButton.disabled = true;
-
         try {
+            let id;
             if (editingProduct) {
-                await supabaseRPC("update_product", {
-                    p_product_id: editingProduct.id,
-                    p_name: name,
-                    p_selling_price: sellingPrice,
-                    p_low_stock_level: lowStock
-                });
+                await supabaseRPC("update_product", {p_product_id: editingProduct.id,p_name:name,p_selling_price:sellingPrice,p_low_stock_level:lowStock});
+                id = editingProduct.id;
+                const variants = await supabaseRPC("get_product_variants", {p_product_id:id});
+                const v = Array.isArray(variants) ? variants[0] : null;
+                if (v) {
+                    await supabaseRPC("update_product_variant", {p_variant_id:v.id || v.variant_id,p_unit:unit,p_volume_value:volume,p_volume_unit:volumeUnit,p_buying_price:v.buying_price ?? 0,p_selling_price:sellingPrice,p_low_stock_level:lowStock});
+                } else {
+                    await supabaseRPC("create_product_variant", {p_product_id:id,p_unit:unit,p_volume_value:volume,p_volume_unit:volumeUnit,p_buying_price:0,p_selling_price:sellingPrice,p_low_stock_level:lowStock});
+                }
             } else {
-                await supabaseRPC("create_product", {
-                    p_name: name,
-                    p_selling_price: sellingPrice,
-                    p_low_stock_level: lowStock
-                });
+                const created = await supabaseRPC("create_product", {p_name:name,p_selling_price:sellingPrice,p_low_stock_level:lowStock});
+                id = typeof created === "string" ? created : created?.id;
+                if (!id) throw new Error("Product created but ID was not returned.");
+                await supabaseRPC("create_product_variant", {p_product_id:id,p_unit:unit,p_volume_value:volume,p_volume_unit:volumeUnit,p_buying_price:0,p_selling_price:sellingPrice,p_low_stock_level:lowStock});
             }
-
+            await updateProductMetadata(id,{sku,brand,category,image_url:imageUrl,notes});
             closeProductModal();
             await loadProducts();
         } catch (error) {
             console.error("Product save error:", error);
-
-            const duplicate =
-                String(error.message || "").toLowerCase().includes("duplicate") ||
-                String(error.message || "").toLowerCase().includes("unique");
-
-            showProductMessage(
-                duplicate
-                    ? (currentLanguage === "sw"
-                        ? "Bidhaa yenye jina hilo tayari ipo."
-                        : "A product with that name already exists.")
-                    : t("product_error"),
-                "error"
-            );
-        } finally {
-            saveButton.disabled = false;
-        }
+            const duplicate = String(error.message || "").toLowerCase().includes("duplicate") || String(error.message || "").toLowerCase().includes("unique");
+            showProductMessage(duplicate ? (currentLanguage === "sw" ? "SKU au taarifa hii tayari ipo." : "SKU or this information already exists.") : (error.message || t("product_error")), "error");
+        } finally { saveButton.disabled = false; }
     });
 
     // Refresh translated Product UI without page reload.
@@ -3202,9 +3268,9 @@
     function addReceivedLine(){
         const wrap=document.getElementById("receivedLines");
         const row=document.createElement("div"); row.className="rs-line";
-        row.innerHTML=`<div class="form-group"><label>Product / Variant</label><select class="rs-variant" required><option value="">Chagua Variant</option>${rsVariants.map(v=>`<option value="${v.variant_id}">${esc(v.product_name)} — ${esc(v.volume_value)} ${esc(v.volume_unit)} (${esc(v.unit)})</option>`).join("")}</select></div><div class="form-group"><label>Quantity</label><input class="rs-qty" type="number" min="0.01" step="0.01" required></div><div class="form-group"><label>Buying Price</label><input class="rs-price" type="number" readonly></div><div class="form-group"><label>Total</label><input class="rs-total" type="number" readonly></div><button type="button" class="danger-line">×</button>`;
+        row.innerHTML=`<div class="form-group"><label>Product / Variant</label><select class="rs-variant" required><option value="">Chagua Variant</option>${rsVariants.map(v=>`<option value="${v.variant_id}">${esc(v.product_name)} — ${esc(v.volume_value)} ${esc(v.volume_unit)} (${esc(v.unit)})</option>`).join("")}</select></div><div class="form-group"><label>Quantity</label><input class="rs-qty" type="number" min="0.01" step="0.01" required></div><div class="form-group"><label>Buying Price</label><input class="rs-price" type="number" min="0" step="0.01" placeholder="Weka Buying Price" required></div><div class="form-group"><label>Total</label><input class="rs-total" type="number" readonly></div><button type="button" class="danger-line">×</button>`;
         wrap.appendChild(row);
-        row.querySelector(".rs-variant").addEventListener("change",()=>{const v=rsVariants.find(x=>x.variant_id===row.querySelector(".rs-variant").value);row.querySelector(".rs-price").value=v?.buying_price||0;updateReceivedTotal();});
+        row.querySelector(".rs-variant").addEventListener("change",()=>{const v=rsVariants.find(x=>x.variant_id===row.querySelector(".rs-variant").value);row.querySelector(".rs-price").value=v?.buying_price||"";updateReceivedTotal();});
         row.querySelector(".rs-qty").addEventListener("input",()=>{const p=Number(row.querySelector(".rs-price").value||0),q=Number(row.querySelector(".rs-qty").value||0);row.querySelector(".rs-total").value=p*q;updateReceivedTotal();});
         row.querySelector(".danger-line").addEventListener("click",()=>{row.remove();updateReceivedTotal();});
     }
@@ -3223,7 +3289,7 @@
     async function verifyReceived(id){if(!confirm('Thibitisha Received Stock hii?'))return;try{await supabaseRPC('verify_stock_receipt',{p_stock_receipt_id:id});await loadReceivedHistory();await loadCurrentStock();alert('Received Stock ime-verify na stock imeongezwa.');}catch(e){alert(e.message||'Failed');}}
     async function rejectReceived(id){const reason=prompt('Sababu ya rejection:');if(!reason?.trim())return;try{await supabaseRPC('reject_stock_receipt',{p_stock_receipt_id:id,p_reason:reason.trim()});await loadReceivedHistory();alert('Received Stock imekataliwa.');}catch(e){alert(e.message||'Failed');}}
     window.verifyReceived=verifyReceived;window.rejectReceived=rejectReceived;
-    document.getElementById("receivedStockForm").addEventListener("submit",async e=>{e.preventDefault();const items=[];document.querySelectorAll('#receivedLines .rs-line').forEach(r=>{const variant_id=r.querySelector('.rs-variant').value,quantity=Number(r.querySelector('.rs-qty').value);if(variant_id&&quantity>0)items.push({variant_id,quantity});});if(!document.getElementById('rsInvoice').value.trim()||!document.getElementById('rsSupplier').value||!items.length){document.getElementById('receivedMessage').textContent='Jaza Invoice, Supplier na bidhaa.';return;}const b=document.getElementById('saveReceivedBtn');b.disabled=true;try{await supabaseRPC('create_stock_receipt',{p_invoice_receipt_no:document.getElementById('rsInvoice').value.trim(),p_supplier_id:document.getElementById('rsSupplier').value,p_payment_reference:document.getElementById('rsPaymentRef').value.trim()||null,p_notes:document.getElementById('rsNotes').value.trim()||null,p_items:items});document.getElementById('receivedMessage').textContent='Received Stock imehifadhiwa kama Pending.';e.target.reset();document.getElementById('receivedLines').innerHTML='';addReceivedLine();updateReceivedTotal();await loadReceivedHistory();}catch(err){document.getElementById('receivedMessage').textContent=err.message||'Failed';}finally{b.disabled=false;}});
+    document.getElementById("receivedStockForm").addEventListener("submit",async e=>{e.preventDefault();const items=[];document.querySelectorAll('#receivedLines .rs-line').forEach(r=>{const variant_id=r.querySelector('.rs-variant').value,quantity=Number(r.querySelector('.rs-qty').value),buying_price=Number(r.querySelector('.rs-price').value);if(variant_id&&quantity>0&&Number.isFinite(buying_price)&&buying_price>=0)items.push({variant_id,quantity,buying_price});});if(!document.getElementById('rsInvoice').value.trim()||!document.getElementById('rsSupplier').value||!items.length){document.getElementById('receivedMessage').textContent='Jaza Invoice, Supplier na bidhaa.';return;}const b=document.getElementById('saveReceivedBtn');b.disabled=true;try{await supabaseRPC('create_stock_receipt',{p_invoice_receipt_no:document.getElementById('rsInvoice').value.trim(),p_supplier_id:document.getElementById('rsSupplier').value,p_payment_reference:document.getElementById('rsPaymentRef').value.trim()||null,p_notes:document.getElementById('rsNotes').value.trim()||null,p_items:items});document.getElementById('receivedMessage').textContent='Received Stock imehifadhiwa kama Pending.';e.target.reset();document.getElementById('receivedLines').innerHTML='';addReceivedLine();updateReceivedTotal();await loadReceivedHistory();}catch(err){document.getElementById('receivedMessage').textContent=err.message||'Failed';}finally{b.disabled=false;}});
     document.getElementById('addReceivedLineBtn').addEventListener('click',addReceivedLine);document.getElementById('clearReceivedBtn').addEventListener('click',()=>{document.getElementById('receivedStockForm').reset();document.getElementById('receivedLines').innerHTML='';addReceivedLine();updateReceivedTotal();});document.getElementById('refreshReceivedBtn').addEventListener('click',()=>{loadReceivedDependencies();loadReceivedHistory();});document.getElementById('refreshCurrentStockBtn').addEventListener('click',loadCurrentStock);document.getElementById('currentStockSearch').addEventListener('input',loadCurrentStock);
 
     async function loadSalesReceipts(){
