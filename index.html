@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="description"
+        content="SGC SOFT DRINKS MANAGEMENT - Mfumo wa kisasa wa usimamizi wa biashara."
+    >
+
+    <title>SGC SOFT DRINKS MANAGEMENT</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet"
+    >
+</head>
+
+<body>
+
+    <!-- =====================================================
+         APP
+    ====================================================== -->
+
+    <div class="app-shell">
+
+        <!-- =================================================
+             LEFT BRAND PANEL
+        ================================================== -->
+
+        <section class="brand-panel">
+
+            <div class="brand-overlay"></div>
+
+            <div class="brand-content">
+
+                <div class="logo-wrap">
+                    <img
+                        src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgRsGllLOBF63Unp0kzICif6C1tapkNBLRntsN7FJJPLlytEa9m1uBi_CdMVtnA7HmE1niKAeRc7FaKka9HamTfaSy4Mp5V8jnfl0DJt12zb4S4WhtI3PSJH9mHkxhu65YXSVA7sD5b8sOfw8jakPYp3H8Um8qvyjlDzxWgNcdsH2qVTmnMbjsZF4TN/s1280/244759.png"
+                        alt="SGC Logo"
+                    >
+                </div>
+
+                <div class="brand-title">
+                    <span>SGC</span>
+                    <strong>SOFT DRINKS</strong>
+                </div>
+
+                <p class="brand-tagline" data-i18n="brandTagline">
+                    Driven By Quality, Built On Trust
+                </p>
+
+                <div class="gold-line"></div>
+
+                <p class="brand-description" data-i18n="brandDescription">
+                    Mfumo wa kisasa wa kusimamia mauzo, stock,
+                    wateja, suppliers na taarifa za biashara.
+                </p>
+
+
+                <!-- BUSINESS FEATURES -->
+
+                <div class="feature-grid">
+
+                    <div class="feature-card">
+                        <span class="feature-icon">📊</span>
+                        <span data-i18n="featureReports">
+                            Ripoti
+                        </span>
+                    </div>
+
+                    <div class="feature-card">
+                        <span class="feature-icon">📦</span>
+                        <span data-i18n="featureStock">
+                            Stock
+                        </span>
+                    </div>
+
+                    <div class="feature-card">
+                        <span class="feature-icon">🛒</span>
+                        <span data-i18n="featureSales">
+                            Mauzo
+                        </span>
+                    </div>
+
+                    <div class="feature-card">
+                        <span class="feature-icon">💰</span>
+                        <span data-i18n="featureFinance">
+                            Fedha
+                        </span>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="brand-bottom">
+                <span data-i18n="brandBottom">
+                    SGC SOFT DRINKS MANAGEMENT
+                </span>
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             RIGHT AUTH PANEL
+        ================================================== -->
+
+        <section class="auth-panel">
+
+            <!-- LANGUAGE -->
+
+            <div class="top-actions">
+
+                <div class="language-selector">
+
+                    <button
+                        type="button"
+                        class="language-button active"
+                        data-language="sw"
+                    >
+                        SW
+                    </button>
+
+                    <button
+                        type="button"
+                        class="language-button"
+                        data-language="en"
+                    >
+                        EN
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 LOGIN VIEW
+            ================================================== -->
+
+            <div
+                id="loginView"
+                class="auth-view active-view"
+            >
+
+                <div class="auth-header">
+
+                    <span class="auth-label" data-i18n="loginLabel">
+                        KARIBU
+                    </span>
+
+                    <h1 data-i18n="loginTitle">
+                        Ingia kwenye Mfumo
+                    </h1>
+
+                    <p data-i18n="loginSubtitle">
+                        Ingia ili kusimamia biashara yako kwa urahisi.
+                    </p>
+
+                </div>
+
+
+                <form id="loginForm">
+
+                    <!-- EMAIL -->
+
+                    <div class="form-group">
+
+                        <label
+                            for="loginEmail"
+                            data-i18n="email"
+                        >
+                            Email
+                        </label>
+
+                        <div class="input-box">
+
+                            <span class="input-icon">✉</span>
+
+                            <input
+                                type="email"
+                                id="loginEmail"
+                                placeholder="you@example.com"
+                                autocomplete="email"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- PASSWORD -->
+
+                    <div class="form-group">
+
+                        <div class="label-row">
+
+                            <label
+                                for="loginPassword"
+                                data-i18n="password"
+                            >
+                                Password
+                            </label>
+
+                            <button
+                                type="button"
+                                class="text-button"
+                                id="forgotPasswordButton"
+                                data-i18n="forgotPassword"
+                            >
+                                Umesahau password?
+                            </button>
+
+                        </div>
+
+                        <div class="input-box">
+
+                            <span class="input-icon">🔒</span>
+
+                            <input
+                                type="password"
+                                id="loginPassword"
+                                placeholder="••••••••"
+                                autocomplete="current-password"
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                class="eye-button"
+                                data-target="loginPassword"
+                            >
+                                👁
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- MESSAGE -->
+
+                    <div
+                        id="loginMessage"
+                        class="message"
+                        hidden
+                    ></div>
+
+
+                    <!-- LOGIN BUTTON -->
+
+                    <button
+                        type="submit"
+                        class="primary-button"
+                        id="loginButton"
+                    >
+
+                        <span data-i18n="loginButton">
+                            Ingia
+                        </span>
+
+                        <span class="button-arrow">→</span>
+
+                    </button>
+
+                </form>
+
+
+                <!-- OWNER SIGNUP -->
+
+                <div class="switch-auth">
+
+                    <span data-i18n="noAccount">
+                        Huna akaunti ya Owner?
+                    </span>
+
+                    <button
+                        type="button"
+                        class="link-button"
+                        id="showSignupButton"
+                        data-i18n="createOwner"
+                    >
+                        Tengeneza Owner Account
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 OWNER SIGNUP VIEW
+            ================================================== -->
+
+            <div
+                id="signupView"
+                class="auth-view"
+            >
+
+                <div class="auth-header">
+
+                    <span class="auth-label owner-label">
+                        OWNER
+                    </span>
+
+                    <h1 data-i18n="signupTitle">
+                        Tengeneza Owner Account
+                    </h1>
+
+                    <p data-i18n="signupSubtitle">
+                        Ingiza taarifa zako na Owner Signup Code.
+                    </p>
+
+                </div>
+
+
+                <form id="signupForm">
+
+                    <!-- FULL NAME -->
+
+                    <div class="form-group">
+
+                        <label
+                            for="fullName"
+                            data-i18n="fullName"
+                        >
+                            Jina Kamili
+                        </label>
+
+                        <div class="input-box">
+
+                            <span class="input-icon">👤</span>
+
+                            <input
+                                type="text"
+                                id="fullName"
+                                placeholder="Mfano: John Sam"
+                                autocomplete="name"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- USERNAME -->
+
+                    <div class="form-group">
+
+                        <label
+                            for="username"
+                            data-i18n="username"
+                        >
+                            Username
+                        </label>
+
+                        <div class="input-box">
+
+                            <span class="input-icon">@</span>
+
+                            <input
+                                type="text"
+                                id="username"
+                                placeholder="Mfano: johnsam"
+                                autocomplete="username"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- EMAIL -->
+
+                    <div class="form-group">
+
+                        <label
+                            for="signupEmail"
+                            data-i18n="email"
+                        >
+                            Email
+                        </label>
+
+                        <div class="input-box">
+
+                            <span class="input-icon">✉</span>
+
+                            <input
+                                type="email"
+                                id="signupEmail"
+                                placeholder="you@example.com"
+                                autocomplete="email"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- PASSWORD -->
+
+                    <div class="form-group">
+
+                        <label
+                            for="signupPassword"
+                            data-i18n="password"
+                        >
+                            Password
+                        </label>
+
+                        <div class="input-box">
+
+                            <span class="input-icon">🔒</span>
+
+                            <input
+                                type="password"
+                                id="signupPassword"
+                                placeholder="••••••••"
+                                autocomplete="new-password"
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                class="eye-button"
+                                data-target="signupPassword"
+                            >
+                                👁
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- CONFIRM PASSWORD -->
+
+                    <div class="form-group">
+
+                        <label
+                            for="confirmPassword"
+                            data-i18n="confirmPassword"
+                        >
+                            Thibitisha Password
+                        </label>
+
+                        <div class="input-box">
+
+                            <span class="input-icon">🔒</span>
+
+                            <input
+                                type="password"
+                                id="confirmPassword"
+                                placeholder="••••••••"
+                                autocomplete="new-password"
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                class="eye-button"
+                                data-target="confirmPassword"
+                            >
+                                👁
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- OWNER CODE -->
+
+                    <div class="form-group">
+
+                        <label
+                            for="ownerCode"
+                            data-i18n="ownerCode"
+                        >
+                            Owner Signup Code
+                        </label>
+
+                        <div class="input-box">
+
+                            <span class="input-icon">🔑</span>
+
+                            <input
+                                type="password"
+                                id="ownerCode"
+                                placeholder="Owner Signup Code"
+                                autocomplete="off"
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                class="eye-button"
+                                data-target="ownerCode"
+                            >
+                                👁
+                            </button>
+
+                        </div>
+
+                        <small data-i18n="ownerCodeHint">
+                            Code hii ni ya siri na inahitajika kuunda Owner.
+                        </small>
+
+                    </div>
+
+
+                    <!-- SIGNUP MESSAGE -->
+
+                    <div
+                        id="signupMessage"
+                        class="message"
+                        hidden
+                    ></div>
+
+
+                    <!-- CREATE BUTTON -->
+
+                    <button
+                        type="submit"
+                        class="primary-button"
+                        id="signupButton"
+                    >
+
+                        <span data-i18n="createOwnerButton">
+                            Tengeneza Account
+                        </span>
+
+                        <span class="button-arrow">→</span>
+
+                    </button>
+
+                </form>
+
+
+                <!-- BACK LOGIN -->
+
+                <div class="switch-auth">
+
+                    <span data-i18n="alreadyAccount">
+                        Tayari una akaunti?
+                    </span>
+
+                    <button
+                        type="button"
+                        class="link-button"
+                        id="showLoginButton"
+                        data-i18n="loginHere"
+                    >
+                        Ingia hapa
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 FORGOT PASSWORD VIEW
+            ================================================== -->
+
+            <div
+                id="forgotView"
+                class="auth-view"
+            >
+
+                <div class="auth-header">
+
+                    <span class="auth-label">
+                        SECURITY
+                    </span>
+
+                    <h1 data-i18n="forgotTitle">
+                        Umesahau Password?
+                    </h1>
+
+                    <p data-i18n="forgotSubtitle">
+                        Weka email yako na tutakutumia link ya kubadilisha password.
+                    </p>
+
+                </div>
+
+
+                <form id="forgotForm">
+
+                    <div class="form-group">
+
+                        <label
+                            for="forgotEmail"
+                            data-i18n="email"
+                        >
+                            Email
+                        </label>
+
+                        <div class="input-box">
+
+                            <span class="input-icon">✉</span>
+
+                            <input
+                                type="email"
+                                id="forgotEmail"
+                                placeholder="you@example.com"
+                                autocomplete="email"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        id="forgotMessage"
+                        class="message"
+                        hidden
+                    ></div>
+
+
+                    <button
+                        type="submit"
+                        class="primary-button"
+                        id="forgotButton"
+                    >
+
+                        <span data-i18n="sendReset">
+                            Tuma Reset Link
+                        </span>
+
+                        <span class="button-arrow">→</span>
+
+                    </button>
+
+                </form>
+
+
+                <div class="switch-auth">
+
+                    <button
+                        type="button"
+                        class="link-button"
+                        id="backToLoginButton"
+                        data-i18n="backLogin"
+                    >
+                        ← Rudi kwenye Login
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 PASSWORD RESET VIEW
+            ================================================== -->
+
+            <div
+                id="resetView"
+                class="auth-view"
+            >
+
+                <div class="auth-header">
+
+                    <span class="auth-label">
+                        SECURITY
+                    </span>
+
+                    <h1 data-i18n="resetTitle">
+                        Weka Password Mpya
+                    </h1>
+
+                    <p data-i18n="resetSubtitle">
+                        Weka password mpya ya akaunti yako.
+                    </p>
+
+                </div>
+
+
+                <form id="resetForm">
+
+                    <div class="form-group">
+
+                        <label
+                            for="newPassword"
+                            data-i18n="newPassword"
+                        >
+                            Password Mpya
+                        </label>
+
+                        <div class="input-box">
+
+                            <span class="input-icon">🔒</span>
+
+                            <input
+                                type="password"
+                                id="newPassword"
+                                placeholder="••••••••"
+                                autocomplete="new-password"
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                class="eye-button"
+                                data-target="newPassword"
+                            >
+                                👁
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label
+                            for="confirmNewPassword"
+                            data-i18n="confirmPassword"
+                        >
+                            Thibitisha Password
+                        </label>
+
+                        <div class="input-box">
+
+                            <span class="input-icon">🔒</span>
+
+                            <input
+                                type="password"
+                                id="confirmNewPassword"
+                                placeholder="••••••••"
+                                autocomplete="new-password"
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                class="eye-button"
+                                data-target="confirmNewPassword"
+                            >
+                                👁
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        id="resetMessage"
+                        class="message"
+                        hidden
+                    ></div>
+
+
+                    <button
+                        type="submit"
+                        class="primary-button"
+                        id="resetButton"
+                    >
+
+                        <span data-i18n="savePassword">
+                            Hifadhi Password
+                        </span>
+
+                        <span class="button-arrow">→</span>
+
+                    </button>
+
+                </form>
+
+            </div>
+
+
+            <!-- =================================================
+                 FOOTER
+            ================================================== -->
+
+            <div class="auth-footer">
+
+                <span data-i18n="copyright">
+                    © 2026 SGC SOFT DRINKS MANAGEMENT. Haki zote zimehifadhiwa.
+                </span>
+
+            </div>
+
+        </section>
+
+    </div>
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+    ====================================================== -->
+
+    <script src="app.js"></script>
+
+</body>
+</html>
