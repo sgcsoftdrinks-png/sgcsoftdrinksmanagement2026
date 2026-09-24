@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SGC Soft Drinks Management — Expenses</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Arial,sans-serif;background:#f4f7fb;color:#172033}
+.top{background:linear-gradient(135deg,#0b3d91,#0066cc);color:#fff;padding:18px 22px;display:flex;justify-content:space-between;align-items:center;gap:15px}
+.brand{font-weight:800;font-size:20px}.sub{font-size:12px;opacity:.85}.wrap{max-width:1250px;margin:auto;padding:20px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
+.card{background:#fff;border-radius:14px;padding:18px;box-shadow:0 4px 18px #17203312;border:1px solid #e7edf5}
+.kpi small{color:#667085}.kpi strong{display:block;font-size:25px;margin-top:8px}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:15px}.toolbar input,.toolbar select,.form input,.form select,.form textarea{border:1px solid #d7deea;border-radius:9px;padding:11px;background:#fff;width:100%}
+.toolbar .search{flex:1;min-width:220px}.btn{border:0;border-radius:9px;padding:11px 15px;font-weight:700;cursor:pointer}.primary{background:#0b66d4;color:#fff}.secondary{background:#eaf2ff;color:#0b4d9b}.danger{background:#feecec;color:#b42318}.muted{color:#667085}
+.table-wrap{overflow:auto}.table{width:100%;border-collapse:collapse;min-width:850px}.table th,.table td{padding:12px;border-bottom:1px solid #edf0f5;text-align:left;font-size:13px}.table th{background:#f8fafc}.badge{padding:5px 8px;border-radius:20px;font-size:11px;font-weight:700;background:#eef2f7}.modal{position:fixed;inset:0;background:#10182899;display:none;align-items:center;justify-content:center;padding:20px;z-index:10}.modal.show{display:flex}.modalbox{background:#fff;width:min(620px,100%);max-height:90vh;overflow:auto;border-radius:16px;padding:22px}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:13px}.field label{display:block;font-size:12px;font-weight:700;margin-bottom:6px}.field.full{grid-column:1/-1}.actions{display:flex;justify-content:flex-end;gap:9px;margin-top:18px}
+.notice{padding:11px 13px;border-radius:9px;margin-bottom:14px;display:none}.ok{background:#ecfdf3;color:#027a48}.err{background:#fef3f2;color:#b42318}
+@media(max-width:800px){.grid{grid-template-columns:1fr 1fr}.formgrid{grid-template-columns:1fr}.field.full{grid-column:auto}}
+@media(max-width:500px){.grid{grid-template-columns:1fr}.wrap{padding:12px}.top{padding:15px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div><div class="brand">SGC SOFT DRINKS MANAGEMENT</div><div class="sub">Expenses Management</div></div>
+  <button class="btn secondary" onclick="location.reload()">Refresh</button>
+</header>
+
+<main class="wrap">
+  <div id="notice" class="notice"></div>
+
+  <section class="grid">
+    <div class="card kpi"><small>Matumizi Leo</small><strong id="todayTotal">TZS 0</strong><span id="todayCount" class="muted">0 transactions</span></div>
+    <div class="card kpi"><small>Wiki Hii</small><strong id="weekTotal">TZS 0</strong><span id="weekCount" class="muted">0 transactions</span></div>
+    <div class="card kpi"><small>Mwezi Huu</small><strong id="monthTotal">TZS 0</strong><span id="monthCount" class="muted">0 transactions</span></div>
+    <div class="card kpi"><small>Mwaka Huu</small><strong id="yearTotal">TZS 0</strong><span id="yearCount" class="muted">0 transactions</span></div>
+  </section>
+
+  <section class="card">
+    <div class="toolbar">
+      <input id="search" class="search" placeholder="Tafuta description, payment reference au category...">
+      <button class="btn primary" id="addBtn">+ Ongeza Expense</button>
+    </div>
+    <div class="table-wrap">
+      <table class="table">
+        <thead><tr><th>Tarehe</th><th>Category</th><th>Description</th><th>Amount</th><th>Payment</th><th>Recorded By</th><th>Actions</th></tr></thead>
+        <tbody id="expenseRows"><tr><td colspan="7" class="muted">Inapakia...</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="card" style="margin-top:18px">
+    <h3>Expenses by Category</h3>
+    <div class="table-wrap"><table class="table"><thead><tr><th>Category</th><th>Total</th><th>Transactions</th></tr></thead><tbody id="categoryRows"></tbody></table></div>
+  </section>
+</main>
+
+<div class="modal" id="modal">
+ <div class="modalbox">
+  <h2 id="modalTitle">Ongeza Expense</h2>
+  <div class="form">
+   <div class="formgrid">
+    <div class="field"><label>Category</label>
+      <select id="category">
+       <option value="food">Food</option><option value="rent">Rent</option><option value="transport">Transport</option><option value="tra">TRA</option><option value="municipality">Municipality</option><option value="electricity">Electricity</option><option value="water">Water</option><option value="fuel">Fuel</option><option value="internet">Internet</option><option value="salary">Salary</option><option value="maintenance">Maintenance</option><option value="other">Other</option>
+      </select>
+    </div>
+    <div class="field"><label>Amount (TZS)</label><input id="amount" type="number" min="1" step="0.01"></div>
+    <div class="field full"><label>Description</label><textarea id="description" rows="3"></textarea></div>
+    <div class="field"><label>Date</label><input id="expenseDate" type="date"></div>
+    <div class="field"><label>Payment Method</label>
+      <select id="paymentMethod"><option value="cash">Cash</option><option value="mobile_money">Mobile Money</option><option value="bank">Bank</option><option value="credit">Credit</option></select>
+    </div>
+    <div class="field full"><label>Payment Reference</label><input id="paymentReference"></div>
+   </div>
+   <div class="actions"><button class="btn secondary" id="cancelBtn">Cancel</button><button class="btn primary" id="saveBtn">Save</button></div>
+  </div>
+ </div>
+</div>
+
+<script>
+const SUPABASE_URL="https://prqhqogcisjwzcsxyics.supabase.co";
+const SUPABASE_KEY="sb_publishable_M1j6cLFnEVGULYaCfssaZg_KkFCLAcQ";
+const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+let editingId=null, allExpenses=[];
+
+const money=n=>"TZS "+Number(n||0).toLocaleString("en-TZ",{maximumFractionDigits:2});
+const esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
+function msg(text,error=false){const n=document.getElementById("notice");n.textContent=text;n.className="notice "+(error?"err":"ok");n.style.display="block";setTimeout(()=>n.style.display="none",3500)}
+function closeModal(){document.getElementById("modal").classList.remove("show");editingId=null}
+function openAdd(){editingId=null;document.getElementById("modalTitle").textContent="Ongeza Expense";document.getElementById("category").value="food";document.getElementById("amount").value="";document.getElementById("description").value="";document.getElementById("expenseDate").value=new Date().toISOString().slice(0,10);document.getElementById("paymentMethod").value="cash";document.getElementById("paymentReference").value="";document.getElementById("modal").classList.add("show")}
+function openEdit(e){editingId=e.expense_id;document.getElementById("modalTitle").textContent="Edit Expense";document.getElementById("category").value=e.category;document.getElementById("amount").value=e.amount;document.getElementById("description").value=e.description||"";document.getElementById("expenseDate").value=e.expense_date;document.getElementById("paymentMethod").value=e.payment_method;document.getElementById("paymentReference").value=e.payment_reference||"";document.getElementById("modal").classList.add("show")}
+
+async function loadSummary(){
+ const {data,error}=await sb.rpc("get_expense_summary"); if(error) throw error;
+ const x=data?.[0]||{};
+ for(const [id,val] of [["todayTotal",x.today_total],["weekTotal",x.week_total],["monthTotal",x.month_total],["yearTotal",x.year_total]]) document.getElementById(id).textContent=money(val);
+ for(const [id,val] of [["todayCount",x.today_count],["weekCount",x.week_count],["monthCount",x.month_count],["yearCount",x.year_count]]) document.getElementById(id).textContent=`${val||0} transactions`;
+}
+async function loadCategories(){
+ const {data,error}=await sb.rpc("get_expense_summary_by_category"); if(error) throw error;
+ document.getElementById("categoryRows").innerHTML=(data||[]).map(x=>`<tr><td>${esc(x.category)}</td><td>${money(x.total_amount)}</td><td>${x.transaction_count}</td></tr>`).join("")||'<tr><td colspan="3" class="muted">Hakuna data.</td></tr>';
+}
+async function loadExpenses(){
+ const search=document.getElementById("search").value.trim()||null;
+ const {data,error}=await sb.rpc("get_expenses_for_current_user",{p_search:search}); if(error) throw error;
+ allExpenses=data||[];renderExpenses();
+}
+function renderExpenses(){
+ const rows=document.getElementById("expenseRows");
+ if(!allExpenses.length){rows.innerHTML='<tr><td colspan="7" class="muted">Hakuna expenses.</td></tr>';return}
+ rows.innerHTML=allExpenses.map(e=>`<tr>
+ <td>${esc(e.expense_date)}</td><td><span class="badge">${esc(e.category)}</span></td><td>${esc(e.description)}</td><td><b>${money(e.amount)}</b></td>
+ <td>${esc(e.payment_method)}${e.payment_reference?`<br><small class="muted">${esc(e.payment_reference)}</small>`:""}</td>
+ <td>${esc(e.recorded_by_name||"-")}</td>
+ <td><button class="btn secondary" onclick='editById("${e.expense_id}")'>Edit</button> <button class="btn danger" onclick='removeExpense("${e.expense_id}")'>Delete</button></td>
+ </tr>`).join("");
+}
+function editById(id){const e=allExpenses.find(x=>x.expense_id===id);if(e)openEdit(e)}
+async function saveExpense(){
+ const payload={p_category:document.getElementById("category").value,p_description:document.getElementById("description").value,p_amount:Number(document.getElementById("amount").value),p_expense_date:document.getElementById("expenseDate").value||null,p_payment_method:document.getElementById("paymentMethod").value,p_payment_reference:document.getElementById("paymentReference").value||null};
+ const result=editingId?await sb.rpc("update_expense",{p_expense_id:editingId,...payload}):await sb.rpc("create_expense",payload);
+ if(result.error){msg(result.error.message,true);return}
+ closeModal();msg(editingId?"Expense imebadilishwa.":"Expense imehifadhiwa.");await refresh();
+}
+async function removeExpense(id){
+ if(!confirm("Una uhakika unataka kufuta expense hii?"))return;
+ const {error}=await sb.rpc("delete_expense",{p_expense_id:id});if(error){msg(error.message,true);return}
+ msg("Expense imefutwa.");await refresh();
+}
+async function refresh(){try{await Promise.all([loadSummary(),loadExpenses(),loadCategories()])}catch(e){msg(e.message,true)}}
+
+document.getElementById("addBtn").onclick=openAdd;
+document.getElementById("cancelBtn").onclick=closeModal;
+document.getElementById("saveBtn").onclick=saveExpense;
+document.getElementById("search").addEventListener("input",()=>{clearTimeout(window._t);window._t=setTimeout(loadExpenses,300)});
+document.getElementById("modal").addEventListener("click",e=>{if(e.target.id==="modal")closeModal()});
+refresh();
+</script>
+</body>
+</html>
