@@ -876,12 +876,18 @@
         .stock-message.error { background: #fee2e2; color: #991b1b; }
 
         @media (max-width: 900px) {
+            .sales-summary { grid-template-columns: repeat(2,1fr); }
+            .sales-totals { grid-template-columns: 1fr; }
             .stock-summary { grid-template-columns: 1fr; }
             .form-grid { grid-template-columns: 1fr 1fr; }
             .receipt-item-row { grid-template-columns: 1.7fr 1fr 1fr 1fr 38px; }
         }
 
         @media (max-width: 650px) {
+            .sales-summary { grid-template-columns: 1fr; }
+            .sale-item-row { grid-template-columns: 1fr 1fr; }
+            .sale-item-row .product-field { grid-column: 1 / -1; }
+            .receipt-meta { grid-template-columns: 1fr; }
             .form-grid { grid-template-columns: 1fr; }
             .receipt-item-row {
                 grid-template-columns: 1fr 1fr;
@@ -889,6 +895,10 @@
             .receipt-item-row .product-field { grid-column: 1 / -1; }
             .receipt-item-row .line-total-box { text-align: left; }
         }
+
+
+        /* SALES PAGE */
+        .sales-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin-bottom:18px}.sales-mini-card{background:white;border:1px solid var(--border);border-radius:14px;padding:16px;box-shadow:var(--shadow)}.sales-mini-card span{display:block;color:var(--gray);font-size:11px;margin-bottom:6px}.sales-mini-card strong{font-size:19px}.sales-toolbar{display:flex;gap:12px;justify-content:space-between;align-items:center;flex-wrap:wrap;margin-bottom:18px}.sales-search{flex:1;min-width:230px}.sales-form-card{background:white;border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);overflow:hidden}.sales-form-head{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:12px}.sales-form-head h3{font-size:15px}.sales-form-body{padding:20px}.sales-items{display:grid;gap:10px;margin-top:10px}.sale-item-row{display:grid;grid-template-columns:2fr .8fr 1fr 1fr 38px;gap:9px;align-items:end;padding:12px;border:1px solid var(--border);border-radius:11px;background:#fafcff}.sale-item-row .form-group{margin-bottom:0}.sale-price-readonly{background:#f8fafc;color:var(--green);font-weight:bold}.sale-line-total{padding:12px 8px;font-size:12px;font-weight:bold;color:var(--blue);text-align:right}.sales-totals{margin-top:16px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.sale-total-box{padding:14px;background:linear-gradient(135deg,#f8fafc,#eef6ff);border-radius:12px}.sale-total-box span{display:block;color:var(--gray);font-size:11px;margin-bottom:5px}.sale-total-box strong{font-size:18px;color:var(--blue)}.sale-message{display:none;margin-bottom:15px;padding:10px 12px;border-radius:9px;font-size:12px}.sale-message.show{display:block}.sale-message.success{background:#dcfce7;color:#166534}.sale-message.error{background:#fee2e2;color:#991b1b}.sale-receipt-modal .modal{max-width:620px}.receipt-paper{padding:24px;background:white}.receipt-brand{text-align:center;border-bottom:1px dashed #cbd5e1;padding-bottom:14px;margin-bottom:14px}.receipt-brand img{width:65px;height:65px;object-fit:contain}.receipt-brand h2{font-size:18px;margin:5px 0 2px}.receipt-brand p{font-size:10px;color:var(--gray)}.receipt-meta{display:grid;grid-template-columns:1fr 1fr;gap:7px 18px;font-size:11px;margin-bottom:15px}.receipt-meta div{display:flex;justify-content:space-between;gap:8px}.receipt-meta span{color:var(--gray)}.receipt-paper table{width:100%;border-collapse:collapse;font-size:11px}.receipt-paper th,.receipt-paper td{padding:7px 4px;border-bottom:1px solid #e2e8f0;text-align:left}.receipt-paper th:last-child,.receipt-paper td:last-child{text-align:right}.receipt-grand{margin-top:12px;margin-left:auto;max-width:260px}.receipt-grand div{display:flex;justify-content:space-between;padding:5px 0;font-size:12px}.receipt-grand .grand{border-top:2px solid #0f172a;font-weight:bold;font-size:15px;padding-top:8px}.receipt-footer{text-align:center;border-top:1px dashed #cbd5e1;margin-top:18px;padding-top:12px;color:var(--gray);font-size:10px}@media print{body *{visibility:hidden!important}#saleReceiptModal,#saleReceiptModal *{visibility:visible!important}#saleReceiptModal{position:absolute!important;inset:0!important;background:white!important;display:block!important;padding:0!important}#saleReceiptModal .modal{max-width:none;width:100%;box-shadow:none;border-radius:0}#saleReceiptModal .modal-head,#saleReceiptModal .modal-actions{display:none!important}}
 
         /* MOBILE */
         @media (max-width: 1100px) {
@@ -996,7 +1006,7 @@
                 <span data-i18n="received_stock">Received Stock</span>
             </button>
 
-            <button>
+            <button id="salesNavBtn">
                 <span class="nav-icon">🛒</span>
                 <span data-i18n="sales">Sales</span>
             </button>
@@ -1232,7 +1242,7 @@
                         </button>
 
 
-                        <button class="quick-action">
+                        <button class="quick-action" id="quickSaleBtn">
 
                             <strong>
                                 🛒
@@ -1445,6 +1455,46 @@
 
             </section>
 
+
+            <!-- SALES PAGE -->
+            <section class="page-view" id="salesPage">
+                <div class="welcome"><h2><span data-i18n="sales_title">Mauzo</span> 🛒</h2><p data-i18n="sales_subtitle">Rekodi mauzo, fuatilia malipo na tafuta receipts.</p></div>
+                <div class="sales-summary">
+                    <div class="sales-mini-card"><span data-i18n="sales_total">Mauzo ya Leo</span><strong id="salesTodayTotal">TZS 0</strong></div>
+                    <div class="sales-mini-card"><span data-i18n="sales_paid">Zimelipwa</span><strong id="salesTodayPaid">TZS 0</strong></div>
+                    <div class="sales-mini-card"><span data-i18n="sales_credit">Credit</span><strong id="salesTodayCredit">TZS 0</strong></div>
+                    <div class="sales-mini-card"><span data-i18n="sales_transactions">Transactions</span><strong id="salesTodayTransactions">0</strong></div>
+                </div>
+                <div class="sales-toolbar">
+                    <div class="search-box sales-search"><span class="search-icon">🔍</span><input type="text" id="salesSearch" data-i18n-placeholder="search_sales" placeholder="Tafuta receipt..."></div>
+                    <button class="primary-btn" id="newSaleBtn">＋ <span data-i18n="new_sale">Mauzo Mapya</span></button>
+                </div>
+                <div class="sales-form-card" id="salesFormCard" style="display:none;margin-bottom:18px;">
+                    <div class="sales-form-head"><h3 data-i18n="new_sale_title">Mauzo Mapya</h3><button class="small-btn" id="closeSaleFormBtn">×</button></div>
+                    <div class="sales-form-body">
+                        <div class="sale-message" id="saleFormMessage"></div>
+                        <div class="form-grid">
+                            <div class="form-group"><label data-i18n="customer">Mteja</label><select id="saleCustomer"><option value="" data-i18n="walk_in_customer">Mteja wa kawaida</option></select></div>
+                            <div class="form-group"><label data-i18n="payment_method">Njia ya Malipo</label><select id="salePaymentMethod"><option value="cash">Cash</option><option value="mobile_money">Mobile Money</option><option value="bank">Bank</option><option value="credit">Credit</option></select></div>
+                            <div class="form-group"><label data-i18n="paid_amount">Kiasi Kilicholipwa</label><input id="salePaidAmount" type="number" min="0" step="0.01" value="0"></div>
+                            <div class="form-group"><label data-i18n="sale_notes">Notes</label><input id="saleNotes" type="text"></div>
+                        </div>
+                        <div class="items-head"><h4 data-i18n="sale_items">Bidhaa za Mauzo</h4><button type="button" class="add-line-btn" id="addSaleLineBtn">＋ <span data-i18n="add_item">Ongeza Bidhaa</span></button></div>
+                        <div class="sales-items" id="saleItems"></div>
+                        <div class="sales-totals">
+                            <div class="sale-total-box"><span data-i18n="grand_total">Jumla</span><strong id="saleGrandTotal">TZS 0</strong></div>
+                            <div class="sale-total-box"><span data-i18n="paid_amount">Kilicholipwa</span><strong id="salePaidDisplay">TZS 0</strong></div>
+                            <div class="sale-total-box"><span data-i18n="balance">Balance</span><strong id="saleBalance">TZS 0</strong></div>
+                        </div>
+                        <div class="receipt-actions"><button type="button" class="secondary-btn" id="clearSaleBtn" data-i18n="clear">Futa</button><button type="button" class="primary-btn" id="saveSaleBtn">💾 <span data-i18n="save_sale">Hifadhi Sale</span></button></div>
+                    </div>
+                </div>
+                <div class="table-card">
+                    <div class="section-head"><h3 data-i18n="sales_history">Historia ya Mauzo</h3><button class="small-btn" id="refreshSalesBtn">↻ <span data-i18n="refresh">Refresh</span></button></div>
+                    <div class="table-wrap"><table class="products-table"><thead><tr><th data-i18n="receipt_no">Receipt</th><th data-i18n="customer">Customer</th><th data-i18n="salesman">Salesman</th><th data-i18n="total">Total</th><th data-i18n="paid_amount">Paid</th><th data-i18n="balance">Balance</th><th data-i18n="payment_method">Payment</th><th data-i18n="date">Tarehe</th><th data-i18n="actions">Vitendo</th></tr></thead><tbody id="salesTableBody"><tr><td colspan="9" class="loading-row" data-i18n="loading">Inapakia...</td></tr></tbody></table></div>
+                </div>
+            </section>
+
             <!-- PRODUCTS PAGE -->
             <section class="page-view" id="productsPage">
 
@@ -1585,7 +1635,7 @@
             welcome_message: "Karibu kwenye SGC SOFT DRINKS MANAGEMENT. Dhibiti biashara yako kwa urahisi.",
             today_sales: "Mauzo ya Leo", stock_value: "Thamani ya Stock", today_transactions: "Transactions Leo", customers_count: "Wateja",
             quick_actions: "Vitendo vya Haraka", receive_stock: "Pokea Stock", receive_stock_desc: "Rekodi bidhaa mpya zilizoingia",
-            new_sale: "Mauzo Mapya", new_sale_desc: "Rekodi mauzo ya bidhaa", new_customer: "Mteja Mpya", new_customer_desc: "Ongeza mteja mpya",
+            new_sale: "Mauzo Mapya", new_sale_desc: "Rekodi mauzo ya bidhaa", sales_title: "Mauzo", sales_subtitle: "Rekodi mauzo, fuatilia malipo na tafuta receipts.", sales_total: "Mauzo ya Leo", sales_paid: "Zimelipwa", sales_credit: "Credit", sales_transactions: "Transactions", search_sales: "Tafuta receipt...", new_sale_title: "Mauzo Mapya", customer: "Mteja", walk_in_customer: "Mteja wa kawaida", payment_method: "Njia ya Malipo", paid_amount: "Kilicholipwa", sale_notes: "Notes", sale_items: "Bidhaa za Mauzo", grand_total: "Jumla", balance: "Balance", save_sale: "Hifadhi Sale", sales_history: "Historia ya Mauzo", receipt_no: "Receipt", salesman: "Salesman", view: "Tazama", print: "Print", sale_saved: "Sale imehifadhiwa vizuri.", sale_error: "Imeshindikana kuhifadhi sale.", customer_required_credit: "Credit/partial payment inahitaji customer.", no_sale_items: "Ongeza angalau bidhaa moja.", duplicate_sale_product: "Bidhaa hiyo tayari ipo kwenye mstari mwingine.", new_customer: "Mteja Mpya", new_customer_desc: "Ongeza mteja mpya",
             new_expense: "Expense Mpya", new_expense_desc: "Rekodi matumizi ya biashara", recent_activity: "Shughuli za Karibuni", no_activity: "Hakuna shughuli bado.",
             products_title: "Bidhaa", products_subtitle: "Simamia bidhaa, bei za mauzo na viwango vya stock.", search_products: "Tafuta bidhaa...",
             add_product: "Ongeza Bidhaa", products_list: "Orodha ya Bidhaa", product: "Bidhaa", selling_price: "Bei ya Mauzo",
@@ -1615,7 +1665,7 @@
             reports_menu: "Reports", administration: "Administration", users: "Users", settings: "Settings", logout: "Logout", welcome: "Welcome",
             welcome_message: "Welcome to SGC SOFT DRINKS MANAGEMENT. Manage your business with ease.", today_sales: "Today's Sales",
             stock_value: "Stock Value", today_transactions: "Today's Transactions", customers_count: "Customers", quick_actions: "Quick Actions",
-            receive_stock: "Receive Stock", receive_stock_desc: "Record newly received products", new_sale: "New Sale", new_sale_desc: "Record a product sale",
+            receive_stock: "Receive Stock", receive_stock_desc: "Record newly received products", new_sale: "New Sale", new_sale_desc: "Record a product sale", sales_title: "Sales", sales_subtitle: "Record sales, track payments and search receipts.", sales_total: "Today Sales", sales_paid: "Paid", sales_credit: "Credit", sales_transactions: "Transactions", search_sales: "Search receipt...", new_sale_title: "New Sale", customer: "Customer", walk_in_customer: "Walk-in Customer", payment_method: "Payment Method", paid_amount: "Paid Amount", sale_notes: "Notes", sale_items: "Sale Items", grand_total: "Total", balance: "Balance", save_sale: "Save Sale", sales_history: "Sales History", receipt_no: "Receipt", salesman: "Salesman", view: "View", print: "Print", sale_saved: "Sale saved successfully.", sale_error: "Failed to save sale.", customer_required_credit: "Credit/partial payment requires a customer.", no_sale_items: "Add at least one product.", duplicate_sale_product: "That product is already on another line.",
             new_customer: "New Customer", new_customer_desc: "Add a new customer", new_expense: "New Expense", new_expense_desc: "Record business expenses",
             recent_activity: "Recent Activity", no_activity: "No activity yet.", products_title: "Products",
             products_subtitle: "Manage products, selling prices and stock levels.", search_products: "Search products...", add_product: "Add Product",
@@ -1922,6 +1972,7 @@
         document.querySelector(".content > .cards").style.display = "none";
         document.querySelector(".content > .grid-two").style.display = "none";
         productsPage.classList.remove("active");
+        salesPage.classList.remove("active");
         stockPage.classList.add("active");
 
         document.querySelectorAll(".nav button").forEach(btn => btn.classList.remove("active"));
@@ -2359,6 +2410,45 @@
     };
 
 
+
+
+    /* ==========================================
+       SALES MANAGEMENT — S6.2
+       ========================================== */
+    const salesPage = document.getElementById("salesPage");
+    const salesNavBtn = document.getElementById("salesNavBtn");
+    const salesFormCard = document.getElementById("salesFormCard");
+    const saleItems = document.getElementById("saleItems");
+    const saleCustomer = document.getElementById("saleCustomer");
+    const salePaymentMethod = document.getElementById("salePaymentMethod");
+    const salePaidAmount = document.getElementById("salePaidAmount");
+    const saleNotes = document.getElementById("saleNotes");
+    const saleFormMessage = document.getElementById("saleFormMessage");
+    const salesTableBody = document.getElementById("salesTableBody");
+    const salesSearch = document.getElementById("salesSearch");
+    let salesProducts=[]; let salesCustomers=[]; let salesRows=[];
+    function showSalesMessage(m,type){saleFormMessage.textContent=m;saleFormMessage.className=`sale-message show ${type}`}
+    function clearSalesMessage(){saleFormMessage.textContent="";saleFormMessage.className="sale-message"}
+    function showSalesPage(open=false){document.querySelectorAll(".page-view").forEach(p=>p.classList.remove("active"));document.querySelector(".content > .welcome").style.display="none";document.querySelector(".content > .cards").style.display="none";document.querySelector(".content > .grid-two").style.display="none";salesPage.classList.add("active");stockPage.classList.remove("active");productsPage.classList.remove("active");document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));salesNavBtn.classList.add("active");if(window.innerWidth<=800)sidebar.classList.remove("open");loadSalesData();if(open)openNewSaleForm()}
+    async function loadSalesData(){try{const [pd,cr]=await Promise.all([supabaseRPC("get_products_for_owner"),fetch(`${SUPABASE_URL}/rest/v1/customers?select=id,name,phone&is_active=eq.true&order=name.asc`,{headers:{apikey:SUPABASE_PUBLISHABLE_KEY,Authorization:`Bearer ${accessToken}`}})]);if(!cr.ok)throw new Error("Customer request failed.");const cd=await cr.json();salesProducts=(Array.isArray(pd)?pd:[]).filter(p=>p.is_active===true);salesCustomers=Array.isArray(cd)?cd:[];renderSaleCustomers();await Promise.all([loadSalesList(),loadTodaySalesSummary()]);if(!saleItems.children.length&&salesProducts.length)addSaleItemRow()}catch(e){console.error(e);salesTableBody.innerHTML=`<tr><td colspan="9" class="empty-row">${escapeHtml(e.message||t("sale_error"))}</td></tr>`}}
+    function renderSaleCustomers(){saleCustomer.innerHTML=`<option value="">${escapeHtml(t("walk_in_customer"))}</option>`+salesCustomers.map(c=>`<option value="${c.id}">${escapeHtml(c.name||"-")}${c.phone?` — ${escapeHtml(c.phone)}`:""}</option>`).join("")}
+    function addSaleItemRow(item={}){if(!salesProducts.length){showSalesMessage(currentLanguage==="sw"?"Hakuna bidhaa hai.":"No active products.","error");return}const row=document.createElement("div");row.className="sale-item-row";const opts=salesProducts.map(p=>`<option value="${p.id}" ${p.id===item.product_id?"selected":""}>${escapeHtml(p.name)}</option>`).join("");row.innerHTML=`<div class="form-group product-field"><label>${t("product")}</label><select class="sale-line-product"><option value="">${escapeHtml(t("product"))}</option>${opts}</select></div><div class="form-group"><label>${t("quantity")}</label><input class="sale-line-quantity" type="number" min="0.01" step="0.01" value="${item.quantity??""}"></div><div class="form-group"><label>${t("selling_price")}</label><input class="sale-line-price sale-price-readonly" type="number" readonly value="0"></div><div><div style="font-size:12px;font-weight:bold;margin-bottom:7px">${t("total")}</div><div class="sale-line-total">TZS 0</div></div><button type="button" class="remove-line-btn">×</button>`;saleItems.appendChild(row);row.querySelector(".sale-line-product").addEventListener("change",()=>updateSaleRow(row));row.querySelector(".sale-line-quantity").addEventListener("input",updateSaleTotals);row.querySelector(".remove-line-btn").addEventListener("click",()=>{row.remove();updateSaleTotals();if(!saleItems.children.length&&salesProducts.length)addSaleItemRow()});updateSaleRow(row)}
+    function updateSaleRow(row){const p=salesProducts.find(x=>x.id===row.querySelector(".sale-line-product").value);row.querySelector(".sale-line-price").value=Number(p?.selling_price||0);updateSaleTotals()}
+    function updateSaleTotals(){let total=0;saleItems.querySelectorAll(".sale-item-row").forEach(r=>{const q=Number(r.querySelector(".sale-line-quantity").value||0),p=Number(r.querySelector(".sale-line-price").value||0),line=q*p;total+=line;r.querySelector(".sale-line-total").textContent=`TZS ${line.toLocaleString()}`});const paid=Math.max(0,Number(salePaidAmount.value||0));document.getElementById("saleGrandTotal").textContent=`TZS ${total.toLocaleString()}`;document.getElementById("salePaidDisplay").textContent=`TZS ${paid.toLocaleString()}`;document.getElementById("saleBalance").textContent=`TZS ${Math.max(0,total-paid).toLocaleString()}`}
+    function collectSaleItems(){const items=[],seen=new Set();for(const r of saleItems.querySelectorAll(".sale-item-row")){const id=r.querySelector(".sale-line-product").value,q=Number(r.querySelector(".sale-line-quantity").value);if(!id&&!q)continue;if(!id||!Number.isFinite(q)||q<=0)throw new Error(t("no_sale_items"));if(seen.has(id))throw new Error(t("duplicate_sale_product"));seen.add(id);items.push({product_id:id,quantity:q})}if(!items.length)throw new Error(t("no_sale_items"));return items}
+    function openNewSaleForm(){salesFormCard.style.display="block";clearSaleForm();setTimeout(()=>saleItems.querySelector(".sale-line-product")?.focus(),50)}
+    function clearSaleForm(){clearSalesMessage();saleCustomer.value="";salePaymentMethod.value="cash";salePaidAmount.value="0";saleNotes.value="";saleItems.innerHTML="";if(salesProducts.length)addSaleItemRow();updateSaleTotals()}
+    salePaidAmount.addEventListener("input",updateSaleTotals);salePaymentMethod.addEventListener("change",()=>{if(salePaymentMethod.value==="credit")salePaidAmount.value="0";updateSaleTotals()});document.getElementById("addSaleLineBtn").addEventListener("click",()=>addSaleItemRow());document.getElementById("newSaleBtn").addEventListener("click",openNewSaleForm);document.getElementById("closeSaleFormBtn").addEventListener("click",()=>salesFormCard.style.display="none");document.getElementById("clearSaleBtn").addEventListener("click",clearSaleForm);document.getElementById("refreshSalesBtn").addEventListener("click",loadSalesData);salesSearch.addEventListener("input",loadSalesList);document.getElementById("quickSaleBtn").addEventListener("click",()=>showSalesPage(true));
+    document.getElementById("saveSaleBtn").addEventListener("click",async()=>{clearSalesMessage();const b=document.getElementById("saveSaleBtn");try{const items=collectSaleItems();const total=items.reduce((sum,i)=>sum+i.quantity*Number(salesProducts.find(p=>p.id===i.product_id)?.selling_price||0),0);let paid=Number(salePaidAmount.value||0);if(!Number.isFinite(paid)||paid<0||paid>total)throw new Error(currentLanguage==="sw"?"Kiasi kilicholipwa si sahihi.":"Paid amount is invalid.");if(salePaymentMethod.value==="credit")paid=0;if((paid<total||salePaymentMethod.value==="credit")&&!saleCustomer.value)throw new Error(t("customer_required_credit"));b.disabled=true;const result=await supabaseRPC("create_sale",{p_customer_id:saleCustomer.value||null,p_paid_amount:paid,p_payment_method:salePaymentMethod.value,p_notes:saleNotes.value.trim()||null,p_items:items});const sale=Array.isArray(result)?result[0]:result;salesFormCard.style.display="none";await Promise.all([loadSalesList(),loadTodaySalesSummary(),loadDashboardSummary()]);alert(`${t("sale_saved")} ${sale?.receipt_no||""}`)}catch(e){console.error(e);showSalesMessage(e.message||t("sale_error"),"error")}finally{b.disabled=false}});
+    async function loadTodaySalesSummary(){try{const d=await supabaseRPC("get_today_sales_summary"),r=Array.isArray(d)?d[0]:d;document.getElementById("salesTodayTotal").textContent=`TZS ${Number(r?.total_sales||0).toLocaleString()}`;document.getElementById("salesTodayPaid").textContent=`TZS ${Number(r?.total_paid||0).toLocaleString()}`;document.getElementById("salesTodayCredit").textContent=`TZS ${Number(r?.total_credit||0).toLocaleString()}`;document.getElementById("salesTodayTransactions").textContent=Number(r?.transaction_count||0).toLocaleString()}catch(e){console.error(e)}}
+    async function loadSalesList(){salesTableBody.innerHTML=`<tr><td colspan="9" class="loading-row">${t("loading")}</td></tr>`;try{const d=await supabaseRPC("get_sales_for_current_user",{p_search:salesSearch.value.trim()||null,p_limit:50,p_offset:0});salesRows=Array.isArray(d)?d:[];if(!salesRows.length){salesTableBody.innerHTML=`<tr><td colspan="9" class="empty-row">${currentLanguage==="sw"?"Hakuna mauzo yaliyopatikana.":"No sales found."}</td></tr>`;return}salesTableBody.innerHTML=salesRows.map(r=>`<tr><td><strong>${escapeHtml(r.receipt_no||"-")}</strong></td><td>${escapeHtml(r.customer_name||(currentLanguage==="sw"?"Mteja wa kawaida":"Walk-in Customer"))}</td><td>${escapeHtml(r.salesman_name||"-")}</td><td class="price">TZS ${Number(r.total_amount||0).toLocaleString()}</td><td>TZS ${Number(r.paid_amount||0).toLocaleString()}</td><td>TZS ${Number(r.balance||0).toLocaleString()}</td><td>${escapeHtml(r.payment_method||"-")}</td><td>${escapeHtml(r.created_at?new Date(r.created_at).toLocaleString():"-")}</td><td><button class="small-btn edit" data-sale-id="${r.id}">👁️ ${t("view")}</button></td></tr>`).join("")}catch(e){console.error(e);salesTableBody.innerHTML=`<tr><td colspan="9" class="empty-row">${escapeHtml(e.message||t("sale_error"))}</td></tr>`}}
+    salesTableBody.addEventListener("click",e=>{const b=e.target.closest("button[data-sale-id]");if(b)openSaleReceipt(b.dataset.saleId)});
+    async function openSaleReceipt(id){try{const result=await supabaseRPC("get_sale_details",{p_sale_id:id});const d=Array.isArray(result)?result[0]:result;if(!d)throw new Error(t("sale_error"));renderSaleReceipt(d);document.getElementById("saleReceiptModal").classList.add("show")}catch(e){alert(e.message||t("sale_error"))}}
+    function renderSaleReceipt(d){const items=Array.isArray(d.items)?d.items:(Array.isArray(d.sale_items)?d.sale_items:[]),customer=d.customer_name||(currentLanguage==="sw"?"Mteja wa kawaida":"Walk-in Customer");document.getElementById("saleReceiptBody").innerHTML=`<div class="receipt-paper"><div class="receipt-brand"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgRsGllLOBF63Unp0kzICif6C1tapkNBLRntsN7FJJPLlytEa9m1uBi_CdMVtnA7HmE1niKAeRc7FaKka9HamTfaSy4Mp5V8jnfl0DJt12zb4S4WhtI3PSJH9mHkxhu65YXSVA7sD5b8sOfw8jakPYp3H8Um8qvyjlDzxWgNcdsH2qVTmnMbjsZF4TN/s1280/244759.png" alt="SGC"><h2>SGC SOFT DRINKS</h2><p>SGC SOFT DRINKS MANAGEMENT</p></div><div class="receipt-meta"><div><span>${t("receipt_no")}</span><strong>${escapeHtml(d.receipt_no||"-")}</strong></div><div><span>${t("date")}</span><strong>${escapeHtml(d.created_at?new Date(d.created_at).toLocaleString():"-")}</strong></div><div><span>${t("customer")}</span><strong>${escapeHtml(customer)}</strong></div><div><span>${t("salesman")}</span><strong>${escapeHtml(d.salesman_name||"-")}</strong></div></div><table><thead><tr><th>${t("product")}</th><th>Qty</th><th>${t("selling_price")}</th><th>${t("total")}</th></tr></thead><tbody>${items.map(i=>`<tr><td>${escapeHtml(i.product_name||"-")}</td><td>${Number(i.quantity||0).toLocaleString()}</td><td>TZS ${Number(i.selling_price||0).toLocaleString()}</td><td>TZS ${Number(i.line_total||0).toLocaleString()}</td></tr>`).join("")}</tbody></table><div class="receipt-grand"><div><span>${t("grand_total")}</span><strong>TZS ${Number(d.total_amount||0).toLocaleString()}</strong></div><div><span>${t("paid_amount")}</span><strong>TZS ${Number(d.paid_amount||0).toLocaleString()}</strong></div><div class="grand"><span>${t("balance")}</span><strong>TZS ${Number(d.balance||0).toLocaleString()}</strong></div></div><div class="receipt-footer">Asante kwa kufanya biashara na SGC SOFT DRINKS.</div></div>`}
+    document.body.insertAdjacentHTML("beforeend",`<div class="modal-backdrop sale-receipt-modal" id="saleReceiptModal"><div class="modal"><div class="modal-head"><h3>${t("receipt_no")}</h3><button class="modal-close" id="closeSaleReceipt">×</button></div><div id="saleReceiptBody"></div><div class="modal-actions" style="padding:0 22px 20px"><button class="secondary-btn" id="closeSaleReceipt2">${t("cancel")}</button><button class="primary-btn" id="printSaleReceipt">🖨️ ${t("print")}</button></div></div></div>`);
+    document.getElementById("closeSaleReceipt").addEventListener("click",()=>document.getElementById("saleReceiptModal").classList.remove("show"));document.getElementById("closeSaleReceipt2").addEventListener("click",()=>document.getElementById("saleReceiptModal").classList.remove("show"));document.getElementById("printSaleReceipt").addEventListener("click",()=>window.print());salesNavBtn.addEventListener("click",()=>showSalesPage(false));
+
+
     /* ==========================================
        PRODUCTS MANAGEMENT
        ========================================== */
@@ -2391,6 +2481,7 @@
         document.querySelector(".content > .cards").style.display = "";
         document.querySelector(".content > .grid-two").style.display = "";
         document.querySelector(".content > #productsPage").classList.remove("active");
+        salesPage.classList.remove("active");
 
         document.querySelectorAll(".nav button").forEach(btn => btn.classList.remove("active"));
         document.querySelector(".nav button:first-of-type").classList.add("active");
@@ -2403,6 +2494,7 @@
 
         productsPage.classList.add("active");
         stockPage.classList.remove("active");
+        salesPage.classList.remove("active");
 
         document.querySelectorAll(".nav button").forEach(btn => btn.classList.remove("active"));
         productsNavBtn.classList.add("active");
@@ -2683,6 +2775,18 @@
                 ? t("edit_product_title")
                 : t("add_product_title");
             renderProducts();
+        }
+    };
+
+
+    const salesApplyLanguageBase = applyLanguage;
+    applyLanguage = function(language) {
+        salesApplyLanguageBase(language);
+        if (salesPage?.classList.contains("active")) {
+            renderSaleCustomers();
+            updateSaleTotals();
+            loadSalesList();
+            loadTodaySalesSummary();
         }
     };
 
