@@ -970,8 +970,10 @@
     
         /* SUPPLIERS UI — S6.4F */
         .supplier-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px}.supplier-mini-card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:16px;box-shadow:0 6px 20px rgba(15,23,42,.05)}.supplier-mini-card span{display:block;color:var(--gray);font-size:12px;margin-bottom:7px}.supplier-mini-card strong{font-size:21px;color:var(--blue)}.supplier-toolbar{display:flex;gap:10px;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap}.supplier-actions{display:flex;gap:7px;flex-wrap:wrap}.supplier-actions button{border:0;border-radius:8px;padding:7px 9px;font-size:11px;cursor:pointer}.supplier-view{background:#eff6ff;color:#1d4ed8}.supplier-edit{background:#f3e8ff;color:#7e22ce}.supplier-pay{background:#dcfce7;color:#166534}.supplier-toggle{background:#fef3c7;color:#92400e}.supplier-message{display:none;padding:10px 12px;border-radius:9px;font-size:12px;margin-bottom:12px}.supplier-message.show{display:block}.supplier-message.success{background:#dcfce7;color:#166534}.supplier-message.error{background:#fee2e2;color:#991b1b}.supplier-modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.supplier-detail-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:15px}.supplier-detail-card{background:#f8fafc;border:1px solid var(--border);border-radius:10px;padding:12px}.supplier-detail-card span{display:block;color:var(--gray);font-size:11px}.supplier-detail-card strong{display:block;margin-top:4px;font-size:15px}.supplier-history{margin-top:15px}.supplier-history h4{margin-bottom:9px}.supplier-status{display:inline-flex;padding:4px 8px;border-radius:20px;font-size:10px;font-weight:700}.supplier-status.paid{background:#dcfce7;color:#166534}.supplier-status.partial{background:#fef3c7;color:#92400e}.supplier-status.unpaid{background:#fee2e2;color:#991b1b}.supplier-modal-wide{max-width:1050px!important}.supplier-payment-box{background:#f8fafc;border:1px solid var(--border);border-radius:12px;padding:14px;margin-top:14px}.supplier-payment-box h4{margin-bottom:10px}@media(max-width:800px){.supplier-summary,.supplier-detail-grid{grid-template-columns:1fr}.supplier-modal-grid{grid-template-columns:1fr}}
-.muted{color:var(--gray)}
-#receiptsPanel{display:none!important}
+</style>
+
+<style>
+#currentStockPage .table-wrap,#receivedStockPage .table-wrap,#receiptsPage .table-wrap{overflow-x:auto}.rs-line{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 42px;gap:10px;align-items:end;margin-bottom:10px}.rs-line .form-group{margin:0}.rs-line input[readonly]{background:#f1f5f9}.danger-line{border:0;background:#fee2e2;color:#991b1b;border-radius:8px;height:38px;cursor:pointer}@media(max-width:800px){.rs-line{grid-template-columns:1fr 1fr}.danger-line{grid-column:auto}}
 </style>
 </head>
 
@@ -1334,9 +1336,9 @@
             <section class="page-view" id="stockPage">
 
                 <div class="welcome">
-                    <h2><span data-i18n="received_stock_title">Received Stock</span> 📥</h2>
-                    <p data-i18n="received_stock_subtitle">
-                        Pokea bidhaa kutoka kwa supplier, thibitisha, na ziingize kwenye stock.
+                    <h2><span data-i18n="stock_title">Stock</span> 📦</h2>
+                    <p data-i18n="stock_subtitle">
+                        Pokea, thibitisha na fuatilia bidhaa zinazoingia.
                     </p>
                 </div>
 
@@ -1360,11 +1362,13 @@
                         <button class="stock-tab active" id="receiveStockTab" data-i18n="receive_stock_tab">
                             Pokea Stock
                         </button>
-                        <button class="stock-tab" id="receiptsTab" style="display:none" aria-hidden="true">Receipts</button>
+                        <button class="stock-tab" id="receiptsTab" data-i18n="receipts_tab">
+                            Receipts
+                        </button>
                     </div>
 
                     <button class="primary-btn" id="newReceiptBtn">
-                        ＋ <span data-i18n="new_received_stock">Received Stock Mpya</span>
+                        ＋ <span data-i18n="new_receipt">Receipt Mpya</span>
                     </button>
                 </div>
 
@@ -1432,7 +1436,7 @@
                     </div>
                 </div>
 
-                <div class="stock-panel" id="receiptsPanel" style="display:none">
+                <div class="stock-panel" id="receiptsPanel">
                     <div class="table-card">
                         <div class="section-head">
                             <h3 data-i18n="stock_receipts">Stock Receipts</h3>
@@ -1464,38 +1468,6 @@
             </section>
 
 
-            <!-- RECEIPTS PAGE — SALES RECEIPTS ONLY -->
-            <section class="page-view" id="receiptsPage">
-                <div class="welcome">
-                    <h2><span data-i18n="receipts_title">Receipts</span> 🧾</h2>
-                    <p data-i18n="receipts_subtitle">Tafuta, tazama na chapisha receipts za mauzo. Hii si Received Stock.</p>
-                </div>
-                <div class="sales-toolbar">
-                    <div class="search-box sales-search">
-                        <span class="search-icon">🔍</span>
-                        <input type="text" id="receiptHistorySearch" placeholder="Tafuta receipt...">
-                    </div>
-                    <button class="secondary-btn" id="refreshReceiptHistoryBtn">↻ Refresh</button>
-                </div>
-                <div class="table-card">
-                    <div class="section-head">
-                        <h3 data-i18n="sales_receipt_history">Sales Receipt History</h3>
-                        <span class="muted" style="font-size:11px" data-i18n="sales_receipt_note">Receipts hizi zinatokana na Sales zilizokamilika.</span>
-                    </div>
-                    <div class="table-wrap">
-                        <table class="products-table">
-                            <thead><tr>
-                                <th>Receipt</th><th>Customer</th><th>Salesman</th><th>Total</th><th>Paid</th><th>Balance</th><th>Payment</th><th>Tarehe</th><th>Vitendo</th>
-                            </tr></thead>
-                            <tbody id="receiptHistoryTableBody">
-                                <tr><td colspan="9" class="loading-row">Inapakia...</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </section>
-
-
             <!-- SUPPLIERS PAGE — S6.4F -->
             <section class="page-view" id="suppliersPage">
                 <div class="welcome">
@@ -1515,6 +1487,43 @@
                 <div class="table-card"><div class="section-head"><h3>Orodha ya Suppliers</h3></div>
                     <div class="table-wrap"><table class="products-table"><thead><tr><th>Supplier</th><th>Contact</th><th>Phone</th><th>Status</th><th>Actions</th></tr></thead><tbody id="suppliersTableBody"><tr><td colspan="5" class="loading-row">Inapakia...</td></tr></tbody></table></div>
                 </div>
+            </section>
+
+            <!-- CURRENT STOCK PAGE -->
+            <section class="page-view" id="currentStockPage">
+                <div class="welcome"><h2>📦 <span>Current Stock</span></h2><p>Angalia stock iliyopo kwa kila product variant.</p></div>
+                <div class="sales-toolbar"><div class="search-box sales-search"><span class="search-icon">🔍</span><input id="currentStockSearch" type="text" placeholder="Tafuta product au variant..."></div><button class="small-btn" id="refreshCurrentStockBtn">↻ Refresh</button></div>
+                <div class="table-card"><div class="section-head"><h3>Stock Status</h3></div><div class="table-wrap"><table class="products-table"><thead><tr><th>Product</th><th>Variant</th><th>Unit</th><th>Buying Price</th><th>Selling Price</th><th>Current Stock</th><th>Low Stock</th><th>Status</th></tr></thead><tbody id="currentStockBody"><tr><td colspan="8" class="loading-row">Inapakia...</td></tr></tbody></table></div></div>
+            </section>
+
+            <!-- RECEIVED STOCK PAGE -->
+            <section class="page-view" id="receivedStockPage">
+                <div class="welcome"><h2>📥 Received Stock</h2><p>Rekodi bidhaa zinazoingia kutoka kwa supplier. Stock inaongezeka baada ya Owner ku-verify.</p></div>
+                <div class="sales-form-card" style="display:block;margin-bottom:18px;">
+                    <div class="sales-form-head"><h3>Receive Stock</h3><span class="form-hint">Buying Price hutoka kwenye Product Variant.</span></div>
+                    <form id="receivedStockForm">
+                        <div class="sales-form-grid">
+                            <div class="form-group"><label>Invoice / Receipt No.</label><input id="rsInvoice" required></div>
+                            <div class="form-group"><label>Supplier</label><select id="rsSupplier" required><option value="">Chagua Supplier</option></select></div>
+                            <div class="form-group"><label>Payment Reference</label><input id="rsPaymentRef"></div>
+                            <div class="form-group"><label>Notes</label><input id="rsNotes"></div>
+                        </div>
+                        <div class="items-head"><h4>Bidhaa Zinazoingia</h4><button type="button" class="add-line-btn" id="addReceivedLineBtn">＋ Ongeza Bidhaa</button></div>
+                        <div class="sales-items" id="receivedLines"></div>
+                        <div class="sales-totals"><div class="sale-total-box"><span>Total Cost</span><strong id="receivedTotal">TZS 0</strong></div></div>
+                        <div class="receipt-actions"><button type="button" class="secondary-btn" id="clearReceivedBtn">Futa</button><button type="submit" class="primary-btn" id="saveReceivedBtn">💾 Hifadhi Pending</button></div>
+                        <div class="sale-message" id="receivedMessage"></div>
+                    </form>
+                </div>
+                <div class="sales-summary"><div class="sales-mini-card"><span>Pending</span><strong id="rsPendingCount">0</strong></div><div class="sales-mini-card"><span>Verified</span><strong id="rsVerifiedCount">0</strong></div><div class="sales-mini-card"><span>Rejected</span><strong id="rsRejectedCount">0</strong></div></div>
+                <div class="table-card"><div class="section-head"><h3>Received Stock History</h3><button class="small-btn" id="refreshReceivedBtn">↻ Refresh</button></div><div class="table-wrap"><table class="products-table"><thead><tr><th>Invoice No.</th><th>Supplier</th><th>Total Cost</th><th>Status</th><th>Received At</th><th>Actions</th></tr></thead><tbody id="receivedHistoryBody"><tr><td colspan="6" class="loading-row">Inapakia...</td></tr></tbody></table></div></div>
+            </section>
+
+            <!-- SALES RECEIPTS PAGE -->
+            <section class="page-view" id="receiptsPage">
+                <div class="welcome"><h2>🧾 Receipts</h2><p>Hapa ni receipts za mauzo kwa customers. Received Stock receipts ziko kwenye Received Stock.</p></div>
+                <div class="sales-toolbar"><div class="search-box sales-search"><span class="search-icon">🔍</span><input id="receiptSearch" type="text" placeholder="Tafuta receipt number..."></div><button class="small-btn" id="refreshReceiptsBtn">↻ Refresh</button></div>
+                <div class="table-card"><div class="section-head"><h3>Sales Receipt History</h3></div><div class="table-wrap"><table class="products-table"><thead><tr><th>Receipt No.</th><th>Customer</th><th>Total</th><th>Paid</th><th>Balance</th><th>Status</th><th>Date</th><th>Action</th></tr></thead><tbody id="receiptsBody"><tr><td colspan="8" class="loading-row">Inapakia...</td></tr></tbody></table></div></div>
             </section>
 
             <!-- SALES PAGE -->
@@ -1728,7 +1737,7 @@
             main_menu: "Main Menu",
             dashboard: "Dashboard",
             overview_text: "Muhtasari wa biashara yako",
-            stock: "Stock", received_stock: "Stock Iliyoingia", sales: "Mauzo", receipts: "Receipts", customers: "Wateja", suppliers: "Suppliers",
+            stock: "Stock", received_stock: "Stock Iliyoingia", receipts: "Risiti", sales: "Mauzo", customers: "Wateja", suppliers: "Suppliers",
             finance: "Fedha", expenses: "Matumizi", payments: "Malipo", reports: "Ripoti", reports_menu: "Ripoti",
             administration: "Usimamizi", users: "Watumiaji", settings: "Mipangilio", logout: "Toka",
             welcome: "Karibu",
@@ -1745,7 +1754,7 @@
             selling_price_label: "Bei ya Mauzo", low_stock_label: "Kiwango cha Low Stock", cancel: "Ghairi", save: "Hifadhi",
             product_saved: "Bidhaa imehifadhiwa vizuri.", product_updated: "Bidhaa imesasishwa vizuri.", product_activated: "Bidhaa imewashwa.",
             product_deactivated: "Bidhaa imezimwa.", product_error: "Kuna tatizo. Tafadhali jaribu tena.", name_required: "Jina la bidhaa linahitajika.",
-            stock_title: "Stock", received_stock_title: "Stock Iliyoingia", received_stock_subtitle: "Pokea bidhaa kutoka kwa supplier, thibitisha, na ziingize kwenye stock.", new_received_stock: "Received Stock Mpya", receipts_title: "Receipts", receipts_subtitle: "Tafuta, tazama na chapisha receipts za mauzo. Hii si Received Stock.", sales_receipt_history: "Historia ya Sales Receipts", sales_receipt_note: "Receipts hizi zinatokana na Sales zilizokamilika.", stock_subtitle: "Pokea, thibitisha na fuatilia bidhaa zinazoingia.",
+            stock_title: "Stock", stock_subtitle: "Pokea, thibitisha na fuatilia bidhaa zinazoingia.",
             pending_receipts: "Receipts Pending", verified_receipts: "Receipts Zilizothibitishwa", rejected_receipts: "Receipts Zilizokataliwa",
             receive_stock_tab: "Pokea Stock", receipts_tab: "Receipts", new_receipt: "Receipt Mpya", receive_stock_title: "Pokea Stock",
             pending_note: "Itahifadhiwa kama Pending mpaka Owner athibitishe.", invoice_no: "Invoice / Receipt No.", supplier: "Supplier",
@@ -1775,7 +1784,7 @@
             selling_price_label: "Selling Price", low_stock_label: "Low Stock Level", cancel: "Cancel", save: "Save",
             product_saved: "Product saved successfully.", product_updated: "Product updated successfully.", product_activated: "Product activated.",
             product_deactivated: "Product deactivated.", product_error: "Something went wrong. Please try again.", name_required: "Product name is required.",
-            stock_title: "Stock", received_stock_title: "Received Stock", received_stock_subtitle: "Receive products from suppliers, verify them, and add them to stock.", new_received_stock: "New Received Stock", receipts_title: "Receipts", receipts_subtitle: "Search, view and print sales receipts. This is not Received Stock.", sales_receipt_history: "Sales Receipt History", sales_receipt_note: "These receipts come from completed sales.", stock_subtitle: "Receive, verify and track incoming products.", pending_receipts: "Pending Receipts",
+            stock_title: "Stock", stock_subtitle: "Receive, verify and track incoming products.", pending_receipts: "Pending Receipts",
             verified_receipts: "Verified Receipts", rejected_receipts: "Rejected Receipts", receive_stock_tab: "Receive Stock", receipts_tab: "Receipts",
             new_receipt: "New Receipt", receive_stock_title: "Receive Stock", pending_note: "It will remain Pending until the Owner verifies it.",
             invoice_no: "Invoice / Receipt No.", supplier: "Supplier", select_supplier: "Select Supplier", payment_reference: "Payment Reference",
@@ -2517,7 +2526,6 @@
        ========================================== */
     const salesPage = document.getElementById("salesPage");
     const salesNavBtn = document.getElementById("salesNavBtn");
-    const receiptsNavBtn = document.getElementById("receiptsNavBtn");
     const salesFormCard = document.getElementById("salesFormCard");
     const saleItems = document.getElementById("saleItems");
     const saleCustomer = document.getElementById("saleCustomer");
@@ -2531,39 +2539,6 @@
     function showSalesMessage(m,type){saleFormMessage.textContent=m;saleFormMessage.className=`sale-message show ${type}`}
     function clearSalesMessage(){saleFormMessage.textContent="";saleFormMessage.className="sale-message"}
     function showSalesPage(open=false){document.querySelectorAll(".page-view").forEach(p=>p.classList.remove("active"));document.querySelector(".content > .welcome").style.display="none";document.querySelector(".content > .cards").style.display="none";document.querySelector(".content > .grid-two").style.display="none";salesPage.classList.add("active");stockPage.classList.remove("active");productsPage.classList.remove("active");document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));salesNavBtn.classList.add("active");if(window.innerWidth<=800)sidebar.classList.remove("open");loadSalesData();if(open)openNewSaleForm()}
-
-    const receiptsPage = document.getElementById("receiptsPage");
-    const receiptHistoryTableBody = document.getElementById("receiptHistoryTableBody");
-    const receiptHistorySearch = document.getElementById("receiptHistorySearch");
-
-    function showReceiptsPage(){
-        document.querySelectorAll(".page-view").forEach(p=>p.classList.remove("active"));
-        document.querySelector(".content > .welcome").style.display="none";
-        document.querySelector(".content > .cards").style.display="none";
-        document.querySelector(".content > .grid-two").style.display="none";
-        receiptsPage.classList.add("active");
-        stockPage.classList.remove("active");
-        salesPage.classList.remove("active");
-        productsPage.classList.remove("active");
-        document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
-        receiptsNavBtn.classList.add("active");
-        if(window.innerWidth<=800)sidebar.classList.remove("open");
-        loadReceiptHistory();
-    }
-
-    async function loadReceiptHistory(){
-        receiptHistoryTableBody.innerHTML=`<tr><td colspan="9" class="loading-row">${t("loading")}</td></tr>`;
-        try{
-            const d=await supabaseRPC("get_sales_for_current_user",{p_search:receiptHistorySearch.value.trim()||null,p_limit:100,p_offset:0});
-            const rows=Array.isArray(d)?d:[];
-            if(!rows.length){receiptHistoryTableBody.innerHTML=`<tr><td colspan="9" class="empty-row">${currentLanguage==="sw"?"Hakuna sales receipts zilizopatikana.":"No sales receipts found."}</td></tr>`;return;}
-            receiptHistoryTableBody.innerHTML=rows.map(r=>`<tr><td><strong>${escapeHtml(r.receipt_no||"-")}</strong></td><td>${escapeHtml(r.customer_name||(currentLanguage==="sw"?"Mteja wa kawaida":"Walk-in Customer"))}</td><td>${escapeHtml(r.salesman_name||"-")}</td><td class="price">TZS ${Number(r.total_amount||0).toLocaleString()}</td><td>TZS ${Number(r.paid_amount||0).toLocaleString()}</td><td>TZS ${Number(r.balance||0).toLocaleString()}</td><td>${escapeHtml(r.payment_method||"-")}</td><td>${escapeHtml(r.created_at?new Date(r.created_at).toLocaleString():"-")}</td><td><button class="small-btn edit" data-receipt-sale-id="${r.id}">👁️ ${t("view")}</button></td></tr>`).join("");
-        }catch(e){console.error(e);receiptHistoryTableBody.innerHTML=`<tr><td colspan="9" class="empty-row">${escapeHtml(e.message||t("sale_error"))}</td></tr>`}
-    }
-
-    receiptHistoryTableBody.addEventListener("click",e=>{const b=e.target.closest("button[data-receipt-sale-id]");if(b)openSaleReceipt(b.dataset.receiptSaleId)});
-    receiptHistorySearch.addEventListener("input",()=>{clearTimeout(window._receiptSearchTimer);window._receiptSearchTimer=setTimeout(loadReceiptHistory,250)});
-    document.getElementById("refreshReceiptHistoryBtn").addEventListener("click",loadReceiptHistory);
     async function loadSalesData(){try{const [pd,cr]=await Promise.all([supabaseRPC("get_products_for_owner"),fetch(`${SUPABASE_URL}/rest/v1/customers?select=id,name,phone&is_active=eq.true&order=name.asc`,{headers:{apikey:SUPABASE_PUBLISHABLE_KEY,Authorization:`Bearer ${accessToken}`}})]);if(!cr.ok)throw new Error("Customer request failed.");const cd=await cr.json();salesProducts=(Array.isArray(pd)?pd:[]).filter(p=>p.is_active===true);salesCustomers=Array.isArray(cd)?cd:[];renderSaleCustomers();await Promise.all([loadSalesList(),loadTodaySalesSummary()]);if(!saleItems.children.length&&salesProducts.length)addSaleItemRow()}catch(e){console.error(e);salesTableBody.innerHTML=`<tr><td colspan="9" class="empty-row">${escapeHtml(e.message||t("sale_error"))}</td></tr>`}}
     function renderSaleCustomers(){saleCustomer.innerHTML=`<option value="">${escapeHtml(t("walk_in_customer"))}</option>`+salesCustomers.map(c=>`<option value="${c.id}">${escapeHtml(c.name||"-")}${c.phone?` — ${escapeHtml(c.phone)}`:""}</option>`).join("")}
     function addSaleItemRow(item={}){if(!salesProducts.length){showSalesMessage(currentLanguage==="sw"?"Hakuna bidhaa hai.":"No active products.","error");return}const row=document.createElement("div");row.className="sale-item-row";const opts=salesProducts.map(p=>`<option value="${p.id}" ${p.id===item.product_id?"selected":""}>${escapeHtml(p.name)}</option>`).join("");row.innerHTML=`<div class="form-group product-field"><label>${t("product")}</label><select class="sale-line-product"><option value="">${escapeHtml(t("product"))}</option>${opts}</select></div><div class="form-group"><label>${t("quantity")}</label><input class="sale-line-quantity" type="number" min="0.01" step="0.01" value="${item.quantity??""}"></div><div class="form-group"><label>${t("selling_price")}</label><input class="sale-line-price sale-price-readonly" type="number" readonly value="0"></div><div><div style="font-size:12px;font-weight:bold;margin-bottom:7px">${t("total")}</div><div class="sale-line-total">TZS 0</div></div><button type="button" class="remove-line-btn">×</button>`;saleItems.appendChild(row);row.querySelector(".sale-line-product").addEventListener("change",()=>updateSaleRow(row));row.querySelector(".sale-line-quantity").addEventListener("input",updateSaleTotals);row.querySelector(".remove-line-btn").addEventListener("click",()=>{row.remove();updateSaleTotals();if(!saleItems.children.length&&salesProducts.length)addSaleItemRow()});updateSaleRow(row)}
@@ -2581,7 +2556,6 @@
     function renderSaleReceipt(d){const items=Array.isArray(d.items)?d.items:(Array.isArray(d.sale_items)?d.sale_items:[]),customer=d.customer_name||(currentLanguage==="sw"?"Mteja wa kawaida":"Walk-in Customer");document.getElementById("saleReceiptBody").innerHTML=`<div class="receipt-paper"><div class="receipt-brand"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgRsGllLOBF63Unp0kzICif6C1tapkNBLRntsN7FJJPLlytEa9m1uBi_CdMVtnA7HmE1niKAeRc7FaKka9HamTfaSy4Mp5V8jnfl0DJt12zb4S4WhtI3PSJH9mHkxhu65YXSVA7sD5b8sOfw8jakPYp3H8Um8qvyjlDzxWgNcdsH2qVTmnMbjsZF4TN/s1280/244759.png" alt="SGC"><h2>SGC SOFT DRINKS</h2><p>SGC SOFT DRINKS MANAGEMENT</p></div><div class="receipt-meta"><div><span>${t("receipt_no")}</span><strong>${escapeHtml(d.receipt_no||"-")}</strong></div><div><span>${t("date")}</span><strong>${escapeHtml(d.created_at?new Date(d.created_at).toLocaleString():"-")}</strong></div><div><span>${t("customer")}</span><strong>${escapeHtml(customer)}</strong></div><div><span>${t("salesman")}</span><strong>${escapeHtml(d.salesman_name||"-")}</strong></div></div><table><thead><tr><th>${t("product")}</th><th>Qty</th><th>${t("selling_price")}</th><th>${t("total")}</th></tr></thead><tbody>${items.map(i=>`<tr><td>${escapeHtml(i.product_name||"-")}</td><td>${Number(i.quantity||0).toLocaleString()}</td><td>TZS ${Number(i.selling_price||0).toLocaleString()}</td><td>TZS ${Number(i.line_total||0).toLocaleString()}</td></tr>`).join("")}</tbody></table><div class="receipt-grand"><div><span>${t("grand_total")}</span><strong>TZS ${Number(d.total_amount||0).toLocaleString()}</strong></div><div><span>${t("paid_amount")}</span><strong>TZS ${Number(d.paid_amount||0).toLocaleString()}</strong></div><div class="grand"><span>${t("balance")}</span><strong>TZS ${Number(d.balance||0).toLocaleString()}</strong></div></div><div class="receipt-footer">Asante kwa kufanya biashara na SGC SOFT DRINKS.</div></div>`}
     document.body.insertAdjacentHTML("beforeend",`<div class="modal-backdrop sale-receipt-modal" id="saleReceiptModal"><div class="modal"><div class="modal-head"><h3>${t("receipt_no")}</h3><button class="modal-close" id="closeSaleReceipt">×</button></div><div id="saleReceiptBody"></div><div class="modal-actions" style="padding:0 22px 20px"><button class="secondary-btn" id="closeSaleReceipt2">${t("cancel")}</button><button class="primary-btn" id="printSaleReceipt">🖨️ ${t("print")}</button></div></div></div>`);
     document.getElementById("closeSaleReceipt").addEventListener("click",()=>document.getElementById("saleReceiptModal").classList.remove("show"));document.getElementById("closeSaleReceipt2").addEventListener("click",()=>document.getElementById("saleReceiptModal").classList.remove("show"));document.getElementById("printSaleReceipt").addEventListener("click",()=>window.print());salesNavBtn.addEventListener("click",()=>showSalesPage(false));
-    receiptsNavBtn.addEventListener("click",showReceiptsPage);
 
 
     /* ==========================================
@@ -3069,6 +3043,81 @@
 
 
     /* ==========================================
+       SGC-SDM — RECEIVED STOCK / STOCK / RECEIPTS SEPARATION
+       ========================================== */
+    const currentStockPage = document.getElementById("currentStockPage");
+    const receivedStockPage = document.getElementById("receivedStockPage");
+    const receiptsPage = document.getElementById("receiptsPage");
+    const receiptsNavBtn = document.getElementById("receiptsNavBtn");
+    let rsVariants = [];
+    let rsSuppliers = [];
+
+    function hideAllBusinessPages(){
+        document.querySelectorAll(".page-view").forEach(p=>p.classList.remove("active"));
+        document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
+        document.querySelector(".content > .welcome").style.display="none";
+        document.querySelector(".content > .cards").style.display="none";
+        document.querySelector(".content > .grid-two").style.display="none";
+    }
+    function showCurrentStockPage(){
+        hideAllBusinessPages(); currentStockPage.classList.add("active"); document.getElementById("stockNavBtn").classList.add("active"); loadCurrentStock();
+        if(window.innerWidth<=800) sidebar.classList.remove("open");
+    }
+    function showReceivedStockPage(){
+        hideAllBusinessPages(); receivedStockPage.classList.add("active"); document.getElementById("receivedStockNavBtn").classList.add("active"); loadReceivedDependencies(); loadReceivedHistory();
+        if(!document.querySelector("#receivedLines .rs-line")) addReceivedLine();
+        if(window.innerWidth<=800) sidebar.classList.remove("open");
+    }
+    function showReceiptsPage(){
+        hideAllBusinessPages(); receiptsPage.classList.add("active"); document.getElementById("receiptsNavBtn").classList.add("active"); loadSalesReceipts();
+        if(window.innerWidth<=800) sidebar.classList.remove("open");
+    }
+    async function loadCurrentStock(){
+        const body=document.getElementById("currentStockBody"); body.innerHTML='<tr><td colspan="8" class="loading-row">Inapakia...</td></tr>';
+        try{
+            const rows=await supabaseRPC("get_variant_stock_summary",{p_product_id:null});
+            const q=(document.getElementById("currentStockSearch").value||"").trim().toLowerCase();
+            const filtered=(rows||[]).filter(r=>`${r.product_name} ${r.volume_value} ${r.volume_unit} ${r.unit}`.toLowerCase().includes(q));
+            if(!filtered.length){body.innerHTML='<tr><td colspan="8" class="empty-row">Hakuna stock.</td></tr>';return;}
+            body.innerHTML=filtered.map(r=>`<tr><td>${esc(r.product_name)}</td><td>${esc(r.volume_value)} ${esc(r.volume_unit)}</td><td>${esc(r.unit)}</td><td>${money(r.buying_price)}</td><td>${money(r.selling_price)}</td><td>${r.current_stock}</td><td>${r.low_stock_level}</td><td>${esc(r.stock_status)}</td></tr>`).join("");
+        }catch(e){body.innerHTML=`<tr><td colspan="8" class="empty-row">${esc(e.message||"Failed")}</td></tr>`;}
+    }
+    function addReceivedLine(){
+        const wrap=document.getElementById("receivedLines");
+        const row=document.createElement("div"); row.className="rs-line";
+        row.innerHTML=`<div class="form-group"><label>Product / Variant</label><select class="rs-variant" required><option value="">Chagua Variant</option>${rsVariants.map(v=>`<option value="${v.variant_id}">${esc(v.product_name)} — ${esc(v.volume_value)} ${esc(v.volume_unit)} (${esc(v.unit)})</option>`).join("")}</select></div><div class="form-group"><label>Quantity</label><input class="rs-qty" type="number" min="0.01" step="0.01" required></div><div class="form-group"><label>Buying Price</label><input class="rs-price" type="number" readonly></div><div class="form-group"><label>Total</label><input class="rs-total" type="number" readonly></div><button type="button" class="danger-line">×</button>`;
+        wrap.appendChild(row);
+        row.querySelector(".rs-variant").addEventListener("change",()=>{const v=rsVariants.find(x=>x.variant_id===row.querySelector(".rs-variant").value);row.querySelector(".rs-price").value=v?.buying_price||0;updateReceivedTotal();});
+        row.querySelector(".rs-qty").addEventListener("input",()=>{const p=Number(row.querySelector(".rs-price").value||0),q=Number(row.querySelector(".rs-qty").value||0);row.querySelector(".rs-total").value=p*q;updateReceivedTotal();});
+        row.querySelector(".danger-line").addEventListener("click",()=>{row.remove();updateReceivedTotal();});
+    }
+    function updateReceivedTotal(){let total=0;document.querySelectorAll("#receivedLines .rs-line").forEach(r=>{const p=Number(r.querySelector('.rs-price').value||0),q=Number(r.querySelector('.rs-qty').value||0);r.querySelector('.rs-total').value=p*q;total+=p*q;});document.getElementById("receivedTotal").textContent=money(total);}
+    async function loadReceivedDependencies(){
+        try{
+            const [v,s]=await Promise.all([supabaseRPC("get_active_product_variants"),fetch(`${SUPABASE_URL}/rest/v1/suppliers?select=id,name&is_active=eq.true&order=name.asc`,{headers:{apikey:SUPABASE_PUBLISHABLE_KEY,Authorization:`Bearer ${accessToken}`}}).then(r=>{if(!r.ok)throw new Error("Supplier request failed");return r.json()})]);
+            rsVariants=v||[];rsSuppliers=s||[];document.getElementById("rsSupplier").innerHTML='<option value="">Chagua Supplier</option>'+rsSuppliers.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join("");
+            document.querySelectorAll("#receivedLines .rs-line").forEach(r=>{r.querySelector('.rs-variant').innerHTML='<option value="">Chagua Variant</option>'+rsVariants.map(v=>`<option value="${v.variant_id}">${esc(v.product_name)} — ${esc(v.volume_value)} ${esc(v.volume_unit)} (${esc(v.unit)})</option>`).join("");});
+        }catch(e){document.getElementById("receivedMessage").textContent=e.message||"Failed";}
+    }
+    async function loadReceivedHistory(){
+        const body=document.getElementById("receivedHistoryBody");body.innerHTML='<tr><td colspan="6" class="loading-row">Inapakia...</td></tr>';
+        try{const r=await fetch(`${SUPABASE_URL}/rest/v1/stock_receipts?select=id,invoice_receipt_no,supplier_id,total_amount,verification_status,received_at&order=created_at.desc`,{headers:{apikey:SUPABASE_PUBLISHABLE_KEY,Authorization:`Bearer ${accessToken}`}});if(!r.ok)throw new Error("Received Stock request failed");const rows=await r.json();const map=new Map(rsSuppliers.map(x=>[x.id,x.name]));const c={pending:0,verified:0,rejected:0};rows.forEach(x=>c[x.verification_status]=(c[x.verification_status]||0)+1);document.getElementById('rsPendingCount').textContent=c.pending;document.getElementById('rsVerifiedCount').textContent=c.verified;document.getElementById('rsRejectedCount').textContent=c.rejected;if(!rows.length){body.innerHTML='<tr><td colspan="6" class="empty-row">Hakuna Received Stock.</td></tr>';return;}body.innerHTML=rows.map(x=>`<tr><td>${esc(x.invoice_receipt_no)}</td><td>${esc(map.get(x.supplier_id)||x.supplier_id||'')}</td><td>${money(x.total_amount)}</td><td>${esc(x.verification_status)}</td><td>${dateTime(x.received_at)}</td><td>${x.verification_status==='pending'?`<button class="small-btn" onclick="verifyReceived('${x.id}')">Verify</button> <button class="small-btn" onclick="rejectReceived('${x.id}')">Reject</button>`:'—'}</td></tr>`).join("");}catch(e){body.innerHTML=`<tr><td colspan="6" class="empty-row">${esc(e.message||"Failed")}</td></tr>`;}
+    }
+    async function verifyReceived(id){if(!confirm('Thibitisha Received Stock hii?'))return;try{await supabaseRPC('verify_stock_receipt',{p_stock_receipt_id:id});await loadReceivedHistory();await loadCurrentStock();alert('Received Stock ime-verify na stock imeongezwa.');}catch(e){alert(e.message||'Failed');}}
+    async function rejectReceived(id){const reason=prompt('Sababu ya rejection:');if(!reason?.trim())return;try{await supabaseRPC('reject_stock_receipt',{p_stock_receipt_id:id,p_reason:reason.trim()});await loadReceivedHistory();alert('Received Stock imekataliwa.');}catch(e){alert(e.message||'Failed');}}
+    window.verifyReceived=verifyReceived;window.rejectReceived=rejectReceived;
+    document.getElementById("receivedStockForm").addEventListener("submit",async e=>{e.preventDefault();const items=[];document.querySelectorAll('#receivedLines .rs-line').forEach(r=>{const variant_id=r.querySelector('.rs-variant').value,quantity=Number(r.querySelector('.rs-qty').value);if(variant_id&&quantity>0)items.push({variant_id,quantity});});if(!document.getElementById('rsInvoice').value.trim()||!document.getElementById('rsSupplier').value||!items.length){document.getElementById('receivedMessage').textContent='Jaza Invoice, Supplier na bidhaa.';return;}const b=document.getElementById('saveReceivedBtn');b.disabled=true;try{await supabaseRPC('create_stock_receipt',{p_invoice_receipt_no:document.getElementById('rsInvoice').value.trim(),p_supplier_id:document.getElementById('rsSupplier').value,p_payment_reference:document.getElementById('rsPaymentRef').value.trim()||null,p_notes:document.getElementById('rsNotes').value.trim()||null,p_items:items});document.getElementById('receivedMessage').textContent='Received Stock imehifadhiwa kama Pending.';e.target.reset();document.getElementById('receivedLines').innerHTML='';addReceivedLine();updateReceivedTotal();await loadReceivedHistory();}catch(err){document.getElementById('receivedMessage').textContent=err.message||'Failed';}finally{b.disabled=false;}});
+    document.getElementById('addReceivedLineBtn').addEventListener('click',addReceivedLine);document.getElementById('clearReceivedBtn').addEventListener('click',()=>{document.getElementById('receivedStockForm').reset();document.getElementById('receivedLines').innerHTML='';addReceivedLine();updateReceivedTotal();});document.getElementById('refreshReceivedBtn').addEventListener('click',()=>{loadReceivedDependencies();loadReceivedHistory();});document.getElementById('refreshCurrentStockBtn').addEventListener('click',loadCurrentStock);document.getElementById('currentStockSearch').addEventListener('input',loadCurrentStock);
+
+    async function loadSalesReceipts(){
+        const body=document.getElementById('receiptsBody');body.innerHTML='<tr><td colspan="8" class="loading-row">Inapakia...</td></tr>';
+        try{const rows=await supabaseRPC('get_sales_for_current_user',{p_search:(document.getElementById('receiptSearch').value||null),p_limit:100,p_offset:0});if(!rows?.length){body.innerHTML='<tr><td colspan="8" class="empty-row">Hakuna sales receipts.</td></tr>';return;}body.innerHTML=rows.map(x=>`<tr><td>${esc(x.receipt_no)}</td><td>${esc(x.customer_name||'Walk-in')}</td><td>${money(x.total_amount)}</td><td>${money(x.paid_amount)}</td><td>${money(x.balance)}</td><td>${esc(x.payment_status)}</td><td>${dateTime(x.created_at)}</td><td><button class="small-btn" onclick="viewSalesReceipt('${x.id}')">View / Print</button></td></tr>`).join('');}catch(e){body.innerHTML=`<tr><td colspan="8" class="empty-row">${esc(e.message||'Failed')}</td></tr>`;}
+    }
+    async function viewSalesReceipt(id){try{const rows=await supabaseRPC('get_sale_details',{p_sale_id:id});if(!rows?.length)throw new Error('Receipt haikupatikana.');const h=rows[0];const items=rows;const w=window.open('','_blank','width=500,height=700');w.document.write(`<html><head><title>${esc(h.receipt_no)}</title><style>body{font-family:Arial;padding:20px}.head{text-align:center}table{width:100%;border-collapse:collapse}th,td{padding:7px;border-bottom:1px solid #ddd;text-align:left}.r{text-align:right}</style></head><body><div class="head"><h2>SGC SOFT DRINKS</h2><p>SALES RECEIPT</p></div><p><b>Receipt:</b> ${esc(h.receipt_no)}<br><b>Customer:</b> ${esc(h.customer_name||'Walk-in')}<br><b>Date:</b> ${dateTime(h.created_at)}</p><table><tr><th>Product</th><th>Qty</th><th>Price</th><th>Total</th></tr>${items.map(i=>`<tr><td>${esc(i.product_name)} ${esc(i.volume_value||'')} ${esc(i.volume_unit||'')}</td><td>${i.quantity}</td><td>${money(i.selling_price)}</td><td>${money(i.line_total)}</td></tr>`).join('')}</table><h3 class="r">TOTAL: ${money(h.total_amount)}</h3><p class="r">PAID: ${money(h.paid_amount)}<br>BALANCE: ${money(h.balance)}</p><p>Payment: ${esc(h.payment_method||'')}</p><script>window.onload=()=>window.print()<\/script></body></html>`);w.document.close();}catch(e){alert(e.message||'Failed');}}
+    window.viewSalesReceipt=viewSalesReceipt;document.getElementById('receiptSearch').addEventListener('input',()=>{clearTimeout(window._receiptTimer);window._receiptTimer=setTimeout(loadSalesReceipts,250)});document.getElementById('refreshReceiptsBtn').addEventListener('click',loadSalesReceipts);
+    function esc(v){return String(v??'').replace(/[&<>'"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[m]));}function money(v){return 'TZS '+Number(v||0).toLocaleString('en-TZ',{maximumFractionDigits:2});}function dateTime(v){return v?new Date(v).toLocaleString('en-GB'):'—';}
+
+    /* ==========================================
        MOBILE SIDEBAR
        ========================================== */
 
@@ -3098,13 +3147,14 @@
         showDashboardPage();
     });
 
-    stockNavBtn.addEventListener("click", () => {
-        showProductsPage();
-    });
-
-    receivedStockNavBtn.addEventListener("click", () => {
-        showStockPage();
-    });
+    // Replace old navigation handlers with the separated architecture.
+    [stockNavBtn, receivedStockNavBtn, receiptsNavBtn].forEach(btn=>{ const clone=btn.cloneNode(true); btn.parentNode.replaceChild(clone,btn); });
+    window.stockNavBtn = document.getElementById("stockNavBtn");
+    window.receivedStockNavBtn = document.getElementById("receivedStockNavBtn");
+    window.receiptsNavBtn = document.getElementById("receiptsNavBtn");
+    window.stockNavBtn.addEventListener("click", showCurrentStockPage);
+    window.receivedStockNavBtn.addEventListener("click", showReceivedStockPage);
+    window.receiptsNavBtn.addEventListener("click", showReceiptsPage);
 
     suppliersNavBtn.addEventListener("click", () => {
         showSuppliersPage();
@@ -3112,7 +3162,7 @@
 
 
 
-    document.getElementById("quickProductsBtn").addEventListener("click", showProductsPage);
+    document.getElementById("quickProductsBtn").addEventListener("click", showReceivedStockPage);
 
 
     /* ==========================================
