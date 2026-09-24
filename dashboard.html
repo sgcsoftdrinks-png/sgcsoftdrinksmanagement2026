@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>SGC SOFT DRINKS MANAGEMENT</title>
+
+    <style>
+        :root {
+            --blue: #0b5ed7;
+            --dark-blue: #063b88;
+            --gold: #f4b400;
+            --green: #16a34a;
+            --red: #dc2626;
+            --orange: #f97316;
+            --cyan: #06b6d4;
+            --purple: #7c3aed;
+            --dark: #0f172a;
+            --gray: #64748b;
+            --light: #f1f5f9;
+            --white: #ffffff;
+            --border: #e2e8f0;
+            --shadow: 0 10px 30px rgba(15, 23, 42, .08);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            min-height: 100vh;
+        }
+
+        button {
+            font-family: inherit;
+            cursor: pointer;
+        }
+
+        .app {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 270px;
+            background: linear-gradient(180deg, #063b88, #0b5ed7 60%, #084298);
+            color: white;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            z-index: 1000;
+            overflow-y: auto;
+            transition: .3s;
+        }
+
+        .brand {
+            padding: 24px 18px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,.15);
+        }
+
+        .brand img {
+            width: 75px;
+            height: 75px;
+            object-fit: contain;
+            background: white;
+            border-radius: 18px;
+            padding: 6px;
+            margin-bottom: 10px;
+        }
+
+        .brand h2 {
+            font-size: 18px;
+            margin-bottom: 4px;
+        }
+
+        .brand p {
+            font-size: 11px;
+            opacity: .8;
+        }
+
+        .nav {
+            padding: 18px 12px;
+        }
+
+        .nav-title {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            opacity: .6;
+            margin: 12px 12px 8px;
+        }
+
+        .nav button {
+            width: 100%;
+            border: 0;
+            background: transparent;
+            color: white;
+            padding: 13px 14px;
+            border-radius: 10px;
+            text-align: left;
+            margin-bottom: 4px;
+            font-size: 14px;
+            transition: .2s;
+        }
+
+        .nav button:hover,
+        .nav button.active {
+            background: rgba(255,255,255,.17);
+        }
+
+        .nav-icon {
+            display: inline-block;
+            width: 28px;
+            font-size: 17px;
+        }
+
+        .logout-btn {
+            margin: 15px 12px 25px;
+            width: calc(100% - 24px);
+            border: 1px solid rgba(255,255,255,.3);
+            background: rgba(220,38,38,.85);
+            color: white;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+
+        /* MAIN */
+        .main {
+            margin-left: 270px;
+            width: calc(100% - 270px);
+            min-height: 100vh;
+        }
+
+        .topbar {
+            height: 75px;
+            background: white;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 28px;
+            position: sticky;
+            top: 0;
+            z-index: 900;
+        }
+
+        .menu-btn {
+            display: none;
+            border: 0;
+            background: var(--light);
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 20px;
+        }
+
+        .page-title h1 {
+            font-size: 21px;
+        }
+
+        .page-title p {
+            color: var(--gray);
+            font-size: 12px;
+            margin-top: 3px;
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .language {
+            display: flex;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .language button {
+            border: 0;
+            background: white;
+            padding: 7px 11px;
+            font-size: 12px;
+        }
+
+        .language button.active {
+            background: var(--blue);
+            color: white;
+        }
+
+        .user-box {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding: 7px 11px;
+            background: var(--light);
+            border-radius: 25px;
+        }
+
+        .user-avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--gold), var(--orange));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .user-info strong {
+            display: block;
+            font-size: 12px;
+        }
+
+        .user-info span {
+            display: block;
+            color: var(--gray);
+            font-size: 10px;
+        }
+
+        /* CONTENT */
+        .content {
+            padding: 28px;
+        }
+
+        .welcome {
+            background: linear-gradient(135deg, #063b88, #0b5ed7, #06b6d4);
+            color: white;
+            padding: 28px;
+            border-radius: 18px;
+            box-shadow: var(--shadow);
+            margin-bottom: 25px;
+        }
+
+        .welcome h2 {
+            font-size: 25px;
+            margin-bottom: 8px;
+        }
+
+        .welcome p {
+            opacity: .9;
+            font-size: 14px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .stat-card {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::after {
+            content: "";
+            position: absolute;
+            width: 70px;
+            height: 70px;
+            right: -20px;
+            top: -20px;
+            border-radius: 50%;
+            background: rgba(11,94,215,.08);
+        }
+
+        .stat-icon {
+            width: 43px;
+            height: 43px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            color: white;
+            font-size: 20px;
+            margin-bottom: 13px;
+        }
+
+        .blue {
+            background: var(--blue);
+        }
+
+        .green {
+            background: var(--green);
+        }
+
+        .orange {
+            background: var(--orange);
+        }
+
+        .purple {
+            background: var(--purple);
+        }
+
+        .stat-card span {
+            display: block;
+            color: var(--gray);
+            font-size: 12px;
+            margin-bottom: 7px;
+        }
+
+        .stat-card strong {
+            font-size: 23px;
+        }
+
+        .grid-two {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 20px;
+        }
+
+        .section-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .section-head {
+            padding: 18px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .section-head h3 {
+            font-size: 15px;
+        }
+
+        .section-head button {
+            border: 0;
+            background: var(--blue);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 11px;
+        }
+
+        .quick-actions {
+            padding: 18px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .quick-action {
+            border: 1px solid var(--border);
+            background: white;
+            padding: 16px;
+            border-radius: 12px;
+            text-align: left;
+            transition: .2s;
+        }
+
+        .quick-action:hover {
+            border-color: var(--blue);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(11,94,215,.12);
+        }
+
+        .quick-action strong {
+            display: block;
+            font-size: 13px;
+            margin-bottom: 5px;
+        }
+
+        .quick-action span {
+            font-size: 11px;
+            color: var(--gray);
+        }
+
+        .activity {
+            padding: 10px 20px 20px;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 13px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .activity-item:last-child {
+            border-bottom: 0;
+        }
+
+        .activity-icon {
+            width: 35px;
+            height: 35px;
+            border-radius: 10px;
+            background: #e0f2fe;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .activity-text strong {
+            display: block;
+            font-size: 12px;
+        }
+
+        .activity-text span {
+            color: var(--gray);
+            font-size: 10px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 35px 20px;
+            color: var(--gray);
+        }
+
+        .empty-state div {
+            font-size: 35px;
+            margin-bottom: 10px;
+        }
+
+        .empty-state p {
+            font-size: 12px;
+        }
+
+        /* MOBILE */
+        @media (max-width: 1100px) {
+            .cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .grid-two {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 800px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .menu-btn {
+                display: block;
+            }
+
+            .topbar {
+                padding: 0 15px;
+            }
+
+            .page-title {
+                display: none;
+            }
+
+            .user-info {
+                display: none;
+            }
+
+            .content {
+                padding: 15px;
+            }
+
+            .welcome {
+                padding: 22px;
+            }
+
+            .welcome h2 {
+                font-size: 21px;
+            }
+        }
+
+        @media (max-width: 550px) {
+            .cards {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+
+            .top-actions {
+                gap: 6px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+
+        <div class="brand">
+            <img
+                src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgRsGllLOBF63Unp0kzICif6C1tapkNBLRntsN7FJJPLlytEa9m1uBi_CdMVtnA7HmE1niKAeRc7FaKka9HamTfaSy4Mp5V8jnfl0DJt12zb4S4WhtI3PSJH9mHkxhu65YXSVA7sD5b8sOfw8jakPYp3H8Um8qvyjlDzxWgNcdsH2qVTmnMbjsZF4TN/s1280/244759.png"
+                alt="SGC Logo"
+            >
+
+            <h2>SGC SOFT DRINKS</h2>
+            <p>MANAGEMENT SYSTEM</p>
+        </div>
+
+        <nav class="nav">
+
+            <div class="nav-title" data-i18n="main_menu">Main Menu</div>
+
+            <button class="active">
+                <span class="nav-icon">📊</span>
+                <span data-i18n="dashboard">Dashboard</span>
+            </button>
+
+            <button>
+                <span class="nav-icon">📦</span>
+                <span data-i18n="stock">Stock</span>
+            </button>
+
+            <button>
+                <span class="nav-icon">🛒</span>
+                <span data-i18n="sales">Sales</span>
+            </button>
+
+            <button>
+                <span class="nav-icon">👥</span>
+                <span data-i18n="customers">Customers</span>
+            </button>
+
+            <button>
+                <span class="nav-icon">🏭</span>
+                <span data-i18n="suppliers">Suppliers</span>
+            </button>
+
+            <div class="nav-title" data-i18n="finance">Finance</div>
+
+            <button>
+                <span class="nav-icon">💰</span>
+                <span data-i18n="expenses">Expenses</span>
+            </button>
+
+            <button>
+                <span class="nav-icon">💳</span>
+                <span data-i18n="payments">Payments</span>
+            </button>
+
+            <div class="nav-title" data-i18n="reports">Reports</div>
+
+            <button>
+                <span class="nav-icon">📈</span>
+                <span data-i18n="reports_menu">Reports</span>
+            </button>
+
+            <div class="nav-title" data-i18n="administration">Administration</div>
+
+            <button>
+                <span class="nav-icon">👤</span>
+                <span data-i18n="users">Users</span>
+            </button>
+
+            <button>
+                <span class="nav-icon">⚙️</span>
+                <span data-i18n="settings">Settings</span>
+            </button>
+
+        </nav>
+
+        <button class="logout-btn" id="logoutBtn">
+            🚪 <span data-i18n="logout">Logout</span>
+        </button>
+
+    </aside>
+
+
+    <!-- MAIN -->
+    <main class="main">
+
+        <header class="topbar">
+
+            <button class="menu-btn" id="menuBtn">☰</button>
+
+            <div class="page-title">
+                <h1 data-i18n="dashboard">Dashboard</h1>
+                <p data-i18n="overview_text">
+                    Muhtasari wa biashara yako
+                </p>
+            </div>
+
+            <div class="top-actions">
+
+                <div class="language">
+                    <button id="swBtn">SW</button>
+                    <button id="enBtn">EN</button>
+                </div>
+
+                <div class="user-box">
+
+                    <div class="user-avatar" id="userAvatar">
+                        O
+                    </div>
+
+                    <div class="user-info">
+                        <strong id="userName">Owner</strong>
+                        <span id="userRole">OWNER</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <section class="content">
+
+            <!-- WELCOME -->
+            <div class="welcome">
+
+                <h2>
+                    <span data-i18n="welcome">Karibu</span>,
+                    <span id="welcomeName">Owner</span> 👋
+                </h2>
+
+                <p data-i18n="welcome_message">
+                    Karibu kwenye SGC SOFT DRINKS MANAGEMENT. Dhibiti biashara yako kwa urahisi.
+                </p>
+
+            </div>
+
+
+            <!-- STAT CARDS -->
+            <div class="cards">
+
+                <div class="card stat-card">
+
+                    <div class="stat-icon blue">💰</div>
+
+                    <span data-i18n="today_sales">Mauzo ya Leo</span>
+
+                    <strong>TZS 0</strong>
+
+                </div>
+
+
+                <div class="card stat-card">
+
+                    <div class="stat-icon green">📦</div>
+
+                    <span data-i18n="stock_value">Thamani ya Stock</span>
+
+                    <strong>TZS 0</strong>
+
+                </div>
+
+
+                <div class="card stat-card">
+
+                    <div class="stat-icon orange">🛒</div>
+
+                    <span data-i18n="today_transactions">Transactions Leo</span>
+
+                    <strong>0</strong>
+
+                </div>
+
+
+                <div class="card stat-card">
+
+                    <div class="stat-icon purple">👥</div>
+
+                    <span data-i18n="customers_count">Wateja</span>
+
+                    <strong>0</strong>
+
+                </div>
+
+            </div>
+
+
+            <!-- LOWER CONTENT -->
+            <div class="grid-two">
+
+                <!-- QUICK ACTIONS -->
+                <div class="section-card">
+
+                    <div class="section-head">
+
+                        <h3 data-i18n="quick_actions">
+                            Quick Actions
+                        </h3>
+
+                    </div>
+
+                    <div class="quick-actions">
+
+                        <button class="quick-action">
+
+                            <strong>
+                                📦 <span data-i18n="receive_stock">Pokea Stock</span>
+                            </strong>
+
+                            <span data-i18n="receive_stock_desc">
+                                Rekodi bidhaa mpya zilizoingia
+                            </span>
+
+                        </button>
+
+
+                        <button class="quick-action">
+
+                            <strong>
+                                🛒 <span data-i18n="new_sale">Mauzo Mapya</span>
+                            </strong>
+
+                            <span data-i18n="new_sale_desc">
+                                Rekodi mauzo ya bidhaa
+                            </span>
+
+                        </button>
+
+
+                        <button class="quick-action">
+
+                            <strong>
+                                👤 <span data-i18n="new_customer">Mteja Mpya</span>
+                            </strong>
+
+                            <span data-i18n="new_customer_desc">
+                                Ongeza mteja mpya
+                            </span>
+
+                        </button>
+
+
+                        <button class="quick-action">
+
+                            <strong>
+                                💸 <span data-i18n="new_expense">Expense Mpya</span>
+                            </strong>
+
+                            <span data-i18n="new_expense_desc">
+                                Rekodi matumizi ya biashara
+                            </span>
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ACTIVITY -->
+                <div class="section-card">
+
+                    <div class="section-head">
+
+                        <h3 data-i18n="recent_activity">
+                            Recent Activity
+                        </h3>
+
+                    </div>
+
+                    <div class="empty-state">
+
+                        <div>📋</div>
+
+                        <p data-i18n="no_activity">
+                            Hakuna shughuli bado.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<script>
+
+    /* ==========================================
+       SGC SOFT DRINKS MANAGEMENT
+       DASHBOARD FOUNDATION
+       ========================================== */
+
+    const SUPABASE_URL =
+        "https://prqhqogcisjwzcsxyics.supabase.co";
+
+    const SUPABASE_AUTH_URL =
+        `${SUPABASE_URL}/auth/v1`;
+
+
+    /* ==========================================
+       LANGUAGE
+       ========================================== */
+
+    const translations = {
+
+        sw: {
+            main_menu: "Main Menu",
+            dashboard: "Dashboard",
+            overview_text: "Muhtasari wa biashara yako",
+            stock: "Stock",
+            sales: "Mauzo",
+            customers: "Wateja",
+            suppliers: "Suppliers",
+            finance: "Fedha",
+            expenses: "Matumizi",
+            payments: "Malipo",
+            reports: "Ripoti",
+            reports_menu: "Ripoti",
+            administration: "Usimamizi",
+            users: "Watumiaji",
+            settings: "Mipangilio",
+            logout: "Toka",
+            welcome: "Karibu",
+            welcome_message:
+                "Karibu kwenye SGC SOFT DRINKS MANAGEMENT. Dhibiti biashara yako kwa urahisi.",
+            today_sales: "Mauzo ya Leo",
+            stock_value: "Thamani ya Stock",
+            today_transactions: "Transactions Leo",
+            customers_count: "Wateja",
+            quick_actions: "Vitendo vya Haraka",
+            receive_stock: "Pokea Stock",
+            receive_stock_desc: "Rekodi bidhaa mpya zilizoingia",
+            new_sale: "Mauzo Mapya",
+            new_sale_desc: "Rekodi mauzo ya bidhaa",
+            new_customer: "Mteja Mpya",
+            new_customer_desc: "Ongeza mteja mpya",
+            new_expense: "Expense Mpya",
+            new_expense_desc: "Rekodi matumizi ya biashara",
+            recent_activity: "Shughuli za Karibuni",
+            no_activity: "Hakuna shughuli bado."
+        },
+
+        en: {
+            main_menu: "Main Menu",
+            dashboard: "Dashboard",
+            overview_text: "Overview of your business",
+            stock: "Stock",
+            sales: "Sales",
+            customers: "Customers",
+            suppliers: "Suppliers",
+            finance: "Finance",
+            expenses: "Expenses",
+            payments: "Payments",
+            reports: "Reports",
+            reports_menu: "Reports",
+            administration: "Administration",
+            users: "Users",
+            settings: "Settings",
+            logout: "Logout",
+            welcome: "Welcome",
+            welcome_message:
+                "Welcome to SGC SOFT DRINKS MANAGEMENT. Manage your business with ease.",
+            today_sales: "Today's Sales",
+            stock_value: "Stock Value",
+            today_transactions: "Today's Transactions",
+            customers_count: "Customers",
+            quick_actions: "Quick Actions",
+            receive_stock: "Receive Stock",
+            receive_stock_desc: "Record newly received products",
+            new_sale: "New Sale",
+            new_sale_desc: "Record a product sale",
+            new_customer: "New Customer",
+            new_customer_desc: "Add a new customer",
+            new_expense: "New Expense",
+            new_expense_desc: "Record business expenses",
+            recent_activity: "Recent Activity",
+            no_activity: "No activity yet."
+        }
+
+    };
+
+
+    let currentLanguage =
+        localStorage.getItem("sgc_language") || "sw";
+
+
+    function applyLanguage(language) {
+
+        currentLanguage = language;
+
+        localStorage.setItem(
+            "sgc_language",
+            language
+        );
+
+        document
+            .querySelectorAll("[data-i18n]")
+            .forEach(element => {
+
+                const key =
+                    element.getAttribute("data-i18n");
+
+                if (
+                    translations[language] &&
+                    translations[language][key]
+                ) {
+                    element.textContent =
+                        translations[language][key];
+                }
+
+            });
+
+
+        document
+            .getElementById("swBtn")
+            .classList.toggle(
+                "active",
+                language === "sw"
+            );
+
+        document
+            .getElementById("enBtn")
+            .classList.toggle(
+                "active",
+                language === "en"
+            );
+
+    }
+
+
+    document
+        .getElementById("swBtn")
+        .addEventListener(
+            "click",
+            () => applyLanguage("sw")
+        );
+
+
+    document
+        .getElementById("enBtn")
+        .addEventListener(
+            "click",
+            () => applyLanguage("en")
+        );
+
+
+    /* ==========================================
+       AUTH SESSION
+       ========================================== */
+
+    const accessToken =
+        localStorage.getItem("sgc_access_token");
+
+    const storedUser =
+        localStorage.getItem("sgc_user");
+
+
+    if (!accessToken) {
+
+        window.location.href = "index.html";
+
+    }
+
+
+    let user = null;
+
+    try {
+
+        user = storedUser
+            ? JSON.parse(storedUser)
+            : null;
+
+    } catch (error) {
+
+        user = null;
+
+    }
+
+
+    /* ==========================================
+       USER INFORMATION
+       ========================================== */
+
+    function displayUser() {
+
+        const email =
+            user?.email || "Owner";
+
+        const metadata =
+            user?.user_metadata || {};
+
+        const name =
+            metadata.full_name ||
+            metadata.name ||
+            email.split("@")[0] ||
+            "Owner";
+
+        document
+            .getElementById("userName")
+            .textContent = name;
+
+        document
+            .getElementById("welcomeName")
+            .textContent = name;
+
+        document
+            .getElementById("userAvatar")
+            .textContent =
+            name.charAt(0).toUpperCase();
+
+    }
+
+
+    /* ==========================================
+       LOGOUT
+       ========================================== */
+
+    document
+        .getElementById("logoutBtn")
+        .addEventListener(
+            "click",
+            async () => {
+
+                try {
+
+                    if (accessToken) {
+
+                        await fetch(
+                            `${SUPABASE_AUTH_URL}/logout`,
+                            {
+                                method: "POST",
+                                headers: {
+                                    "Authorization":
+                                        `Bearer ${accessToken}`,
+                                    "apikey":
+                                        "sb_publishable_M1j6cLFnEVGULYaCfssaZg_KkFCLAcQ"
+                                }
+                            }
+                        );
+
+                    }
+
+                } catch (error) {
+
+                    console.log(
+                        "Logout request error:",
+                        error
+                    );
+
+                }
+
+
+                localStorage.removeItem(
+                    "sgc_access_token"
+                );
+
+                localStorage.removeItem(
+                    "sgc_refresh_token"
+                );
+
+                localStorage.removeItem(
+                    "sgc_user"
+                );
+
+
+                window.location.href =
+                    "index.html";
+
+            }
+        );
+
+
+    /* ==========================================
+       MOBILE SIDEBAR
+       ========================================== */
+
+    const sidebar =
+        document.getElementById("sidebar");
+
+    const menuBtn =
+        document.getElementById("menuBtn");
+
+
+    menuBtn.addEventListener(
+        "click",
+        () => {
+
+            sidebar.classList.toggle("open");
+
+        }
+    );
+
+
+    /* ==========================================
+       INITIALIZE
+       ========================================== */
+
+    displayUser();
+
+    applyLanguage(currentLanguage);
+
+</script>
+
+</body>
+</html>
