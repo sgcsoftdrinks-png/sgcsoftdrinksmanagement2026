@@ -1901,7 +1901,8 @@
        ========================================== */
 
     const stockPage = document.getElementById("stockPage");
-    const stockNavBtn = document.getElementById("receivedStockNavBtn");
+    const receivedStockNavBtn = document.getElementById("receivedStockNavBtn");
+    const stockNavBtn = document.getElementById("stockNavBtn");
     const receiveStockTab = document.getElementById("receiveStockTab");
     const receiptsTab = document.getElementById("receiptsTab");
     const receiveStockPanel = document.getElementById("receiveStockPanel");
@@ -1924,7 +1925,7 @@
         stockPage.classList.add("active");
 
         document.querySelectorAll(".nav button").forEach(btn => btn.classList.remove("active"));
-        stockNavBtn.classList.add("active");
+        receivedStockNavBtn.classList.add("active");
 
         loadStockData();
 
@@ -2363,7 +2364,7 @@
        ========================================== */
 
     const productsPage = document.getElementById("productsPage");
-    const productsNavBtn = document.getElementById("productsNavBtn");
+    const productsNavBtn = document.getElementById("stockNavBtn");
     const productsTableBody = document.getElementById("productsTableBody");
     const productSearch = document.getElementById("productSearch");
     const productCount = document.getElementById("productCount");
@@ -2775,6 +2776,10 @@
 
     dashboardNavBtn.addEventListener("click", () => {
         showDashboardPage();
+    });
+
+    stockNavBtn.addEventListener("click", () => {
+        showProductsPage();
     });
 
     receivedStockNavBtn.addEventListener("click", () => {
