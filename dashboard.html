@@ -1534,6 +1534,7 @@
                             <thead>
                                 <tr>
                                     <th data-i18n="product">Bidhaa</th>
+                                    <th data-i18n="variants">Variants</th>
                                     <th data-i18n="selling_price">Bei ya Mauzo</th>
                                     <th data-i18n="low_stock">Low Stock</th>
                                     <th data-i18n="status">Hali</th>
@@ -1542,7 +1543,7 @@
                             </thead>
                             <tbody id="productsTableBody">
                                 <tr>
-                                    <td colspan="5" class="loading-row" data-i18n="loading">Inapakia...</td>
+                                    <td colspan="6" class="loading-row" data-i18n="loading">Inapakia...</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -1601,6 +1602,60 @@
         </div>
     </div>
 
+    <!-- PRODUCT VARIANT MODAL -->
+    <div class="modal-backdrop" id="variantModal">
+        <div class="modal">
+            <div class="modal-head">
+                <h3 id="variantModalTitle">Ongeza Variant</h3>
+                <button class="modal-close" id="closeVariantModal">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-message" id="variantModalMessage"></div>
+                <div id="variantProductLabel" class="form-hint" style="margin-bottom:14px;font-weight:700;"></div>
+                <form id="variantForm">
+                    <input type="hidden" id="variantId">
+                    <input type="hidden" id="variantProductId">
+                    <div class="form-group">
+                        <label for="variantUnit">Unit</label>
+                        <select id="variantUnit" required>
+                            <option value="">Chagua Unit</option>
+                            <option value="crates">Crates</option>
+                            <option value="cotton">Carton</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="variantVolumeValue">Volume</label>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                            <input id="variantVolumeValue" type="number" min="0.001" step="0.001" placeholder="500" required>
+                            <select id="variantVolumeUnit" required>
+                                <option value="">Chagua kipimo</option>
+                                <option value="ml">ml</option>
+                                <option value="l">Litre</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="variantBuyingPrice">Bei ya Manunuzi</label>
+                        <input id="variantBuyingPrice" type="number" min="0" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="variantSellingPrice">Bei ya Mauzo</label>
+                        <input id="variantSellingPrice" type="number" min="0" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="variantLowStock">Low Stock Level</label>
+                        <input id="variantLowStock" type="number" min="0" step="0.01" value="0" required>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="secondary-btn" id="cancelVariantBtn">Ghairi</button>
+                        <button type="submit" class="primary-btn" id="saveVariantBtn">Hifadhi Variant</button>
+                    </div>
+                </form>
+                <div id="variantList" style="margin-top:18px;"></div>
+            </div>
+        </div>
+    </div>
+
 <script>
 
     /* ==========================================
@@ -1638,7 +1693,7 @@
             new_sale: "Mauzo Mapya", new_sale_desc: "Rekodi mauzo ya bidhaa", sales_title: "Mauzo", sales_subtitle: "Rekodi mauzo, fuatilia malipo na tafuta receipts.", sales_total: "Mauzo ya Leo", sales_paid: "Zimelipwa", sales_credit: "Credit", sales_transactions: "Transactions", search_sales: "Tafuta receipt...", new_sale_title: "Mauzo Mapya", customer: "Mteja", walk_in_customer: "Mteja wa kawaida", payment_method: "Njia ya Malipo", paid_amount: "Kilicholipwa", sale_notes: "Notes", sale_items: "Bidhaa za Mauzo", grand_total: "Jumla", balance: "Balance", save_sale: "Hifadhi Sale", sales_history: "Historia ya Mauzo", receipt_no: "Receipt", salesman: "Salesman", view: "Tazama", print: "Print", sale_saved: "Sale imehifadhiwa vizuri.", sale_error: "Imeshindikana kuhifadhi sale.", customer_required_credit: "Credit/partial payment inahitaji customer.", no_sale_items: "Ongeza angalau bidhaa moja.", duplicate_sale_product: "Bidhaa hiyo tayari ipo kwenye mstari mwingine.", new_customer: "Mteja Mpya", new_customer_desc: "Ongeza mteja mpya",
             new_expense: "Expense Mpya", new_expense_desc: "Rekodi matumizi ya biashara", recent_activity: "Shughuli za Karibuni", no_activity: "Hakuna shughuli bado.",
             products_title: "Bidhaa", products_subtitle: "Simamia bidhaa, bei za mauzo na viwango vya stock.", search_products: "Tafuta bidhaa...",
-            add_product: "Ongeza Bidhaa", products_list: "Orodha ya Bidhaa", product: "Bidhaa", selling_price: "Bei ya Mauzo",
+            add_product: "Ongeza Bidhaa", products_list: "Orodha ya Bidhaa", product: "Bidhaa", selling_price: "Bei ya Mauzo", variant: "Variant", variants: "Variants", add_variant: "Ongeza Variant", unit: "Unit", volume: "Volume", buying_price: "Bei ya Manunuzi", save_variant: "Hifadhi Variant", variant_saved: "Variant imehifadhiwa.", variant_updated: "Variant imesasishwa.", variant_error: "Tatizo la kuhifadhi Variant.", no_variants: "Hakuna variants.", select_unit: "Chagua Unit", select_volume_unit: "Chagua kipimo", volume_value: "Kiasi cha Volume",
             low_stock: "Low Stock", status: "Hali", actions: "Vitendo", active: "Hai", inactive: "Haifanyi kazi", edit: "Hariri",
             activate: "Washa", deactivate: "Zima", loading: "Inapakia...", no_products: "Hakuna bidhaa zilizopatikana.",
             add_product_title: "Ongeza Bidhaa", edit_product_title: "Hariri Bidhaa", product_name: "Jina la Bidhaa",
@@ -1669,7 +1724,7 @@
             new_customer: "New Customer", new_customer_desc: "Add a new customer", new_expense: "New Expense", new_expense_desc: "Record business expenses",
             recent_activity: "Recent Activity", no_activity: "No activity yet.", products_title: "Products",
             products_subtitle: "Manage products, selling prices and stock levels.", search_products: "Search products...", add_product: "Add Product",
-            products_list: "Product List", product: "Product", selling_price: "Selling Price", low_stock: "Low Stock", status: "Status", actions: "Actions",
+            products_list: "Product List", product: "Product", selling_price: "Selling Price", variant: "Variant", variants: "Variants", add_variant: "Add Variant", unit: "Unit", volume: "Volume", buying_price: "Buying Price", save_variant: "Save Variant", variant_saved: "Variant saved.", variant_updated: "Variant updated.", variant_error: "Failed to save variant.", no_variants: "No variants.", select_unit: "Select Unit", select_volume_unit: "Select unit", volume_value: "Volume Value", low_stock: "Low Stock", status: "Status", actions: "Actions",
             active: "Active", inactive: "Inactive", edit: "Edit", activate: "Activate", deactivate: "Deactivate", loading: "Loading...",
             no_products: "No products found.", add_product_title: "Add Product", edit_product_title: "Edit Product", product_name: "Product Name",
             selling_price_label: "Selling Price", low_stock_label: "Low Stock Level", cancel: "Cancel", save: "Save",
@@ -2470,6 +2525,23 @@
 
     let products = [];
     let editingProduct = null;
+    let selectedVariantProduct = null;
+    let editingVariant = null;
+    let currentVariants = [];
+
+    const variantModal = document.getElementById("variantModal");
+    const variantForm = document.getElementById("variantForm");
+    const variantId = document.getElementById("variantId");
+    const variantProductId = document.getElementById("variantProductId");
+    const variantProductLabel = document.getElementById("variantProductLabel");
+    const variantUnit = document.getElementById("variantUnit");
+    const variantVolumeValue = document.getElementById("variantVolumeValue");
+    const variantVolumeUnit = document.getElementById("variantVolumeUnit");
+    const variantBuyingPrice = document.getElementById("variantBuyingPrice");
+    const variantSellingPrice = document.getElementById("variantSellingPrice");
+    const variantLowStock = document.getElementById("variantLowStock");
+    const variantModalMessage = document.getElementById("variantModalMessage");
+    const variantList = document.getElementById("variantList");
 
     function t(key) {
         return translations[currentLanguage]?.[key] || translations.en[key] || key;
@@ -2541,7 +2613,7 @@
             console.error("Products loading error:", error);
             productsTableBody.innerHTML = `
                 <tr>
-                    <td colspan="5" class="empty-row">${t("product_error")}</td>
+                    <td colspan="6" class="empty-row">${t("product_error")}</td>
                 </tr>
             `;
         }
@@ -2549,56 +2621,26 @@
 
     function renderProducts() {
         const query = (productSearch.value || "").trim().toLowerCase();
-
-        const filtered = products.filter(product =>
-            String(product.name || "").toLowerCase().includes(query)
-        );
-
+        const filtered = products.filter(product => String(product.name || "").toLowerCase().includes(query));
         productCount.textContent = `${filtered.length}/${products.length}`;
-
         if (!filtered.length) {
-            productsTableBody.innerHTML = `
-                <tr>
-                    <td colspan="5" class="empty-row">${t("no_products")}</td>
-                </tr>
-            `;
+            productsTableBody.innerHTML = `<tr><td colspan="6" class="empty-row">${t("no_products")}</td></tr>`;
             return;
         }
-
         productsTableBody.innerHTML = filtered.map(product => {
             const active = product.is_active === true;
             const price = Number(product.selling_price || 0).toLocaleString();
-
-            return `
-                <tr>
-                    <td>
-                        <span class="product-name">${escapeHtml(product.name)}</span>
-                    </td>
-                    <td>
-                        <span class="price">TZS ${price}</span>
-                    </td>
-                    <td>${Number(product.low_stock_level || 0).toLocaleString()}</td>
-                    <td>
-                        <span class="status-badge ${active ? "status-active" : "status-inactive"}">
-                            ${active ? "● " + t("active") : "● " + t("inactive")}
-                        </span>
-                    </td>
-                    <td>
-                        <div class="table-actions">
-                            <button class="small-btn edit" data-action="edit" data-id="${product.id}">
-                                ✏️ ${t("edit")}
-                            </button>
-                            <button
-                                class="small-btn ${active ? "deactivate" : "activate"}"
-                                data-action="toggle"
-                                data-id="${product.id}"
-                            >
-                                ${active ? "⏸️ " + t("deactivate") : "▶️ " + t("activate")}
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-            `;
+            return `<tr>
+                <td><span class="product-name">${escapeHtml(product.name)}</span></td>
+                <td><button class="small-btn edit" data-action="variants" data-id="${product.id}">⚙️ ${t("variants")}</button></td>
+                <td><span class="price">TZS ${price}</span></td>
+                <td>${Number(product.low_stock_level || 0).toLocaleString()}</td>
+                <td><span class="status-badge ${active ? "status-active" : "status-inactive"}">${active ? "● " + t("active") : "● " + t("inactive")}</span></td>
+                <td><div class="table-actions">
+                    <button class="small-btn edit" data-action="edit" data-id="${product.id}">✏️ ${t("edit")}</button>
+                    <button class="small-btn ${active ? "deactivate" : "activate"}" data-action="toggle" data-id="${product.id}">${active ? "⏸️ " + t("deactivate") : "▶️ " + t("activate")}</button>
+                </div></td>
+            </tr>`;
         }).join("");
     }
 
@@ -2700,6 +2742,42 @@
             }
         }
     });
+
+    function unitLabel(unit) { return unit === "cotton" ? "Carton" : "Crates"; }
+    function volumeLabel(v) { return `${Number(v.volume_value).toLocaleString()} ${v.volume_unit === "l" ? "Litre" : "ml"}`; }
+
+    async function loadVariants(productIdValue) {
+        currentVariants = await supabaseRPC("get_product_variants", { p_product_id: productIdValue });
+        currentVariants = Array.isArray(currentVariants) ? currentVariants : [];
+        if (!currentVariants.length) { variantList.innerHTML = `<div class="empty-row" style="padding:12px 0;">${t("no_variants")}</div>`; return; }
+        variantList.innerHTML = currentVariants.map(v => `<div style="border:1px solid var(--border);border-radius:10px;padding:12px;margin-top:8px;display:flex;justify-content:space-between;gap:10px;align-items:center;">
+            <div><strong>${unitLabel(v.unit)} • ${volumeLabel(v)}</strong><div class="form-hint">Buy: TZS ${Number(v.buying_price).toLocaleString()} · Sell: TZS ${Number(v.selling_price).toLocaleString()} · Low: ${Number(v.low_stock_level).toLocaleString()}</div></div>
+            <div class="table-actions"><button type="button" class="small-btn edit" data-variant-action="edit" data-variant-id="${v.id}">✏️</button><button type="button" class="small-btn ${v.is_active ? "deactivate" : "activate"}" data-variant-action="toggle" data-variant-id="${v.id}" data-active="${v.is_active}">${v.is_active ? "⏸️" : "▶️"}</button></div>
+        </div>`).join("");
+    }
+
+    function openVariantModal(product, variant=null) {
+        selectedVariantProduct = product; editingVariant = variant;
+        variantProductId.value = product.id; variantProductLabel.textContent = `${product.name} — ${t("variants")}`;
+        variantModalMessage.className = "modal-message"; variantModalMessage.textContent = "";
+        if (variant) {
+            variantId.value=variant.id; variantUnit.value=variant.unit; variantVolumeValue.value=variant.volume_value; variantVolumeUnit.value=variant.volume_unit; variantBuyingPrice.value=variant.buying_price; variantSellingPrice.value=variant.selling_price; variantLowStock.value=variant.low_stock_level;
+        } else { variantForm.reset(); variantId.value=""; variantProductId.value=product.id; variantLowStock.value=0; }
+        variantModal.classList.add("show"); loadVariants(product.id).catch(e=>showVariantMessage(e.message||t("variant_error"),"error"));
+    }
+    function closeVariantModal(){ variantModal.classList.remove("show"); editingVariant=null; selectedVariantProduct=null; variantForm.reset(); variantList.innerHTML=""; }
+    function showVariantMessage(message,type){variantModalMessage.textContent=message;variantModalMessage.className=`modal-message show ${type}`;}
+
+    productsTableBody.addEventListener("click", async event => {
+        const button=event.target.closest("button[data-action]"); if(!button) return;
+        const product=products.find(x=>x.id===button.dataset.id); if(!product) return;
+        if(button.dataset.action==="variants"){openVariantModal(product);return;}
+    });
+    document.getElementById("closeVariantModal").addEventListener("click",closeVariantModal);
+    document.getElementById("cancelVariantBtn").addEventListener("click",closeVariantModal);
+    variantModal.addEventListener("click",e=>{if(e.target===variantModal)closeVariantModal();});
+    variantList.addEventListener("click",async e=>{const b=e.target.closest("button[data-variant-action]");if(!b)return;const v=currentVariants.find(x=>x.id===b.dataset.variantId);if(!v)return;if(b.dataset.variantAction==="edit"){openVariantModal(selectedVariantProduct,v);return;}try{await supabaseRPC("set_product_variant_active",{p_variant_id:v.id,p_is_active:b.dataset.active!=="true"});await loadVariants(selectedVariantProduct.id);}catch(err){showVariantMessage(err.message||t("variant_error"),"error");}});
+    variantForm.addEventListener("submit",async e=>{e.preventDefault();const b=document.getElementById("saveVariantBtn");try{const payload={p_product_id:variantProductId.value,p_unit:variantUnit.value,p_volume_value:Number(variantVolumeValue.value),p_volume_unit:variantVolumeUnit.value,p_buying_price:Number(variantBuyingPrice.value),p_selling_price:Number(variantSellingPrice.value),p_low_stock_level:Number(variantLowStock.value)};b.disabled=true;if(editingVariant){await supabaseRPC("update_product_variant",{p_variant_id:editingVariant.id,...payload});showVariantMessage(t("variant_updated"),"success");}else{await supabaseRPC("create_product_variant",payload);showVariantMessage(t("variant_saved"),"success");}await loadVariants(variantProductId.value);await loadProducts();}catch(err){console.error(err);showVariantMessage(err.message||t("variant_error"),"error");}finally{b.disabled=false;}});
 
     productForm.addEventListener("submit", async event => {
         event.preventDefault();
