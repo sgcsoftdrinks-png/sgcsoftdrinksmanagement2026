@@ -968,14 +968,8 @@
             }
         }
     
-        .sale-line-stock { display:block; margin-top:5px; font-size:11px; color:var(--gray); font-weight:600; }
-        .sale-item-row, .receipt-item-row { align-items:end; }
-        .sale-item-row .form-group, .receipt-item-row .form-group { min-width:0; }
-        .sale-line-price, .stock-line-cost { background:#f7f7f7; }
-
-/* S6.3F — CUSTOMER UI */
-.customer-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}.customer-mini-card{background:var(--card,#fff);border:1px solid rgba(0,0,0,.07);border-radius:14px;padding:16px;box-shadow:0 4px 14px rgba(0,0,0,.04)}.customer-mini-card span{display:block;font-size:12px;color:var(--gray,#777);margin-bottom:7px}.customer-mini-card strong{font-size:20px}.detail-summary{margin-top:14px}.customer-detail-card{margin-top:18px;background:var(--card,#fff);border-radius:16px;padding:18px;box-shadow:0 5px 20px rgba(0,0,0,.05)}.customer-detail-actions{display:flex;justify-content:flex-end;margin:12px 0 18px}.nested-card{margin-top:16px}.modal.show{display:flex}.customer-detail-card .table-card{box-shadow:none;border:1px solid rgba(0,0,0,.06)}
-@media(max-width:800px){.customer-summary{grid-template-columns:repeat(2,1fr)}}
+        /* SUPPLIERS UI — S6.4F */
+        .supplier-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px}.supplier-mini-card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:16px;box-shadow:0 6px 20px rgba(15,23,42,.05)}.supplier-mini-card span{display:block;color:var(--gray);font-size:12px;margin-bottom:7px}.supplier-mini-card strong{font-size:21px;color:var(--blue)}.supplier-toolbar{display:flex;gap:10px;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap}.supplier-actions{display:flex;gap:7px;flex-wrap:wrap}.supplier-actions button{border:0;border-radius:8px;padding:7px 9px;font-size:11px;cursor:pointer}.supplier-view{background:#eff6ff;color:#1d4ed8}.supplier-edit{background:#f3e8ff;color:#7e22ce}.supplier-pay{background:#dcfce7;color:#166534}.supplier-toggle{background:#fef3c7;color:#92400e}.supplier-message{display:none;padding:10px 12px;border-radius:9px;font-size:12px;margin-bottom:12px}.supplier-message.show{display:block}.supplier-message.success{background:#dcfce7;color:#166534}.supplier-message.error{background:#fee2e2;color:#991b1b}.supplier-modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.supplier-detail-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:15px}.supplier-detail-card{background:#f8fafc;border:1px solid var(--border);border-radius:10px;padding:12px}.supplier-detail-card span{display:block;color:var(--gray);font-size:11px}.supplier-detail-card strong{display:block;margin-top:4px;font-size:15px}.supplier-history{margin-top:15px}.supplier-history h4{margin-bottom:9px}.supplier-status{display:inline-flex;padding:4px 8px;border-radius:20px;font-size:10px;font-weight:700}.supplier-status.paid{background:#dcfce7;color:#166534}.supplier-status.partial{background:#fef3c7;color:#92400e}.supplier-status.unpaid{background:#fee2e2;color:#991b1b}.supplier-modal-wide{max-width:1050px!important}.supplier-payment-box{background:#f8fafc;border:1px solid var(--border);border-radius:12px;padding:14px;margin-top:14px}.supplier-payment-box h4{margin-bottom:10px}@media(max-width:800px){.supplier-summary,.supplier-detail-grid{grid-template-columns:1fr}.supplier-modal-grid{grid-template-columns:1fr}}
 </style>
 </head>
 
@@ -1020,12 +1014,12 @@
                 <span data-i18n="sales">Sales</span>
             </button>
 
-            <button id="customersNavBtn">
+            <button>
                 <span class="nav-icon">👥</span>
                 <span data-i18n="customers">Customers</span>
             </button>
 
-            <button>
+            <button id="suppliersNavBtn">
                 <span class="nav-icon">🏭</span>
                 <span data-i18n="suppliers">Suppliers</span>
             </button>
@@ -1267,7 +1261,7 @@
                         </button>
 
 
-                        <button class="quick-action" id="quickCustomerBtn">
+                        <button class="quick-action">
 
                             <strong>
                                 👤
@@ -1465,6 +1459,27 @@
             </section>
 
 
+            <!-- SUPPLIERS PAGE — S6.4F -->
+            <section class="page-view" id="suppliersPage">
+                <div class="welcome">
+                    <h2><span>Suppliers</span> 🏭</h2>
+                    <p>${'Simamia suppliers, manunuzi na malipo.'}</p>
+                </div>
+                <div class="supplier-summary">
+                    <div class="supplier-mini-card"><span>Total Suppliers</span><strong id="supplierCount">0</strong></div>
+                    <div class="supplier-mini-card"><span>Purchases</span><strong id="supplierPurchases">TZS 0</strong></div>
+                    <div class="supplier-mini-card"><span>Outstanding</span><strong id="supplierOutstanding">TZS 0</strong></div>
+                </div>
+                <div class="supplier-toolbar">
+                    <div class="search-box"><span class="search-icon">🔍</span><input id="supplierSearch" type="text" placeholder="Tafuta supplier..."></div>
+                    <div class="supplier-actions"><button class="small-btn" id="refreshSuppliersBtn">↻ Refresh</button><button class="primary-btn" id="addSupplierBtn">＋ Ongeza Supplier</button></div>
+                </div>
+                <div class="supplier-message" id="supplierMessage"></div>
+                <div class="table-card"><div class="section-head"><h3>Orodha ya Suppliers</h3></div>
+                    <div class="table-wrap"><table class="products-table"><thead><tr><th>Supplier</th><th>Contact</th><th>Phone</th><th>Status</th><th>Actions</th></tr></thead><tbody id="suppliersTableBody"><tr><td colspan="5" class="loading-row">Inapakia...</td></tr></tbody></table></div>
+                </div>
+            </section>
+
             <!-- SALES PAGE -->
             <section class="page-view" id="salesPage">
                 <div class="welcome"><h2><span data-i18n="sales_title">Mauzo</span> 🛒</h2><p data-i18n="sales_subtitle">Rekodi mauzo, fuatilia malipo na tafuta receipts.</p></div>
@@ -1503,94 +1518,6 @@
                     <div class="table-wrap"><table class="products-table"><thead><tr><th data-i18n="receipt_no">Receipt</th><th data-i18n="customer">Customer</th><th data-i18n="salesman">Salesman</th><th data-i18n="total">Total</th><th data-i18n="paid_amount">Paid</th><th data-i18n="balance">Balance</th><th data-i18n="payment_method">Payment</th><th data-i18n="date">Tarehe</th><th data-i18n="actions">Vitendo</th></tr></thead><tbody id="salesTableBody"><tr><td colspan="9" class="loading-row" data-i18n="loading">Inapakia...</td></tr></tbody></table></div>
                 </div>
             </section>
-
-            <!-- CUSTOMERS PAGE -->
-            <section class="page-view" id="customersPage">
-                <div class="welcome">
-                    <h2><span data-i18n="customers_title">Wateja</span> 👥</h2>
-                    <p data-i18n="customers_subtitle">Simamia wateja, madeni na malipo.</p>
-                </div>
-
-                <div class="customer-summary">
-                    <div class="customer-mini-card"><span data-i18n="customer_total">Wateja</span><strong id="customerTotalCount">0</strong></div>
-                    <div class="customer-mini-card"><span data-i18n="customer_credit_total">Madeni</span><strong id="customerCreditTotal">TZS 0</strong></div>
-                </div>
-
-                <div class="products-toolbar">
-                    <div class="search-box">
-                        <span class="search-icon">🔍</span>
-                        <input id="customerSearch" type="text" data-i18n-placeholder="search_customers" placeholder="Tafuta mteja...">
-                    </div>
-                    <button class="primary-btn" id="addCustomerBtn">＋ <span data-i18n="new_customer">Mteja Mpya</span></button>
-                </div>
-
-                <div class="table-card">
-                    <div class="section-head"><h3 data-i18n="customers_list">Orodha ya Wateja</h3><button class="small-btn" id="refreshCustomersBtn">↻ <span data-i18n="refresh">Refresh</span></button></div>
-                    <div class="table-wrap">
-                        <table class="products-table">
-                            <thead><tr>
-                                <th data-i18n="customer_name">Jina</th><th data-i18n="phone">Simu</th><th data-i18n="address">Anwani</th><th data-i18n="customer_balance">Balance</th><th data-i18n="status">Hali</th><th data-i18n="actions">Vitendo</th>
-                            </tr></thead>
-                            <tbody id="customersTableBody"><tr><td colspan="6" class="loading-row" data-i18n="loading">Inapakia...</td></tr></tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <div class="customer-detail-card" id="customerDetailCard" style="display:none;">
-                    <div class="section-head"><h3 id="customerDetailTitle">Customer</h3><button class="small-btn" id="closeCustomerDetail">×</button></div>
-                    <div class="customer-summary detail-summary">
-                        <div class="customer-mini-card"><span data-i18n="total_sales">Total Sales</span><strong id="detailTotalSales">TZS 0</strong></div>
-                        <div class="customer-mini-card"><span data-i18n="total_paid">Paid</span><strong id="detailTotalPaid">TZS 0</strong></div>
-                        <div class="customer-mini-card"><span data-i18n="customer_balance">Balance</span><strong id="detailBalance">TZS 0</strong></div>
-                        <div class="customer-mini-card"><span data-i18n="credit_sales">Credit Sales</span><strong id="detailCreditCount">0</strong></div>
-                    </div>
-                    <div class="customer-detail-actions">
-                        <button class="primary-btn" id="recordCustomerPaymentBtn">💰 <span data-i18n="record_payment">Record Payment</span></button>
-                    </div>
-                    <div class="table-card nested-card">
-                        <div class="section-head"><h4 data-i18n="customer_sales_history">Sales History</h4></div>
-                        <div class="table-wrap"><table class="products-table"><thead><tr><th>Receipt</th><th>Total</th><th>Paid</th><th>Balance</th><th>Status</th><th>Date</th></tr></thead><tbody id="customerSalesBody"></tbody></table></div>
-                    </div>
-                    <div class="table-card nested-card">
-                        <div class="section-head"><h4 data-i18n="customer_payment_history">Payment History</h4></div>
-                        <div class="table-wrap"><table class="products-table"><thead><tr><th>Receipt</th><th>Amount</th><th>Method</th><th>Reference</th><th>Date</th></tr></thead><tbody id="customerPaymentsBody"></tbody></table></div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- CUSTOMER MODAL -->
-            <div class="modal" id="customerModal">
-                <div class="modal-content">
-                    <div class="modal-header"><h3 id="customerModalTitle">Mteja Mpya</h3><button class="modal-close" id="closeCustomerModal">×</button></div>
-                    <div class="modal-body">
-                        <div class="modal-message" id="customerModalMessage"></div>
-                        <form id="customerForm">
-                            <input type="hidden" id="customerId">
-                            <div class="form-group"><label data-i18n="customer_name">Jina la Mteja</label><input id="customerName" type="text" required></div>
-                            <div class="form-group"><label data-i18n="phone">Simu</label><input id="customerPhone" type="text"></div>
-                            <div class="form-group"><label data-i18n="address">Anwani</label><textarea id="customerAddress"></textarea></div>
-                            <div class="modal-actions"><button type="button" class="secondary-btn" id="cancelCustomerBtn" data-i18n="cancel">Ghairi</button><button type="submit" class="primary-btn" id="saveCustomerBtn"><span data-i18n="save">Hifadhi</span></button></div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <!-- PAYMENT MODAL -->
-            <div class="modal" id="customerPaymentModal">
-                <div class="modal-content">
-                    <div class="modal-header"><h3 data-i18n="record_payment">Record Payment</h3><button class="modal-close" id="closeCustomerPaymentModal">×</button></div>
-                    <div class="modal-body">
-                        <div class="modal-message" id="customerPaymentMessage"></div>
-                        <form id="customerPaymentForm">
-                            <div class="form-group"><label data-i18n="sale">Sale / Receipt</label><select id="customerPaymentSale" required></select></div>
-                            <div class="form-group"><label data-i18n="payment_amount">Kiasi</label><input id="customerPaymentAmount" type="number" min="0.01" step="0.01" required></div>
-                            <div class="form-group"><label data-i18n="payment_method">Njia ya Malipo</label><select id="customerPaymentMethod"><option value="cash">Cash</option><option value="mobile_money">Mobile Money</option><option value="bank">Bank</option></select></div>
-                            <div class="form-group"><label data-i18n="payment_reference">Payment Reference</label><input id="customerPaymentReference" type="text"></div>
-                            <div class="modal-actions"><button type="button" class="secondary-btn" id="cancelCustomerPaymentBtn" data-i18n="cancel">Ghairi</button><button type="submit" class="primary-btn" id="saveCustomerPaymentBtn">💾 <span data-i18n="save">Hifadhi</span></button></div>
-                        </form>
-                    </div>
-                </div>
-            </div>
 
             <!-- PRODUCTS PAGE -->
             <section class="page-view" id="productsPage">
@@ -1654,6 +1581,45 @@
 </div>
 
 
+
+    <!-- SUPPLIER MODALS — S6.4F -->
+    <div class="modal-backdrop" id="supplierModal">
+        <div class="modal">
+            <div class="modal-head"><h3 id="supplierModalTitle">Ongeza Supplier</h3><button class="modal-close" id="closeSupplierModal">×</button></div>
+            <div class="modal-body"><div class="supplier-message" id="supplierModalMessage"></div>
+                <form id="supplierForm"><input type="hidden" id="supplierId">
+                    <div class="supplier-modal-grid">
+                        <div class="form-group"><label>Jina la Supplier</label><input id="supplierName" type="text" required></div>
+                        <div class="form-group"><label>Contact Person</label><input id="supplierContact" type="text"></div>
+                        <div class="form-group"><label>Phone</label><input id="supplierPhone" type="text"></div>
+                        <div class="form-group"><label>Address</label><input id="supplierAddress" type="text"></div>
+                    </div>
+                    <div class="modal-actions"><button type="button" class="secondary-btn" id="cancelSupplierBtn">Ghairi</button><button type="submit" class="primary-btn" id="saveSupplierBtn">Hifadhi</button></div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-backdrop" id="supplierDetailModal">
+        <div class="modal supplier-modal-wide"><div class="modal-head"><h3 id="supplierDetailTitle">Supplier Details</h3><button class="modal-close" id="closeSupplierDetail">×</button></div>
+            <div class="modal-body"><div id="supplierDetailBody"></div></div>
+        </div>
+    </div>
+
+    <div class="modal-backdrop" id="supplierPaymentModal">
+        <div class="modal"><div class="modal-head"><h3>Record Supplier Payment</h3><button class="modal-close" id="closeSupplierPayment">×</button></div>
+            <div class="modal-body"><div class="supplier-message" id="supplierPaymentMessage"></div>
+                <form id="supplierPaymentForm"><input type="hidden" id="paymentReceiptId">
+                    <div class="form-group"><label>Receipt</label><select id="paymentReceiptSelect" required></select></div>
+                    <div class="form-group"><label>Outstanding</label><input id="paymentOutstanding" type="text" readonly></div>
+                    <div class="form-group"><label>Amount</label><input id="supplierPaymentAmount" type="number" min="0.01" step="0.01" required></div>
+                    <div class="form-group"><label>Payment Method</label><select id="supplierPaymentMethod"><option value="cash">Cash</option><option value="mobile_money">Mobile Money</option><option value="bank">Bank</option></select></div>
+                    <div class="form-group"><label>Payment Reference</label><input id="supplierPaymentReference" type="text"></div>
+                    <div class="modal-actions"><button type="button" class="secondary-btn" id="cancelSupplierPayment">Ghairi</button><button type="submit" class="primary-btn" id="saveSupplierPayment">Record Payment</button></div>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <!-- PRODUCT MODAL -->
     <div class="modal-backdrop" id="productModal">
@@ -1732,7 +1698,7 @@
             welcome_message: "Karibu kwenye SGC SOFT DRINKS MANAGEMENT. Dhibiti biashara yako kwa urahisi.",
             today_sales: "Mauzo ya Leo", stock_value: "Thamani ya Stock", today_transactions: "Transactions Leo", customers_count: "Wateja",
             quick_actions: "Vitendo vya Haraka", receive_stock: "Pokea Stock", receive_stock_desc: "Rekodi bidhaa mpya zilizoingia",
-            new_sale: "Mauzo Mapya", new_sale_desc: "Rekodi mauzo ya bidhaa", sales_title: "Mauzo", sales_subtitle: "Rekodi mauzo, fuatilia malipo na tafuta receipts.", sales_total: "Mauzo ya Leo", sales_paid: "Zimelipwa", sales_credit: "Credit", sales_transactions: "Transactions", search_sales: "Tafuta receipt...", new_sale_title: "Mauzo Mapya", customer: "Mteja", walk_in_customer: "Mteja wa kawaida", payment_method: "Njia ya Malipo", paid_amount: "Kilicholipwa", sale_notes: "Notes", sale_items: "Bidhaa za Mauzo", grand_total: "Jumla", balance: "Balance", save_sale: "Hifadhi Sale", sales_history: "Historia ya Mauzo", receipt_no: "Receipt", salesman: "Salesman", view: "Tazama", print: "Print", sale_saved: "Sale imehifadhiwa vizuri.", sale_error: "Imeshindikana kuhifadhi sale.", customer_required_credit: "Credit/partial payment inahitaji customer.", no_sale_items: "Ongeza angalau bidhaa moja.", duplicate_sale_product: "Bidhaa hiyo tayari ipo kwenye mstari mwingine.", new_customer: "Mteja Mpya", new_customer_desc: "Ongeza mteja mpya", customers_title: "Wateja", customers_subtitle: "Simamia wateja, madeni na malipo.", customer_total: "Wateja", customer_credit_total: "Madeni", customers_list: "Orodha ya Wateja", customer_name: "Jina la Mteja", phone: "Simu", address: "Anwani", customer_balance: "Balance", total_sales: "Total Sales", total_paid: "Paid", credit_sales: "Credit Sales", record_payment: "Record Payment", customer_sales_history: "Sales History", customer_payment_history: "Payment History", payment_amount: "Kiasi", sale: "Sale / Receipt", search_customers: "Tafuta mteja...", no_customers: "Hakuna wateja.", no_credit_sales: "Hakuna mauzo yenye deni.",
+            new_sale: "Mauzo Mapya", new_sale_desc: "Rekodi mauzo ya bidhaa", sales_title: "Mauzo", sales_subtitle: "Rekodi mauzo, fuatilia malipo na tafuta receipts.", sales_total: "Mauzo ya Leo", sales_paid: "Zimelipwa", sales_credit: "Credit", sales_transactions: "Transactions", search_sales: "Tafuta receipt...", new_sale_title: "Mauzo Mapya", customer: "Mteja", walk_in_customer: "Mteja wa kawaida", payment_method: "Njia ya Malipo", paid_amount: "Kilicholipwa", sale_notes: "Notes", sale_items: "Bidhaa za Mauzo", grand_total: "Jumla", balance: "Balance", save_sale: "Hifadhi Sale", sales_history: "Historia ya Mauzo", receipt_no: "Receipt", salesman: "Salesman", view: "Tazama", print: "Print", sale_saved: "Sale imehifadhiwa vizuri.", sale_error: "Imeshindikana kuhifadhi sale.", customer_required_credit: "Credit/partial payment inahitaji customer.", no_sale_items: "Ongeza angalau bidhaa moja.", duplicate_sale_product: "Bidhaa hiyo tayari ipo kwenye mstari mwingine.", new_customer: "Mteja Mpya", new_customer_desc: "Ongeza mteja mpya",
             new_expense: "Expense Mpya", new_expense_desc: "Rekodi matumizi ya biashara", recent_activity: "Shughuli za Karibuni", no_activity: "Hakuna shughuli bado.",
             products_title: "Bidhaa", products_subtitle: "Simamia bidhaa, bei za mauzo na viwango vya stock.", search_products: "Tafuta bidhaa...",
             add_product: "Ongeza Bidhaa", products_list: "Orodha ya Bidhaa", product: "Bidhaa", selling_price: "Bei ya Mauzo",
@@ -1763,7 +1729,7 @@
             welcome_message: "Welcome to SGC SOFT DRINKS MANAGEMENT. Manage your business with ease.", today_sales: "Today's Sales",
             stock_value: "Stock Value", today_transactions: "Today's Transactions", customers_count: "Customers", quick_actions: "Quick Actions",
             receive_stock: "Receive Stock", receive_stock_desc: "Record newly received products", new_sale: "New Sale", new_sale_desc: "Record a product sale", sales_title: "Sales", sales_subtitle: "Record sales, track payments and search receipts.", sales_total: "Today Sales", sales_paid: "Paid", sales_credit: "Credit", sales_transactions: "Transactions", search_sales: "Search receipt...", new_sale_title: "New Sale", customer: "Customer", walk_in_customer: "Walk-in Customer", payment_method: "Payment Method", paid_amount: "Paid Amount", sale_notes: "Notes", sale_items: "Sale Items", grand_total: "Total", balance: "Balance", save_sale: "Save Sale", sales_history: "Sales History", receipt_no: "Receipt", salesman: "Salesman", view: "View", print: "Print", sale_saved: "Sale saved successfully.", sale_error: "Failed to save sale.", customer_required_credit: "Credit/partial payment requires a customer.", no_sale_items: "Add at least one product.", duplicate_sale_product: "That product is already on another line.",
-            new_customer: "New Customer", new_customer_desc: "Add a new customer", customers_title: "Customers", customers_subtitle: "Manage customers, credit and payments.", customer_total: "Customers", customer_credit_total: "Outstanding Credit", customers_list: "Customer List", customer_name: "Customer Name", phone: "Phone", address: "Address", customer_balance: "Balance", total_sales: "Total Sales", total_paid: "Paid", credit_sales: "Credit Sales", record_payment: "Record Payment", customer_sales_history: "Sales History", customer_payment_history: "Payment History", payment_amount: "Amount", sale: "Sale / Receipt", search_customers: "Search customer...", no_customers: "No customers found.", no_credit_sales: "No outstanding credit sales.", new_expense: "New Expense", new_expense_desc: "Record business expenses",
+            new_customer: "New Customer", new_customer_desc: "Add a new customer", new_expense: "New Expense", new_expense_desc: "Record business expenses",
             recent_activity: "Recent Activity", no_activity: "No activity yet.", products_title: "Products",
             products_subtitle: "Manage products, selling prices and stock levels.", search_products: "Search products...", add_product: "Add Product",
             products_list: "Product List", product: "Product", selling_price: "Selling Price", low_stock: "Low Stock", status: "Status", actions: "Actions",
@@ -2170,65 +2136,6 @@
             ).join("");
     }
 
-    async function loadReceiptRowVariants(row, productId, selectedVariantId = null) {
-        const unitSelect = row.querySelector(".stock-line-unit");
-        const volumeSelect = row.querySelector(".stock-line-volume");
-        const priceInput = row.querySelector(".stock-line-cost");
-
-        unitSelect.innerHTML = `<option value="">${currentLanguage === "sw" ? "Chagua Unit" : "Select Unit"}</option>`;
-        volumeSelect.innerHTML = `<option value="">${currentLanguage === "sw" ? "Chagua Volume" : "Select Volume"}</option>`;
-        priceInput.value = "";
-        row._variants = [];
-
-        if (!productId) return;
-
-        try {
-            const variants = await supabaseRPC("get_variants_for_received_stock", {
-                p_product_id: productId
-            });
-            row._variants = Array.isArray(variants) ? variants : [];
-
-            const units = [...new Map(row._variants.map(v => [v.unit, v])).values()];
-            unitSelect.innerHTML += units.map(v => {
-                const label = v.unit === "cotton" ? "Carton" : "Crates";
-                return `<option value="${escapeHtml(v.unit)}">${label}</option>`;
-            }).join("");
-
-            if (selectedVariantId) {
-                const selected = row._variants.find(v => v.variant_id === selectedVariantId);
-                if (selected) {
-                    unitSelect.value = selected.unit;
-                    populateReceiptVolumes(row);
-                    volumeSelect.value = String(selected.variant_id);
-                    updateReceiptVariant(row);
-                }
-            }
-        } catch (error) {
-            console.error("Received stock variants error:", error);
-            showStockMessage(error.message || t("load_error"), "error");
-        }
-    }
-
-    function populateReceiptVolumes(row) {
-        const unit = row.querySelector(".stock-line-unit").value;
-        const volumeSelect = row.querySelector(".stock-line-volume");
-        const variants = (row._variants || []).filter(v => v.unit === unit);
-
-        volumeSelect.innerHTML = `<option value="">${currentLanguage === "sw" ? "Chagua Volume" : "Select Volume"}</option>` +
-            variants.map(v => `<option value="${v.variant_id}">${Number(v.volume_value).toLocaleString()} ${escapeHtml(v.volume_unit)}</option>`).join("");
-
-        updateReceiptVariant(row);
-    }
-
-    function updateReceiptVariant(row) {
-        const variantId = row.querySelector(".stock-line-volume").value;
-        const variant = (row._variants || []).find(v => v.variant_id === variantId);
-        const priceInput = row.querySelector(".stock-line-cost");
-
-        priceInput.value = variant ? Number(variant.buying_price || 0) : "";
-        updateReceiptTotals();
-    }
-
     function addReceiptItemRow(item = {}) {
         if (!stockProducts.length) {
             showStockMessage(t("no_active_products"), "error");
@@ -2237,7 +2144,6 @@
 
         const row = document.createElement("div");
         row.className = "receipt-item-row";
-        row._variants = [];
 
         const productOptions = stockProducts.map(product => {
             const selected = product.id === item.product_id ? "selected" : "";
@@ -2254,16 +2160,10 @@
             </div>
 
             <div class="form-group">
-                <label>Unit</label>
-                <select class="stock-line-unit">
-                    <option value="">Chagua Unit</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label>Volume</label>
-                <select class="stock-line-volume">
-                    <option value="">Chagua Volume</option>
+                <label>${t("packaging") || "Packaging"}</label>
+                <select class="stock-line-packaging">
+                    <option value="cotton" ${item.packaging === "cotton" ? "selected" : ""}>Cotton</option>
+                    <option value="crates" ${item.packaging === "crates" ? "selected" : ""}>Crates</option>
                 </select>
             </div>
 
@@ -2274,7 +2174,7 @@
 
             <div class="form-group">
                 <label>${t("buying_price") || "Buying Price"}</label>
-                <input class="stock-line-cost" type="number" min="0" step="0.01" readonly value="${item.unit_cost ?? ""}">
+                <input class="stock-line-cost" type="number" min="0" step="0.01" value="${item.unit_cost ?? ""}">
             </div>
 
             <div>
@@ -2285,59 +2185,69 @@
 
         receiptItems.appendChild(row);
 
-        row.querySelector(".stock-line-product").addEventListener("change", async () => {
-            await loadReceiptRowVariants(row, row.querySelector(".stock-line-product").value);
-        });
-        row.querySelector(".stock-line-unit").addEventListener("change", () => populateReceiptVolumes(row));
-        row.querySelector(".stock-line-volume").addEventListener("change", () => updateReceiptVariant(row));
         row.querySelector(".stock-line-quantity").addEventListener("input", updateReceiptTotals);
+        row.querySelector(".stock-line-cost").addEventListener("input", updateReceiptTotals);
         row.querySelector(".remove-line-btn").addEventListener("click", () => {
             row.remove();
             updateReceiptTotals();
-            if (!receiptItems.children.length && stockProducts.length) addReceiptItemRow();
+
+            if (!receiptItems.children.length && stockProducts.length) {
+                addReceiptItemRow();
+            }
         });
 
-        if (item.product_id) loadReceiptRowVariants(row, item.product_id, item.variant_id || null);
         updateReceiptTotals();
     }
 
     function updateReceiptTotals() {
         let grandTotal = 0;
+
         receiptItems.querySelectorAll(".receipt-item-row").forEach(row => {
             const quantity = Number(row.querySelector(".stock-line-quantity").value || 0);
             const cost = Number(row.querySelector(".stock-line-cost").value || 0);
             const lineTotal = quantity * cost;
+
             grandTotal += lineTotal;
-            row.querySelector(".line-total-box").textContent = `TZS ${lineTotal.toLocaleString()}`;
+
+            row.querySelector(".line-total-box").textContent =
+                `TZS ${lineTotal.toLocaleString()}`;
         });
-        document.getElementById("receiptGrandTotal").textContent = `TZS ${grandTotal.toLocaleString()}`;
+
+        document.getElementById("receiptGrandTotal").textContent =
+            `TZS ${grandTotal.toLocaleString()}`;
     }
 
     function clearReceiptForm() {
         stockReceiptForm.reset();
         receiptItems.innerHTML = "";
         clearStockMessage();
-        if (stockProducts.length) addReceiptItemRow();
+
+        if (stockProducts.length) {
+            addReceiptItemRow();
+        }
+
         document.getElementById("receiptGrandTotal").textContent = "TZS 0";
     }
 
     function collectReceiptItems() {
         const items = [];
+
         receiptItems.querySelectorAll(".receipt-item-row").forEach(row => {
             const productId = row.querySelector(".stock-line-product").value;
-            const variantId = row.querySelector(".stock-line-volume").value;
+            const packaging = row.querySelector(".stock-line-packaging").value;
             const quantity = Number(row.querySelector(".stock-line-quantity").value);
             const unitCost = Number(row.querySelector(".stock-line-cost").value);
 
-            if (productId || variantId || quantity || unitCost) {
+            if (productId || quantity || unitCost) {
                 items.push({
                     product_id: productId,
-                    variant_id: variantId,
+                    packaging,
                     quantity,
                     unit_cost: unitCost
                 });
             }
         });
+
         return items;
     }
 
@@ -2357,8 +2267,9 @@
         }
 
         for (const item of items) {
-            if (!item.product_id || !item.variant_id || !Number.isFinite(item.quantity) || item.quantity <= 0) {
-                showStockMessage(currentLanguage === "sw" ? "Chagua Product, Unit, Volume na Quantity sahihi." : "Select Product, Unit, Volume and a valid Quantity.", "error");
+            if (!item.product_id || !Number.isFinite(item.quantity) || item.quantity <= 0 ||
+                !Number.isFinite(item.unit_cost) || item.unit_cost < 0) {
+                showStockMessage(t("load_error"), "error");
                 return;
             }
         }
@@ -2581,272 +2492,25 @@
     let salesProducts=[]; let salesCustomers=[]; let salesRows=[];
     function showSalesMessage(m,type){saleFormMessage.textContent=m;saleFormMessage.className=`sale-message show ${type}`}
     function clearSalesMessage(){saleFormMessage.textContent="";saleFormMessage.className="sale-message"}
-    function showSalesPage(open=false){document.querySelectorAll(".page-view").forEach(p=>p.classList.remove("active"));document.querySelector(".content > .welcome").style.display="none";document.querySelector(".content > .cards").style.display="none";document.querySelector(".content > .grid-two").style.display="none";salesPage.classList.add("active");stockPage.classList.remove("active");productsPage.classList.remove("active");customersPage.classList.remove("active");document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));salesNavBtn.classList.add("active");if(window.innerWidth<=800)sidebar.classList.remove("open");loadSalesData();if(open)openNewSaleForm()}
+    function showSalesPage(open=false){document.querySelectorAll(".page-view").forEach(p=>p.classList.remove("active"));document.querySelector(".content > .welcome").style.display="none";document.querySelector(".content > .cards").style.display="none";document.querySelector(".content > .grid-two").style.display="none";salesPage.classList.add("active");stockPage.classList.remove("active");productsPage.classList.remove("active");document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));salesNavBtn.classList.add("active");if(window.innerWidth<=800)sidebar.classList.remove("open");loadSalesData();if(open)openNewSaleForm()}
     async function loadSalesData(){try{const [pd,cr]=await Promise.all([supabaseRPC("get_products_for_owner"),fetch(`${SUPABASE_URL}/rest/v1/customers?select=id,name,phone&is_active=eq.true&order=name.asc`,{headers:{apikey:SUPABASE_PUBLISHABLE_KEY,Authorization:`Bearer ${accessToken}`}})]);if(!cr.ok)throw new Error("Customer request failed.");const cd=await cr.json();salesProducts=(Array.isArray(pd)?pd:[]).filter(p=>p.is_active===true);salesCustomers=Array.isArray(cd)?cd:[];renderSaleCustomers();await Promise.all([loadSalesList(),loadTodaySalesSummary()]);if(!saleItems.children.length&&salesProducts.length)addSaleItemRow()}catch(e){console.error(e);salesTableBody.innerHTML=`<tr><td colspan="9" class="empty-row">${escapeHtml(e.message||t("sale_error"))}</td></tr>`}}
     function renderSaleCustomers(){saleCustomer.innerHTML=`<option value="">${escapeHtml(t("walk_in_customer"))}</option>`+salesCustomers.map(c=>`<option value="${c.id}">${escapeHtml(c.name||"-")}${c.phone?` — ${escapeHtml(c.phone)}`:""}</option>`).join("")}
-    async function loadSaleRowVariants(row, productId, selectedVariantId = null) {
-        const unitSelect = row.querySelector(".sale-line-unit");
-        const volumeSelect = row.querySelector(".sale-line-volume");
-        const priceInput = row.querySelector(".sale-line-price");
-        const stockDisplay = row.querySelector(".sale-line-stock");
-
-        unitSelect.innerHTML = `<option value="">${currentLanguage === "sw" ? "Chagua Unit" : "Select Unit"}</option>`;
-        volumeSelect.innerHTML = `<option value="">${currentLanguage === "sw" ? "Chagua Volume" : "Select Volume"}</option>`;
-        priceInput.value = "0";
-        stockDisplay.textContent = "";
-        row._variants = [];
-
-        if (!productId) return;
-
-        try {
-            const variants = await supabaseRPC("get_variants_for_sale", { p_product_id: productId });
-            row._variants = Array.isArray(variants) ? variants : [];
-            const units = [...new Map(row._variants.map(v => [v.unit, v])).values()];
-            unitSelect.innerHTML += units.map(v => {
-                const label = v.unit === "cotton" ? "Carton" : "Crates";
-                return `<option value="${escapeHtml(v.unit)}">${label}</option>`;
-            }).join("");
-
-            if (selectedVariantId) {
-                const selected = row._variants.find(v => v.variant_id === selectedVariantId);
-                if (selected) {
-                    unitSelect.value = selected.unit;
-                    populateSaleVolumes(row);
-                    volumeSelect.value = String(selected.variant_id);
-                    updateSaleVariant(row);
-                }
-            }
-        } catch (error) {
-            console.error("Sale variants error:", error);
-            showSalesMessage(error.message || t("sale_error"), "error");
-        }
-    }
-
-    function populateSaleVolumes(row) {
-        const unit = row.querySelector(".sale-line-unit").value;
-        const volumeSelect = row.querySelector(".sale-line-volume");
-        const variants = (row._variants || []).filter(v => v.unit === unit);
-        volumeSelect.innerHTML = `<option value="">${currentLanguage === "sw" ? "Chagua Volume" : "Select Volume"}</option>` +
-            variants.map(v => `<option value="${v.variant_id}">${Number(v.volume_value).toLocaleString()} ${escapeHtml(v.volume_unit)}</option>`).join("");
-        updateSaleVariant(row);
-    }
-
-    function updateSaleVariant(row) {
-        const variantId = row.querySelector(".sale-line-volume").value;
-        const variant = (row._variants || []).find(v => v.variant_id === variantId);
-        row.querySelector(".sale-line-price").value = variant ? Number(variant.selling_price || 0) : 0;
-        row.querySelector(".sale-line-stock").textContent = variant
-            ? `${currentLanguage === "sw" ? "Stock" : "Stock"}: ${Number(variant.current_stock || 0).toLocaleString()}`
-            : "";
-        updateSaleTotals();
-    }
-
-    function addSaleItemRow(item={}) {
-        if(!salesProducts.length){showSalesMessage(currentLanguage==="sw"?"Hakuna bidhaa hai.":"No active products.","error");return}
-        const row=document.createElement("div");row.className="sale-item-row";row._variants=[];
-        const opts=salesProducts.map(p=>`<option value="${p.id}" ${p.id===item.product_id?"selected":""}>${escapeHtml(p.name)}</option>`).join("");
-        row.innerHTML=`
-            <div class="form-group product-field"><label>${t("product")}</label><select class="sale-line-product"><option value="">${escapeHtml(t("product"))}</option>${opts}</select></div>
-            <div class="form-group"><label>Unit</label><select class="sale-line-unit"><option value="">Chagua Unit</option></select></div>
-            <div class="form-group"><label>Volume</label><select class="sale-line-volume"><option value="">Chagua Volume</option></select><small class="sale-line-stock"></small></div>
-            <div class="form-group"><label>${t("quantity")}</label><input class="sale-line-quantity" type="number" min="0.01" step="0.01" value="${item.quantity??""}"></div>
-            <div class="form-group"><label>${t("selling_price")}</label><input class="sale-line-price sale-price-readonly" type="number" readonly value="0"></div>
-            <div><div style="font-size:12px;font-weight:bold;margin-bottom:7px">${t("total")}</div><div class="sale-line-total">TZS 0</div></div>
-            <button type="button" class="remove-line-btn">×</button>`;
-        saleItems.appendChild(row);
-        row.querySelector(".sale-line-product").addEventListener("change",()=>loadSaleRowVariants(row,row.querySelector(".sale-line-product").value));
-        row.querySelector(".sale-line-unit").addEventListener("change",()=>populateSaleVolumes(row));
-        row.querySelector(".sale-line-volume").addEventListener("change",()=>updateSaleVariant(row));
-        row.querySelector(".sale-line-quantity").addEventListener("input",updateSaleTotals);
-        row.querySelector(".remove-line-btn").addEventListener("click",()=>{row.remove();updateSaleTotals();if(!saleItems.children.length&&salesProducts.length)addSaleItemRow()});
-        if(item.product_id)loadSaleRowVariants(row,item.product_id,item.variant_id||null);else updateSaleTotals();
-    }
-
+    function addSaleItemRow(item={}){if(!salesProducts.length){showSalesMessage(currentLanguage==="sw"?"Hakuna bidhaa hai.":"No active products.","error");return}const row=document.createElement("div");row.className="sale-item-row";const opts=salesProducts.map(p=>`<option value="${p.id}" ${p.id===item.product_id?"selected":""}>${escapeHtml(p.name)}</option>`).join("");row.innerHTML=`<div class="form-group product-field"><label>${t("product")}</label><select class="sale-line-product"><option value="">${escapeHtml(t("product"))}</option>${opts}</select></div><div class="form-group"><label>${t("quantity")}</label><input class="sale-line-quantity" type="number" min="0.01" step="0.01" value="${item.quantity??""}"></div><div class="form-group"><label>${t("selling_price")}</label><input class="sale-line-price sale-price-readonly" type="number" readonly value="0"></div><div><div style="font-size:12px;font-weight:bold;margin-bottom:7px">${t("total")}</div><div class="sale-line-total">TZS 0</div></div><button type="button" class="remove-line-btn">×</button>`;saleItems.appendChild(row);row.querySelector(".sale-line-product").addEventListener("change",()=>updateSaleRow(row));row.querySelector(".sale-line-quantity").addEventListener("input",updateSaleTotals);row.querySelector(".remove-line-btn").addEventListener("click",()=>{row.remove();updateSaleTotals();if(!saleItems.children.length&&salesProducts.length)addSaleItemRow()});updateSaleRow(row)}
+    function updateSaleRow(row){const p=salesProducts.find(x=>x.id===row.querySelector(".sale-line-product").value);row.querySelector(".sale-line-price").value=Number(p?.selling_price||0);updateSaleTotals()}
     function updateSaleTotals(){let total=0;saleItems.querySelectorAll(".sale-item-row").forEach(r=>{const q=Number(r.querySelector(".sale-line-quantity").value||0),p=Number(r.querySelector(".sale-line-price").value||0),line=q*p;total+=line;r.querySelector(".sale-line-total").textContent=`TZS ${line.toLocaleString()}`});const paid=Math.max(0,Number(salePaidAmount.value||0));document.getElementById("saleGrandTotal").textContent=`TZS ${total.toLocaleString()}`;document.getElementById("salePaidDisplay").textContent=`TZS ${paid.toLocaleString()}`;document.getElementById("saleBalance").textContent=`TZS ${Math.max(0,total-paid).toLocaleString()}`}
-    function collectSaleItems(){const items=[];for(const r of saleItems.querySelectorAll(".sale-item-row")){const productId=r.querySelector(".sale-line-product").value,variantId=r.querySelector(".sale-line-volume").value,q=Number(r.querySelector(".sale-line-quantity").value);if(productId||variantId||q)items.push({product_id:productId,variant_id:variantId,quantity:q})}return items}
-    function openNewSaleForm(){salesFormCard.style.display="block";clearSalesMessage();if(!saleItems.children.length&&salesProducts.length)addSaleItemRow()}
-    function clearSaleForm(){saleItems.innerHTML="";saleCustomer.value="";salePaymentMethod.value="cash";salePaidAmount.value="0";saleNotes.value="";clearSalesMessage();if(salesProducts.length)addSaleItemRow();updateSaleTotals()}
-    document.getElementById("newSaleBtn")?.addEventListener("click",openNewSaleForm);
-    document.getElementById("clearSaleBtn")?.addEventListener("click",clearSaleForm);
-    salePaidAmount.addEventListener("input",updateSaleTotals);
-    salesSearch.addEventListener("input",()=>{clearTimeout(window.__salesSearchTimer);window.__salesSearchTimer=setTimeout(loadSalesList,300)});
-    document.getElementById("addSaleLineBtn")?.addEventListener("click",()=>addSaleItemRow());
-    document.getElementById("saleForm")?.addEventListener("submit",async e=>{e.preventDefault();clearSalesMessage();const items=collectSaleItems();const paid=Math.max(0,Number(salePaidAmount.value||0));if(!items.length||items.some(i=>!i.product_id||!i.variant_id||!Number.isFinite(i.quantity)||i.quantity<=0)){showSalesMessage(currentLanguage==="sw"?"Chagua Product, Unit, Volume na Quantity sahihi.":"Select Product, Unit, Volume and a valid Quantity.","error");return}const btn=document.getElementById("saveSaleBtn");btn.disabled=true;try{await supabaseRPC("create_sale",{p_customer_id:saleCustomer.value||null,p_paid_amount:paid,p_payment_method:salePaymentMethod.value,p_notes:saleNotes.value.trim()||null,p_items:items});showSalesMessage(currentLanguage==="sw"?"Sale imehifadhiwa.":"Sale saved successfully.","success");clearSaleForm();await loadSalesList();await loadTodaySalesSummary();await loadDashboardSummary()}catch(err){console.error(err);showSalesMessage(err.message||t("sale_error"),"error")}finally{btn.disabled=false}});
-    async function loadTodaySalesSummary(){try{const d=await supabaseRPC("get_today_sales_summary");const x=Array.isArray(d)?d[0]:d;document.getElementById("todaySalesTotal").textContent=`TZS ${Number(x?.total_sales||0).toLocaleString()}`;document.getElementById("todaySalesPaid").textContent=`TZS ${Number(x?.total_paid||0).toLocaleString()}`;document.getElementById("todaySalesCredit").textContent=`TZS ${Number(x?.total_credit||0).toLocaleString()}`;document.getElementById("todaySalesTransactions").textContent=Number(x?.transaction_count||0).toLocaleString()}catch(e){console.error(e)}}
-    async function loadSalesList(){salesTableBody.innerHTML=`<tr><td colspan="9" class="loading-row">${t("loading")}</td></tr>`;try{const d=await supabaseRPC("get_sales_for_current_user",{p_search:salesSearch.value.trim()||null,p_limit:50,p_offset:0});salesRows=Array.isArray(d)?d:[];if(!salesRows.length){salesTableBody.innerHTML=`<tr><td colspan="9" class="empty-row">${currentLanguage==="sw"?"Hakuna mauzo yaliyopatikana.":"No sales found."}</td></tr>`;return}salesTableBody.innerHTML=salesRows.map(r=>`<tr><td><strong>${escapeHtml(r.receipt_no||"-")}</strong></td><td>${escapeHtml(r.customer_name||(currentLanguage==="sw"?"Mteja wa kawaida":"Walk-in Customer"))}</td><td>${escapeHtml(r.salesman_name||"-")}</td><td class="price">TZS ${Number(r.total_amount||0).toLocaleString()}</td><td>TZS ${Number(r.paid_amount||0).toLocaleString()}</td><td>TZS ${Number(r.balance||0).toLocaleString()}</td><td>${escapeHtml(r.payment_method||"-")}</td><td>${escapeHtml(r.created_at?new Date(r.created_at).toLocaleString():"-")}</td><td><button class="small-btn edit" data-sale-id="${r.sale_id}">👁️ ${t("view")}</button></td></tr>`).join("")}catch(e){console.error(e);salesTableBody.innerHTML=`<tr><td colspan="9" class="empty-row">${escapeHtml(e.message||t("sale_error"))}</td></tr>`}}
+    function collectSaleItems(){const items=[],seen=new Set();for(const r of saleItems.querySelectorAll(".sale-item-row")){const id=r.querySelector(".sale-line-product").value,q=Number(r.querySelector(".sale-line-quantity").value);if(!id&&!q)continue;if(!id||!Number.isFinite(q)||q<=0)throw new Error(t("no_sale_items"));if(seen.has(id))throw new Error(t("duplicate_sale_product"));seen.add(id);items.push({product_id:id,quantity:q})}if(!items.length)throw new Error(t("no_sale_items"));return items}
+    function openNewSaleForm(){salesFormCard.style.display="block";clearSaleForm();setTimeout(()=>saleItems.querySelector(".sale-line-product")?.focus(),50)}
+    function clearSaleForm(){clearSalesMessage();saleCustomer.value="";salePaymentMethod.value="cash";salePaidAmount.value="0";saleNotes.value="";saleItems.innerHTML="";if(salesProducts.length)addSaleItemRow();updateSaleTotals()}
+    salePaidAmount.addEventListener("input",updateSaleTotals);salePaymentMethod.addEventListener("change",()=>{if(salePaymentMethod.value==="credit")salePaidAmount.value="0";updateSaleTotals()});document.getElementById("addSaleLineBtn").addEventListener("click",()=>addSaleItemRow());document.getElementById("newSaleBtn").addEventListener("click",openNewSaleForm);document.getElementById("closeSaleFormBtn").addEventListener("click",()=>salesFormCard.style.display="none");document.getElementById("clearSaleBtn").addEventListener("click",clearSaleForm);document.getElementById("refreshSalesBtn").addEventListener("click",loadSalesData);salesSearch.addEventListener("input",loadSalesList);document.getElementById("quickSaleBtn").addEventListener("click",()=>showSalesPage(true));
+    document.getElementById("saveSaleBtn").addEventListener("click",async()=>{clearSalesMessage();const b=document.getElementById("saveSaleBtn");try{const items=collectSaleItems();const total=items.reduce((sum,i)=>sum+i.quantity*Number(salesProducts.find(p=>p.id===i.product_id)?.selling_price||0),0);let paid=Number(salePaidAmount.value||0);if(!Number.isFinite(paid)||paid<0||paid>total)throw new Error(currentLanguage==="sw"?"Kiasi kilicholipwa si sahihi.":"Paid amount is invalid.");if(salePaymentMethod.value==="credit")paid=0;if((paid<total||salePaymentMethod.value==="credit")&&!saleCustomer.value)throw new Error(t("customer_required_credit"));b.disabled=true;const result=await supabaseRPC("create_sale",{p_customer_id:saleCustomer.value||null,p_paid_amount:paid,p_payment_method:salePaymentMethod.value,p_notes:saleNotes.value.trim()||null,p_items:items});const sale=Array.isArray(result)?result[0]:result;salesFormCard.style.display="none";await Promise.all([loadSalesList(),loadTodaySalesSummary(),loadDashboardSummary()]);alert(`${t("sale_saved")} ${sale?.receipt_no||""}`)}catch(e){console.error(e);showSalesMessage(e.message||t("sale_error"),"error")}finally{b.disabled=false}});
+    async function loadTodaySalesSummary(){try{const d=await supabaseRPC("get_today_sales_summary"),r=Array.isArray(d)?d[0]:d;document.getElementById("salesTodayTotal").textContent=`TZS ${Number(r?.total_sales||0).toLocaleString()}`;document.getElementById("salesTodayPaid").textContent=`TZS ${Number(r?.total_paid||0).toLocaleString()}`;document.getElementById("salesTodayCredit").textContent=`TZS ${Number(r?.total_credit||0).toLocaleString()}`;document.getElementById("salesTodayTransactions").textContent=Number(r?.transaction_count||0).toLocaleString()}catch(e){console.error(e)}}
+    async function loadSalesList(){salesTableBody.innerHTML=`<tr><td colspan="9" class="loading-row">${t("loading")}</td></tr>`;try{const d=await supabaseRPC("get_sales_for_current_user",{p_search:salesSearch.value.trim()||null,p_limit:50,p_offset:0});salesRows=Array.isArray(d)?d:[];if(!salesRows.length){salesTableBody.innerHTML=`<tr><td colspan="9" class="empty-row">${currentLanguage==="sw"?"Hakuna mauzo yaliyopatikana.":"No sales found."}</td></tr>`;return}salesTableBody.innerHTML=salesRows.map(r=>`<tr><td><strong>${escapeHtml(r.receipt_no||"-")}</strong></td><td>${escapeHtml(r.customer_name||(currentLanguage==="sw"?"Mteja wa kawaida":"Walk-in Customer"))}</td><td>${escapeHtml(r.salesman_name||"-")}</td><td class="price">TZS ${Number(r.total_amount||0).toLocaleString()}</td><td>TZS ${Number(r.paid_amount||0).toLocaleString()}</td><td>TZS ${Number(r.balance||0).toLocaleString()}</td><td>${escapeHtml(r.payment_method||"-")}</td><td>${escapeHtml(r.created_at?new Date(r.created_at).toLocaleString():"-")}</td><td><button class="small-btn edit" data-sale-id="${r.id}">👁️ ${t("view")}</button></td></tr>`).join("")}catch(e){console.error(e);salesTableBody.innerHTML=`<tr><td colspan="9" class="empty-row">${escapeHtml(e.message||t("sale_error"))}</td></tr>`}}
     salesTableBody.addEventListener("click",e=>{const b=e.target.closest("button[data-sale-id]");if(b)openSaleReceipt(b.dataset.saleId)});
-    async function openSaleReceipt(id){try{const result=await supabaseRPC("get_sale_details",{p_sale_id:id});const rows=Array.isArray(result)?result:[];if(!rows.length)throw new Error(t("sale_error"));renderSaleReceipt(rows);document.getElementById("saleReceiptModal").classList.add("show")}catch(e){alert(e.message||t("sale_error"))}}
-    function renderSaleReceipt(rows){const d=rows[0],customer=d.customer_name||(currentLanguage==="sw"?"Mteja wa kawaida":"Walk-in Customer");document.getElementById("saleReceiptBody").innerHTML=`<div class="receipt-paper"><div class="receipt-brand"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgRsGllLOBF63Unp0kzICif6C1tapkNBLRntsN7FJJPLlytEa9m1uBi_CdMVtnA7HmE1niKAeRc7FaKka9HamTfaSy4Mp5V8jnfl0DJt12zb4S4WhtI3PSJH9mHkxhu65YXSVA7sD5b8sOfw8jakPYp3H8Um8qvyjlDzxWgNcdsH2qVTmnMbjsZF4TN/s1280/244759.png" alt="SGC"><h2>SGC SOFT DRINKS</h2><p>SGC SOFT DRINKS MANAGEMENT</p></div><div class="receipt-meta"><div><span>${t("receipt_no")}</span><strong>${escapeHtml(d.receipt_no||"-")}</strong></div><div><span>${t("date")}</span><strong>${escapeHtml(d.sale_created_at?new Date(d.sale_created_at).toLocaleString():"-")}</strong></div><div><span>${t("customer")}</span><strong>${escapeHtml(customer)}</strong></div><div><span>${t("salesman")}</span><strong>${escapeHtml(d.salesman_name||"-")}</strong></div></div><table><thead><tr><th>${t("product")}</th><th>Unit</th><th>Volume</th><th>Qty</th><th>${t("selling_price")}</th><th>${t("total")}</th></tr></thead><tbody>${rows.map(i=>`<tr><td>${escapeHtml(i.product_name||"-")}</td><td>${escapeHtml(i.unit==="cotton"?"Carton":i.unit||"-")}</td><td>${Number(i.volume_value||0).toLocaleString()} ${escapeHtml(i.volume_unit||"")}</td><td>${Number(i.quantity||0).toLocaleString()}</td><td>TZS ${Number(i.selling_price||0).toLocaleString()}</td><td>TZS ${Number(i.line_total||0).toLocaleString()}</td></tr>`).join("")}</tbody></table><div class="receipt-grand"><div><span>${t("grand_total")}</span><strong>TZS ${Number(d.total_amount||0).toLocaleString()}</strong></div><div><span>${t("paid_amount")}</span><strong>TZS ${Number(d.paid_amount||0).toLocaleString()}</strong></div><div class="grand"><span>${t("balance")}</span><strong>TZS ${Number(d.balance||0).toLocaleString()}</strong></div></div><div class="receipt-footer">Asante kwa kufanya biashara na SGC SOFT DRINKS.</div></div>`}
-
+    async function openSaleReceipt(id){try{const result=await supabaseRPC("get_sale_details",{p_sale_id:id});const d=Array.isArray(result)?result[0]:result;if(!d)throw new Error(t("sale_error"));renderSaleReceipt(d);document.getElementById("saleReceiptModal").classList.add("show")}catch(e){alert(e.message||t("sale_error"))}}
+    function renderSaleReceipt(d){const items=Array.isArray(d.items)?d.items:(Array.isArray(d.sale_items)?d.sale_items:[]),customer=d.customer_name||(currentLanguage==="sw"?"Mteja wa kawaida":"Walk-in Customer");document.getElementById("saleReceiptBody").innerHTML=`<div class="receipt-paper"><div class="receipt-brand"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgRsGllLOBF63Unp0kzICif6C1tapkNBLRntsN7FJJPLlytEa9m1uBi_CdMVtnA7HmE1niKAeRc7FaKka9HamTfaSy4Mp5V8jnfl0DJt12zb4S4WhtI3PSJH9mHkxhu65YXSVA7sD5b8sOfw8jakPYp3H8Um8qvyjlDzxWgNcdsH2qVTmnMbjsZF4TN/s1280/244759.png" alt="SGC"><h2>SGC SOFT DRINKS</h2><p>SGC SOFT DRINKS MANAGEMENT</p></div><div class="receipt-meta"><div><span>${t("receipt_no")}</span><strong>${escapeHtml(d.receipt_no||"-")}</strong></div><div><span>${t("date")}</span><strong>${escapeHtml(d.created_at?new Date(d.created_at).toLocaleString():"-")}</strong></div><div><span>${t("customer")}</span><strong>${escapeHtml(customer)}</strong></div><div><span>${t("salesman")}</span><strong>${escapeHtml(d.salesman_name||"-")}</strong></div></div><table><thead><tr><th>${t("product")}</th><th>Qty</th><th>${t("selling_price")}</th><th>${t("total")}</th></tr></thead><tbody>${items.map(i=>`<tr><td>${escapeHtml(i.product_name||"-")}</td><td>${Number(i.quantity||0).toLocaleString()}</td><td>TZS ${Number(i.selling_price||0).toLocaleString()}</td><td>TZS ${Number(i.line_total||0).toLocaleString()}</td></tr>`).join("")}</tbody></table><div class="receipt-grand"><div><span>${t("grand_total")}</span><strong>TZS ${Number(d.total_amount||0).toLocaleString()}</strong></div><div><span>${t("paid_amount")}</span><strong>TZS ${Number(d.paid_amount||0).toLocaleString()}</strong></div><div class="grand"><span>${t("balance")}</span><strong>TZS ${Number(d.balance||0).toLocaleString()}</strong></div></div><div class="receipt-footer">Asante kwa kufanya biashara na SGC SOFT DRINKS.</div></div>`}
+    document.body.insertAdjacentHTML("beforeend",`<div class="modal-backdrop sale-receipt-modal" id="saleReceiptModal"><div class="modal"><div class="modal-head"><h3>${t("receipt_no")}</h3><button class="modal-close" id="closeSaleReceipt">×</button></div><div id="saleReceiptBody"></div><div class="modal-actions" style="padding:0 22px 20px"><button class="secondary-btn" id="closeSaleReceipt2">${t("cancel")}</button><button class="primary-btn" id="printSaleReceipt">🖨️ ${t("print")}</button></div></div></div>`);
     document.getElementById("closeSaleReceipt").addEventListener("click",()=>document.getElementById("saleReceiptModal").classList.remove("show"));document.getElementById("closeSaleReceipt2").addEventListener("click",()=>document.getElementById("saleReceiptModal").classList.remove("show"));document.getElementById("printSaleReceipt").addEventListener("click",()=>window.print());salesNavBtn.addEventListener("click",()=>showSalesPage(false));
 
-
-    /* ==========================================
-       CUSTOMERS / CREDIT / PAYMENTS
-       ========================================== */
-
-    const customersPage = document.getElementById("customersPage");
-    const customersNavBtn = document.getElementById("customersNavBtn");
-    const quickCustomerBtn = document.getElementById("quickCustomerBtn");
-    const customerSearch = document.getElementById("customerSearch");
-    const customersTableBody = document.getElementById("customersTableBody");
-    const customerModal = document.getElementById("customerModal");
-    const customerForm = document.getElementById("customerForm");
-    const customerModalTitle = document.getElementById("customerModalTitle");
-    const customerModalMessage = document.getElementById("customerModalMessage");
-    const customerId = document.getElementById("customerId");
-    const customerName = document.getElementById("customerName");
-    const customerPhone = document.getElementById("customerPhone");
-    const customerAddress = document.getElementById("customerAddress");
-    const customerDetailCard = document.getElementById("customerDetailCard");
-    const customerPaymentModal = document.getElementById("customerPaymentModal");
-    const customerPaymentForm = document.getElementById("customerPaymentForm");
-    const customerPaymentSale = document.getElementById("customerPaymentSale");
-    const customerPaymentAmount = document.getElementById("customerPaymentAmount");
-    const customerPaymentMethod = document.getElementById("customerPaymentMethod");
-    const customerPaymentReference = document.getElementById("customerPaymentReference");
-    const customerPaymentMessage = document.getElementById("customerPaymentMessage");
-
-    let customers = [];
-    let editingCustomer = null;
-    let selectedCustomer = null;
-    let selectedCustomerSales = [];
-
-    function moneyCustomer(v){return `TZS ${Number(v||0).toLocaleString()}`}
-    function dateCustomer(v){return v ? new Date(v).toLocaleString() : "-"}
-    function customerMsg(el,msg,type="error"){el.textContent=msg;el.className=`modal-message ${type}`;el.style.display="block"}
-
-    function showCustomersPage(){
-        document.querySelectorAll(".page-view").forEach(p=>p.classList.remove("active"));
-        document.querySelector(".content > .welcome").style.display="none";
-        document.querySelector(".content > .cards").style.display="none";
-        document.querySelector(".content > .grid-two").style.display="none";
-        customersPage.classList.add("active");
-        stockPage.classList.remove("active");
-        salesPage.classList.remove("active");
-        productsPage.classList.remove("active");
-        document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
-        customersNavBtn.classList.add("active");
-        customerDetailCard.style.display="none";
-        loadCustomers();
-        if(window.innerWidth<=800) sidebar.classList.remove("open");
-    }
-
-    async function loadCustomers(){
-        customersTableBody.innerHTML=`<tr><td colspan="6" class="loading-row">${t("loading")}</td></tr>`;
-        try{
-            const data=await supabaseRPC("get_customers_for_current_user",{p_search:customerSearch.value.trim()||null});
-            customers=Array.isArray(data)?data:[];
-            document.getElementById("customerTotalCount").textContent=customers.length.toLocaleString();
-            renderCustomers();
-            await updateCustomerCreditTotal();
-        }catch(e){
-            console.error(e);
-            customersTableBody.innerHTML=`<tr><td colspan="6" class="empty-row">${escapeHtml(e.message||t("product_error"))}</td></tr>`;
-        }
-    }
-
-    async function updateCustomerCreditTotal(){
-        let total=0;
-        for(const c of customers){
-            try{const r=await supabaseRPC("get_customer_credit_summary",{p_customer_id:c.customer_id});if(r?.[0]) total+=Number(r[0].total_balance||0)}catch(e){console.warn(e)}
-        }
-        document.getElementById("customerCreditTotal").textContent=moneyCustomer(total);
-    }
-
-    async function renderCustomers(){
-        if(!customers.length){customersTableBody.innerHTML=`<tr><td colspan="6" class="empty-row">${t("no_customers")}</td></tr>`;return}
-        const rows=[];
-        for(const c of customers){
-            let bal=0;
-            try{const r=await supabaseRPC("get_customer_credit_summary",{p_customer_id:c.customer_id});bal=Number(r?.[0]?.total_balance||0)}catch(e){}
-            rows.push(`<tr><td><strong>${escapeHtml(c.name||"-")}</strong></td><td>${escapeHtml(c.phone||"-")}</td><td>${escapeHtml(c.address||"-")}</td><td>${moneyCustomer(bal)}</td><td><span class="status-badge ${c.is_active?"active":"inactive"}">${c.is_active?t("active"):t("inactive")}</span></td><td><button class="small-btn" data-customer-view="${c.customer_id}">${t("view")}</button> <button class="small-btn" data-customer-edit="${c.customer_id}">${t("edit")}</button> <button class="small-btn" data-customer-toggle="${c.customer_id}" data-active="${c.is_active}">${c.is_active?t("deactivate"):t("activate")}</button></td></tr>`);
-        }
-        customersTableBody.innerHTML=rows.join("");
-        customersTableBody.querySelectorAll("[data-customer-view]").forEach(b=>b.addEventListener("click",()=>openCustomerDetails(b.dataset.customerView)));
-        customersTableBody.querySelectorAll("[data-customer-edit]").forEach(b=>b.addEventListener("click",()=>openCustomerEditor(b.dataset.customerEdit)));
-        customersTableBody.querySelectorAll("[data-customer-toggle]").forEach(b=>b.addEventListener("click",()=>toggleCustomer(b.dataset.customerToggle,b.dataset.active==="true")));
-    }
-
-    function openCustomerEditor(id=null){
-        editingCustomer=id?customers.find(c=>c.customer_id===id):null;
-        customerId.value=editingCustomer?.customer_id||"";
-        customerName.value=editingCustomer?.name||"";
-        customerPhone.value=editingCustomer?.phone||"";
-        customerAddress.value=editingCustomer?.address||"";
-        customerModalTitle.textContent=editingCustomer?t("edit"):t("new_customer");
-        customerModalMessage.style.display="none";
-        customerModal.classList.add("show");
-        setTimeout(()=>customerName.focus(),50);
-    }
-
-    async function toggleCustomer(id,current){
-        try{await supabaseRPC("set_customer_active",{p_customer_id:id,p_is_active:!current});await loadCustomers()}catch(e){alert(e.message||t("product_error"))}
-    }
-
-    async function openCustomerDetails(id){
-        const c=customers.find(x=>x.customer_id===id);if(!c)return;
-        selectedCustomer=c;
-        document.getElementById("customerDetailTitle").textContent=`${c.name}${c.phone?` — ${c.phone}`:""}`;
-        customerDetailCard.style.display="block";
-        try{
-            const [summary,sales,payments]=await Promise.all([
-                supabaseRPC("get_customer_credit_summary",{p_customer_id:id}),
-                supabaseRPC("get_customer_sales_history",{p_customer_id:id}),
-                supabaseRPC("get_customer_payment_history",{p_customer_id:id})
-            ]);
-            const x=summary?.[0]||{};
-            document.getElementById("detailTotalSales").textContent=moneyCustomer(x.total_sales);
-            document.getElementById("detailTotalPaid").textContent=moneyCustomer(x.total_paid);
-            document.getElementById("detailBalance").textContent=moneyCustomer(x.total_balance);
-            document.getElementById("detailCreditCount").textContent=Number(x.credit_sales_count||0).toLocaleString();
-            selectedCustomerSales=Array.isArray(sales)?sales:[];
-            document.getElementById("customerSalesBody").innerHTML=selectedCustomerSales.length?selectedCustomerSales.map(s=>`<tr><td>${escapeHtml(s.receipt_no||"-")}</td><td>${moneyCustomer(s.total_amount)}</td><td>${moneyCustomer(s.paid_amount)}</td><td>${moneyCustomer(s.balance)}</td><td>${escapeHtml(s.payment_status||"-")}</td><td>${dateCustomer(s.created_at)}</td></tr>`).join(""):"<tr><td colspan=\"6\" class=\"empty-row\">-</td></tr>";
-            const pp=Array.isArray(payments)?payments:[];
-            document.getElementById("customerPaymentsBody").innerHTML=pp.length?pp.map(x=>`<tr><td>${escapeHtml(x.receipt_no||"-")}</td><td>${moneyCustomer(x.amount)}</td><td>${escapeHtml(x.payment_method||"-")}</td><td>${escapeHtml(x.payment_reference||"-")}</td><td>${dateCustomer(x.created_at)}</td></tr>`).join(""):"<tr><td colspan=\"5\" class=\"empty-row\">-</td></tr>";
-        }catch(e){alert(e.message||t("product_error"))}
-        customerDetailCard.scrollIntoView({behavior:"smooth",block:"start"});
-    }
-
-    function openCustomerPayment(){
-        if(!selectedCustomer)return;
-        const due=selectedCustomerSales.filter(s=>Number(s.balance)>0&&s.sale_status==="completed");
-        customerPaymentSale.innerHTML=due.length?due.map(s=>`<option value="${s.sale_id}">${escapeHtml(s.receipt_no||s.sale_id)} — ${moneyCustomer(s.balance)}</option>`).join(""): `<option value="">${t("no_credit_sales")}</option>`;
-        customerPaymentAmount.value="";customerPaymentReference.value="";customerPaymentMessage.style.display="none";
-        customerPaymentModal.classList.add("show");
-    }
-
-    customerForm.addEventListener("submit",async e=>{
-        e.preventDefault();
-        const btn=document.getElementById("saveCustomerBtn");btn.disabled=true;customerModalMessage.style.display="none";
-        try{
-            if(editingCustomer){await supabaseRPC("update_customer",{p_customer_id:editingCustomer.customer_id,p_name:customerName.value,p_phone:customerPhone.value||null,p_address:customerAddress.value||null})}
-            else{await supabaseRPC("create_customer",{p_name:customerName.value,p_phone:customerPhone.value||null,p_address:customerAddress.value||null})}
-            customerModal.classList.remove("show");await loadCustomers();
-        }catch(e){customerMsg(customerModalMessage,e.message||t("product_error"))}finally{btn.disabled=false}
-    });
-
-    customerPaymentForm.addEventListener("submit",async e=>{
-        e.preventDefault();
-        const btn=document.getElementById("saveCustomerPaymentBtn");btn.disabled=true;customerPaymentMessage.style.display="none";
-        try{
-            if(!customerPaymentSale.value)throw new Error(t("no_credit_sales"));
-            await supabaseRPC("record_customer_payment",{p_sale_id:customerPaymentSale.value,p_amount:Number(customerPaymentAmount.value),p_payment_method:customerPaymentMethod.value,p_payment_reference:customerPaymentReference.value||null});
-            customerPaymentModal.classList.remove("show");await openCustomerDetails(selectedCustomer.customer_id);await loadCustomers();
-        }catch(e){customerMsg(customerPaymentMessage,e.message||t("product_error"))}finally{btn.disabled=false}
-    });
-
-    customersNavBtn.addEventListener("click",()=>showCustomersPage());
-    quickCustomerBtn.addEventListener("click",()=>{showCustomersPage();setTimeout(()=>openCustomerEditor(),50)});
-    document.getElementById("addCustomerBtn").addEventListener("click",()=>openCustomerEditor());
-    document.getElementById("refreshCustomersBtn").addEventListener("click",loadCustomers);
-    document.getElementById("closeCustomerModal").addEventListener("click",()=>customerModal.classList.remove("show"));
-    document.getElementById("cancelCustomerBtn").addEventListener("click",()=>customerModal.classList.remove("show"));
-    document.getElementById("closeCustomerPaymentModal").addEventListener("click",()=>customerPaymentModal.classList.remove("show"));
-    document.getElementById("cancelCustomerPaymentBtn").addEventListener("click",()=>customerPaymentModal.classList.remove("show"));
-    document.getElementById("closeCustomerDetail").addEventListener("click",()=>customerDetailCard.style.display="none");
-    document.getElementById("recordCustomerPaymentBtn").addEventListener("click",openCustomerPayment);
-    customerSearch.addEventListener("input",()=>{clearTimeout(window.customerSearchTimer);window.customerSearchTimer=setTimeout(loadCustomers,350)});
 
     /* ==========================================
        PRODUCTS MANAGEMENT
@@ -2881,8 +2545,6 @@
         document.querySelector(".content > .grid-two").style.display = "";
         document.querySelector(".content > #productsPage").classList.remove("active");
         salesPage.classList.remove("active");
-        customersPage.classList.remove("active");
-        customersPage.classList.remove("active");
 
         document.querySelectorAll(".nav button").forEach(btn => btn.classList.remove("active"));
         document.querySelector(".nav button:first-of-type").classList.add("active");
@@ -2896,7 +2558,7 @@
         productsPage.classList.add("active");
         stockPage.classList.remove("active");
         salesPage.classList.remove("active");
-        customersPage.classList.remove("active");
+        suppliersPage.classList.remove("active");
 
         document.querySelectorAll(".nav button").forEach(btn => btn.classList.remove("active"));
         productsNavBtn.classList.add("active");
@@ -3193,6 +2855,86 @@
     };
 
 
+
+    /* ==========================================
+       SUPPLIERS MANAGEMENT — S6.4F
+       ========================================== */
+    const suppliersPage = document.getElementById("suppliersPage");
+    const suppliersNavBtn = document.getElementById("suppliersNavBtn");
+    const suppliersTableBody = document.getElementById("suppliersTableBody");
+    const supplierSearch = document.getElementById("supplierSearch");
+    const supplierModal = document.getElementById("supplierModal");
+    const supplierDetailModal = document.getElementById("supplierDetailModal");
+    const supplierPaymentModal = document.getElementById("supplierPaymentModal");
+    let suppliers = [];
+    let editingSupplier = null;
+    let paymentSupplier = null;
+    let paymentReceipts = [];
+
+    function supplierMoney(v){return `TZS ${Number(v||0).toLocaleString()}`;}
+    function showSupplierMessage(m,type="success"){const e=document.getElementById("supplierMessage");e.textContent=m;e.className=`supplier-message show ${type}`}
+    function clearSupplierMessage(){const e=document.getElementById("supplierMessage");e.textContent="";e.className="supplier-message"}
+
+    function showSuppliersPage(){
+        document.querySelectorAll(".page-view").forEach(p=>p.classList.remove("active"));
+        document.querySelector(".content > .welcome").style.display="none";
+        document.querySelector(".content > .cards").style.display="none";
+        document.querySelector(".content > .grid-two").style.display="none";
+        suppliersPage.classList.add("active");
+        document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
+        suppliersNavBtn.classList.add("active");
+        if(window.innerWidth<=800) sidebar.classList.remove("open");
+        loadSuppliers();
+    }
+
+    async function loadSuppliers(){
+        suppliersTableBody.innerHTML='<tr><td colspan="5" class="loading-row">Inapakia...</td></tr>';
+        try{
+            const data=await supabaseRPC("get_suppliers_for_current_user",{p_search:null});
+            suppliers=Array.isArray(data)?data:[];
+            renderSuppliers();
+            await refreshSupplierTotals();
+        }catch(e){console.error("Supplier load error",e);suppliersTableBody.innerHTML=`<tr><td colspan="5" class="empty-row">${escapeHtml(e.message||"Imeshindikana kupakia suppliers.")}</td></tr>`}
+    }
+
+    function renderSuppliers(){
+        const q=(supplierSearch.value||"").trim().toLowerCase();
+        const rows=suppliers.filter(s=>[s.name,s.phone,s.contact_person,s.address].some(v=>String(v||"").toLowerCase().includes(q)));
+        document.getElementById("supplierCount").textContent=rows.length;
+        if(!rows.length){suppliersTableBody.innerHTML='<tr><td colspan="5" class="empty-row">Hakuna supplier.</td></tr>';return}
+        suppliersTableBody.innerHTML=rows.map(s=>`<tr><td><strong>${escapeHtml(s.name||"-")}</strong><br><small>${escapeHtml(s.contact_person||"")}</small></td><td>${escapeHtml(s.contact_person||"-")}</td><td>${escapeHtml(s.phone||"-")}</td><td><span class="supplier-status ${s.is_active?'paid':'unpaid'}">${s.is_active?'Active':'Inactive'}</span></td><td><div class="supplier-actions"><button class="supplier-view" data-action="view" data-id="${s.id}">View</button><button class="supplier-edit" data-action="edit" data-id="${s.id}">Edit</button><button class="supplier-pay" data-action="pay" data-id="${s.id}">Pay</button><button class="supplier-toggle" data-action="toggle" data-id="${s.id}">${s.is_active?'Deactivate':'Activate'}</button></div></td></tr>`).join("");
+    }
+
+    async function refreshSupplierTotals(){
+        let purchases=0,outstanding=0;
+        for(const s of suppliers){try{const d=await supabaseRPC("get_supplier_balance",{p_supplier_id:s.id});const x=Array.isArray(d)?d[0]:d;purchases+=Number(x?.total_purchases||0);outstanding+=Number(x?.outstanding_balance||0)}catch(e){console.warn("Supplier balance",s.id,e)}}
+        document.getElementById("supplierPurchases").textContent=supplierMoney(purchases);document.getElementById("supplierOutstanding").textContent=supplierMoney(outstanding);
+    }
+
+    function openSupplierModal(s=null){
+        editingSupplier=s;clearSupplierMessage();document.getElementById("supplierModalMessage").textContent="";document.getElementById("supplierModalMessage").className="supplier-message";
+        document.getElementById("supplierModalTitle").textContent=s?"Edit Supplier":"Ongeza Supplier";
+        document.getElementById("supplierId").value=s?.id||"";document.getElementById("supplierName").value=s?.name||"";document.getElementById("supplierContact").value=s?.contact_person||"";document.getElementById("supplierPhone").value=s?.phone||"";document.getElementById("supplierAddress").value=s?.address||"";supplierModal.classList.add("show");
+    }
+    function closeSupplierModal(){supplierModal.classList.remove("show");editingSupplier=null}
+
+    document.getElementById("supplierForm").addEventListener("submit",async e=>{e.preventDefault();const btn=document.getElementById("saveSupplierBtn");btn.disabled=true;try{const body={p_name:document.getElementById("supplierName").value.trim(),p_phone:document.getElementById("supplierPhone").value.trim()||null,p_address:document.getElementById("supplierAddress").value.trim()||null,p_contact_person:document.getElementById("supplierContact").value.trim()||null};if(!body.p_name)throw new Error("Supplier name is required.");if(editingSupplier){await supabaseRPC("update_supplier",{p_supplier_id:editingSupplier.id,...body})}else{await supabaseRPC("create_supplier",body)}closeSupplierModal();showSupplierMessage(editingSupplier?"Supplier updated.":"Supplier created.");await loadSuppliers()}catch(err){console.error(err);alert(err.message||"Failed.")}finally{btn.disabled=false}});
+
+    async function openSupplierDetails(id){
+        const s=suppliers.find(x=>x.id===id);if(!s)return; supplierDetailModal.classList.add("show");document.getElementById("supplierDetailTitle").textContent=s.name;const body=document.getElementById("supplierDetailBody");body.innerHTML='<div class="loading-row">Inapakia...</div>';
+        try{const [bal,hist,payments]=await Promise.all([supabaseRPC("get_supplier_balance",{p_supplier_id:id}),supabaseRPC("get_supplier_purchase_history",{p_supplier_id:id}),supabaseRPC("get_supplier_payment_history",{p_supplier_id:id})]);const b=Array.isArray(bal)?bal[0]:bal;const rows=Array.isArray(hist)?hist:[];const ph=Array.isArray(payments)?payments:[];body.innerHTML=`<div class="supplier-detail-grid"><div class="supplier-detail-card"><span>Total Purchases</span><strong>${supplierMoney(b?.total_purchases)}</strong></div><div class="supplier-detail-card"><span>Total Paid</span><strong>${supplierMoney(b?.total_paid)}</strong></div><div class="supplier-detail-card"><span>Outstanding</span><strong>${supplierMoney(b?.outstanding_balance)}</strong></div></div><div class="supplier-history"><h4>Purchase History</h4><div class="table-wrap"><table class="products-table"><thead><tr><th>Receipt</th><th>Total</th><th>Paid</th><th>Balance</th><th>Status</th><th>Date</th></tr></thead><tbody>${rows.length?rows.map(r=>`<tr><td>${escapeHtml(r.invoice_receipt_no||"-")}</td><td>${supplierMoney(r.total_amount)}</td><td>${supplierMoney(r.total_paid)}</td><td>${supplierMoney(r.outstanding_balance)}</td><td><span class="supplier-status ${r.payment_status}">${escapeHtml(r.payment_status)}</span></td><td>${new Date(r.received_at||r.verified_at).toLocaleString()}</td></tr>`).join(""):'<tr><td colspan="6" class="empty-row">Hakuna history.</td></tr>'}</tbody></table></div></div><div class="supplier-history"><h4>Payment History</h4><div class="table-wrap"><table class="products-table"><thead><tr><th>Date</th><th>Receipt</th><th>Amount</th><th>Method</th><th>Reference</th></tr></thead><tbody>${ph.length?ph.map(r=>`<tr><td>${new Date(r.created_at).toLocaleString()}</td><td>${escapeHtml(r.invoice_receipt_no||"-")}</td><td>${supplierMoney(r.amount)}</td><td>${escapeHtml(r.payment_method||"-")}</td><td>${escapeHtml(r.payment_reference||"-")}</td></tr>`).join(""):'<tr><td colspan="5" class="empty-row">Hakuna payments.</td></tr>'}</tbody></table></div></div>`}catch(e){body.innerHTML=`<div class="supplier-message show error">${escapeHtml(e.message||"Failed to load details")}</div>`}
+    }
+
+    async function openSupplierPayment(id){
+        const s=suppliers.find(x=>x.id===id);if(!s)return;paymentSupplier=s;document.getElementById("supplierPaymentMessage").textContent="";document.getElementById("supplierPaymentMessage").className="supplier-message";document.getElementById("supplierPaymentForm").reset();const sel=document.getElementById("paymentReceiptSelect");sel.innerHTML='<option value="">Inapakia receipts...</option>';supplierPaymentModal.classList.add("show");
+        try{const data=await supabaseRPC("get_supplier_purchase_history",{p_supplier_id:id});paymentReceipts=(Array.isArray(data)?data:[]).filter(r=>Number(r.outstanding_balance)>0&&r.verification_status==='verified');sel.innerHTML=paymentReceipts.length?paymentReceipts.map(r=>`<option value="${r.stock_receipt_id}" data-balance="${r.outstanding_balance}">${escapeHtml(r.invoice_receipt_no||r.stock_receipt_id)} — ${supplierMoney(r.outstanding_balance)}</option>`).join(""):'<option value="">Hakuna deni la kulipa</option>';updatePaymentOutstanding()}catch(e){sel.innerHTML='<option value="">Failed</option>';document.getElementById("supplierPaymentMessage").textContent=e.message||"Failed";document.getElementById("supplierPaymentMessage").className="supplier-message show error"}
+    }
+    function updatePaymentOutstanding(){const o=document.getElementById("paymentReceiptSelect").selectedOptions[0];document.getElementById("paymentOutstanding").value=o? supplierMoney(o.dataset.balance):supplierMoney(0);document.getElementById("supplierPaymentAmount").max=o?.dataset.balance||0}
+    document.getElementById("supplierPaymentForm").addEventListener("submit",async e=>{e.preventDefault();const receipt=document.getElementById("paymentReceiptSelect").value,amount=Number(document.getElementById("supplierPaymentAmount").value);if(!receipt||!Number.isFinite(amount)||amount<=0)return alert("Weka payment amount.");const btn=document.getElementById("saveSupplierPayment");btn.disabled=true;try{await supabaseRPC("record_supplier_payment",{p_stock_receipt_id:receipt,p_amount:amount,p_payment_method:document.getElementById("supplierPaymentMethod").value,p_payment_reference:document.getElementById("supplierPaymentReference").value.trim()||null});supplierPaymentModal.classList.remove("show");alert("Supplier payment recorded successfully.");await loadSuppliers()}catch(e){alert(e.message||"Payment failed.")}finally{btn.disabled=false}});
+
+    suppliersTableBody.addEventListener("click",async e=>{const b=e.target.closest("button[data-action]");if(!b)return;const id=b.dataset.id,action=b.dataset.action,s=suppliers.find(x=>x.id===id);if(!s)return;if(action==='view')return openSupplierDetails(id);if(action==='edit')return openSupplierModal(s);if(action==='pay')return openSupplierPayment(id);if(action==='toggle'){try{await supabaseRPC("set_supplier_active",{p_supplier_id:id,p_is_active:!s.is_active});await loadSuppliers()}catch(err){alert(err.message||"Failed")}}});
+    supplierSearch.addEventListener("input",renderSuppliers);document.getElementById("refreshSuppliersBtn").addEventListener("click",loadSuppliers);document.getElementById("addSupplierBtn").addEventListener("click",()=>openSupplierModal());document.getElementById("closeSupplierModal").addEventListener("click",closeSupplierModal);document.getElementById("cancelSupplierBtn").addEventListener("click",closeSupplierModal);document.getElementById("closeSupplierDetail").addEventListener("click",()=>supplierDetailModal.classList.remove("show"));document.getElementById("closeSupplierPayment").addEventListener("click",()=>supplierPaymentModal.classList.remove("show"));document.getElementById("cancelSupplierPayment").addEventListener("click",()=>supplierPaymentModal.classList.remove("show"));document.getElementById("paymentReceiptSelect").addEventListener("change",updatePaymentOutstanding);
+
     /* ==========================================
        LOGOUT
        ========================================== */
@@ -3290,6 +3032,10 @@
 
     receivedStockNavBtn.addEventListener("click", () => {
         showStockPage();
+    });
+
+    suppliersNavBtn.addEventListener("click", () => {
+        showSuppliersPage();
     });
 
 
