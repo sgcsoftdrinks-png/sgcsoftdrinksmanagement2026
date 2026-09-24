@@ -22,8 +22,7 @@ const SUPABASE_PUBLISHABLE_KEY =
 const AUTH_URL =
     `${SUPABASE_URL}/auth/v1`;
 
-const OWNER_SIGNUP_URL =
-    `${SUPABASE_URL}/functions/v1/owner-signup`;
+const OWNER_SIGNUP_URL = `${SUPABASE_URL}/functions/v1/clever-handler`;
 
 
 /* =========================================================
