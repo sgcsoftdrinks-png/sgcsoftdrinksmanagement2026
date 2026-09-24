@@ -967,7 +967,12 @@
                 gap: 6px;
             }
         }
-    </style>
+    
+        .sale-line-stock { display:block; margin-top:5px; font-size:11px; color:var(--gray); font-weight:600; }
+        .sale-item-row, .receipt-item-row { align-items:end; }
+        .sale-item-row .form-group, .receipt-item-row .form-group { min-width:0; }
+        .sale-line-price, .stock-line-cost { background:#f7f7f7; }
+</style>
 </head>
 
 <body>
@@ -1534,7 +1539,6 @@
                             <thead>
                                 <tr>
                                     <th data-i18n="product">Bidhaa</th>
-                                    <th data-i18n="variants">Variants</th>
                                     <th data-i18n="selling_price">Bei ya Mauzo</th>
                                     <th data-i18n="low_stock">Low Stock</th>
                                     <th data-i18n="status">Hali</th>
@@ -1543,7 +1547,7 @@
                             </thead>
                             <tbody id="productsTableBody">
                                 <tr>
-                                    <td colspan="6" class="loading-row" data-i18n="loading">Inapakia...</td>
+                                    <td colspan="5" class="loading-row" data-i18n="loading">Inapakia...</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -1602,60 +1606,6 @@
         </div>
     </div>
 
-    <!-- PRODUCT VARIANT MODAL -->
-    <div class="modal-backdrop" id="variantModal">
-        <div class="modal">
-            <div class="modal-head">
-                <h3 id="variantModalTitle">Ongeza Variant</h3>
-                <button class="modal-close" id="closeVariantModal">×</button>
-            </div>
-            <div class="modal-body">
-                <div class="modal-message" id="variantModalMessage"></div>
-                <div id="variantProductLabel" class="form-hint" style="margin-bottom:14px;font-weight:700;"></div>
-                <form id="variantForm">
-                    <input type="hidden" id="variantId">
-                    <input type="hidden" id="variantProductId">
-                    <div class="form-group">
-                        <label for="variantUnit">Unit</label>
-                        <select id="variantUnit" required>
-                            <option value="">Chagua Unit</option>
-                            <option value="crates">Crates</option>
-                            <option value="cotton">Carton</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="variantVolumeValue">Volume</label>
-                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-                            <input id="variantVolumeValue" type="number" min="0.001" step="0.001" placeholder="500" required>
-                            <select id="variantVolumeUnit" required>
-                                <option value="">Chagua kipimo</option>
-                                <option value="ml">ml</option>
-                                <option value="l">Litre</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="variantBuyingPrice">Bei ya Manunuzi</label>
-                        <input id="variantBuyingPrice" type="number" min="0" step="0.01" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="variantSellingPrice">Bei ya Mauzo</label>
-                        <input id="variantSellingPrice" type="number" min="0" step="0.01" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="variantLowStock">Low Stock Level</label>
-                        <input id="variantLowStock" type="number" min="0" step="0.01" value="0" required>
-                    </div>
-                    <div class="modal-actions">
-                        <button type="button" class="secondary-btn" id="cancelVariantBtn">Ghairi</button>
-                        <button type="submit" class="primary-btn" id="saveVariantBtn">Hifadhi Variant</button>
-                    </div>
-                </form>
-                <div id="variantList" style="margin-top:18px;"></div>
-            </div>
-        </div>
-    </div>
-
 <script>
 
     /* ==========================================
@@ -1693,7 +1643,7 @@
             new_sale: "Mauzo Mapya", new_sale_desc: "Rekodi mauzo ya bidhaa", sales_title: "Mauzo", sales_subtitle: "Rekodi mauzo, fuatilia malipo na tafuta receipts.", sales_total: "Mauzo ya Leo", sales_paid: "Zimelipwa", sales_credit: "Credit", sales_transactions: "Transactions", search_sales: "Tafuta receipt...", new_sale_title: "Mauzo Mapya", customer: "Mteja", walk_in_customer: "Mteja wa kawaida", payment_method: "Njia ya Malipo", paid_amount: "Kilicholipwa", sale_notes: "Notes", sale_items: "Bidhaa za Mauzo", grand_total: "Jumla", balance: "Balance", save_sale: "Hifadhi Sale", sales_history: "Historia ya Mauzo", receipt_no: "Receipt", salesman: "Salesman", view: "Tazama", print: "Print", sale_saved: "Sale imehifadhiwa vizuri.", sale_error: "Imeshindikana kuhifadhi sale.", customer_required_credit: "Credit/partial payment inahitaji customer.", no_sale_items: "Ongeza angalau bidhaa moja.", duplicate_sale_product: "Bidhaa hiyo tayari ipo kwenye mstari mwingine.", new_customer: "Mteja Mpya", new_customer_desc: "Ongeza mteja mpya",
             new_expense: "Expense Mpya", new_expense_desc: "Rekodi matumizi ya biashara", recent_activity: "Shughuli za Karibuni", no_activity: "Hakuna shughuli bado.",
             products_title: "Bidhaa", products_subtitle: "Simamia bidhaa, bei za mauzo na viwango vya stock.", search_products: "Tafuta bidhaa...",
-            add_product: "Ongeza Bidhaa", products_list: "Orodha ya Bidhaa", product: "Bidhaa", selling_price: "Bei ya Mauzo", variant: "Variant", variants: "Variants", add_variant: "Ongeza Variant", unit: "Unit", volume: "Volume", buying_price: "Bei ya Manunuzi", save_variant: "Hifadhi Variant", variant_saved: "Variant imehifadhiwa.", variant_updated: "Variant imesasishwa.", variant_error: "Tatizo la kuhifadhi Variant.", no_variants: "Hakuna variants.", select_unit: "Chagua Unit", select_volume_unit: "Chagua kipimo", volume_value: "Kiasi cha Volume",
+            add_product: "Ongeza Bidhaa", products_list: "Orodha ya Bidhaa", product: "Bidhaa", selling_price: "Bei ya Mauzo",
             low_stock: "Low Stock", status: "Hali", actions: "Vitendo", active: "Hai", inactive: "Haifanyi kazi", edit: "Hariri",
             activate: "Washa", deactivate: "Zima", loading: "Inapakia...", no_products: "Hakuna bidhaa zilizopatikana.",
             add_product_title: "Ongeza Bidhaa", edit_product_title: "Hariri Bidhaa", product_name: "Jina la Bidhaa",
@@ -1724,7 +1674,7 @@
             new_customer: "New Customer", new_customer_desc: "Add a new customer", new_expense: "New Expense", new_expense_desc: "Record business expenses",
             recent_activity: "Recent Activity", no_activity: "No activity yet.", products_title: "Products",
             products_subtitle: "Manage products, selling prices and stock levels.", search_products: "Search products...", add_product: "Add Product",
-            products_list: "Product List", product: "Product", selling_price: "Selling Price", variant: "Variant", variants: "Variants", add_variant: "Add Variant", unit: "Unit", volume: "Volume", buying_price: "Buying Price", save_variant: "Save Variant", variant_saved: "Variant saved.", variant_updated: "Variant updated.", variant_error: "Failed to save variant.", no_variants: "No variants.", select_unit: "Select Unit", select_volume_unit: "Select unit", volume_value: "Volume Value", low_stock: "Low Stock", status: "Status", actions: "Actions",
+            products_list: "Product List", product: "Product", selling_price: "Selling Price", low_stock: "Low Stock", status: "Status", actions: "Actions",
             active: "Active", inactive: "Inactive", edit: "Edit", activate: "Activate", deactivate: "Deactivate", loading: "Loading...",
             no_products: "No products found.", add_product_title: "Add Product", edit_product_title: "Edit Product", product_name: "Product Name",
             selling_price_label: "Selling Price", low_stock_label: "Low Stock Level", cancel: "Cancel", save: "Save",
@@ -2128,6 +2078,65 @@
             ).join("");
     }
 
+    async function loadReceiptRowVariants(row, productId, selectedVariantId = null) {
+        const unitSelect = row.querySelector(".stock-line-unit");
+        const volumeSelect = row.querySelector(".stock-line-volume");
+        const priceInput = row.querySelector(".stock-line-cost");
+
+        unitSelect.innerHTML = `<option value="">${currentLanguage === "sw" ? "Chagua Unit" : "Select Unit"}</option>`;
+        volumeSelect.innerHTML = `<option value="">${currentLanguage === "sw" ? "Chagua Volume" : "Select Volume"}</option>`;
+        priceInput.value = "";
+        row._variants = [];
+
+        if (!productId) return;
+
+        try {
+            const variants = await supabaseRPC("get_variants_for_received_stock", {
+                p_product_id: productId
+            });
+            row._variants = Array.isArray(variants) ? variants : [];
+
+            const units = [...new Map(row._variants.map(v => [v.unit, v])).values()];
+            unitSelect.innerHTML += units.map(v => {
+                const label = v.unit === "cotton" ? "Carton" : "Crates";
+                return `<option value="${escapeHtml(v.unit)}">${label}</option>`;
+            }).join("");
+
+            if (selectedVariantId) {
+                const selected = row._variants.find(v => v.variant_id === selectedVariantId);
+                if (selected) {
+                    unitSelect.value = selected.unit;
+                    populateReceiptVolumes(row);
+                    volumeSelect.value = String(selected.variant_id);
+                    updateReceiptVariant(row);
+                }
+            }
+        } catch (error) {
+            console.error("Received stock variants error:", error);
+            showStockMessage(error.message || t("load_error"), "error");
+        }
+    }
+
+    function populateReceiptVolumes(row) {
+        const unit = row.querySelector(".stock-line-unit").value;
+        const volumeSelect = row.querySelector(".stock-line-volume");
+        const variants = (row._variants || []).filter(v => v.unit === unit);
+
+        volumeSelect.innerHTML = `<option value="">${currentLanguage === "sw" ? "Chagua Volume" : "Select Volume"}</option>` +
+            variants.map(v => `<option value="${v.variant_id}">${Number(v.volume_value).toLocaleString()} ${escapeHtml(v.volume_unit)}</option>`).join("");
+
+        updateReceiptVariant(row);
+    }
+
+    function updateReceiptVariant(row) {
+        const variantId = row.querySelector(".stock-line-volume").value;
+        const variant = (row._variants || []).find(v => v.variant_id === variantId);
+        const priceInput = row.querySelector(".stock-line-cost");
+
+        priceInput.value = variant ? Number(variant.buying_price || 0) : "";
+        updateReceiptTotals();
+    }
+
     function addReceiptItemRow(item = {}) {
         if (!stockProducts.length) {
             showStockMessage(t("no_active_products"), "error");
@@ -2136,6 +2145,7 @@
 
         const row = document.createElement("div");
         row.className = "receipt-item-row";
+        row._variants = [];
 
         const productOptions = stockProducts.map(product => {
             const selected = product.id === item.product_id ? "selected" : "";
@@ -2152,10 +2162,16 @@
             </div>
 
             <div class="form-group">
-                <label>${t("packaging") || "Packaging"}</label>
-                <select class="stock-line-packaging">
-                    <option value="cotton" ${item.packaging === "cotton" ? "selected" : ""}>Cotton</option>
-                    <option value="crates" ${item.packaging === "crates" ? "selected" : ""}>Crates</option>
+                <label>Unit</label>
+                <select class="stock-line-unit">
+                    <option value="">Chagua Unit</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Volume</label>
+                <select class="stock-line-volume">
+                    <option value="">Chagua Volume</option>
                 </select>
             </div>
 
@@ -2166,7 +2182,7 @@
 
             <div class="form-group">
                 <label>${t("buying_price") || "Buying Price"}</label>
-                <input class="stock-line-cost" type="number" min="0" step="0.01" value="${item.unit_cost ?? ""}">
+                <input class="stock-line-cost" type="number" min="0" step="0.01" readonly value="${item.unit_cost ?? ""}">
             </div>
 
             <div>
@@ -2177,69 +2193,59 @@
 
         receiptItems.appendChild(row);
 
+        row.querySelector(".stock-line-product").addEventListener("change", async () => {
+            await loadReceiptRowVariants(row, row.querySelector(".stock-line-product").value);
+        });
+        row.querySelector(".stock-line-unit").addEventListener("change", () => populateReceiptVolumes(row));
+        row.querySelector(".stock-line-volume").addEventListener("change", () => updateReceiptVariant(row));
         row.querySelector(".stock-line-quantity").addEventListener("input", updateReceiptTotals);
-        row.querySelector(".stock-line-cost").addEventListener("input", updateReceiptTotals);
         row.querySelector(".remove-line-btn").addEventListener("click", () => {
             row.remove();
             updateReceiptTotals();
-
-            if (!receiptItems.children.length && stockProducts.length) {
-                addReceiptItemRow();
-            }
+            if (!receiptItems.children.length && stockProducts.length) addReceiptItemRow();
         });
 
+        if (item.product_id) loadReceiptRowVariants(row, item.product_id, item.variant_id || null);
         updateReceiptTotals();
     }
 
     function updateReceiptTotals() {
         let grandTotal = 0;
-
         receiptItems.querySelectorAll(".receipt-item-row").forEach(row => {
             const quantity = Number(row.querySelector(".stock-line-quantity").value || 0);
             const cost = Number(row.querySelector(".stock-line-cost").value || 0);
             const lineTotal = quantity * cost;
-
             grandTotal += lineTotal;
-
-            row.querySelector(".line-total-box").textContent =
-                `TZS ${lineTotal.toLocaleString()}`;
+            row.querySelector(".line-total-box").textContent = `TZS ${lineTotal.toLocaleString()}`;
         });
-
-        document.getElementById("receiptGrandTotal").textContent =
-            `TZS ${grandTotal.toLocaleString()}`;
+        document.getElementById("receiptGrandTotal").textContent = `TZS ${grandTotal.toLocaleString()}`;
     }
 
     function clearReceiptForm() {
         stockReceiptForm.reset();
         receiptItems.innerHTML = "";
         clearStockMessage();
-
-        if (stockProducts.length) {
-            addReceiptItemRow();
-        }
-
+        if (stockProducts.length) addReceiptItemRow();
         document.getElementById("receiptGrandTotal").textContent = "TZS 0";
     }
 
     function collectReceiptItems() {
         const items = [];
-
         receiptItems.querySelectorAll(".receipt-item-row").forEach(row => {
             const productId = row.querySelector(".stock-line-product").value;
-            const packaging = row.querySelector(".stock-line-packaging").value;
+            const variantId = row.querySelector(".stock-line-volume").value;
             const quantity = Number(row.querySelector(".stock-line-quantity").value);
             const unitCost = Number(row.querySelector(".stock-line-cost").value);
 
-            if (productId || quantity || unitCost) {
+            if (productId || variantId || quantity || unitCost) {
                 items.push({
                     product_id: productId,
-                    packaging,
+                    variant_id: variantId,
                     quantity,
                     unit_cost: unitCost
                 });
             }
         });
-
         return items;
     }
 
@@ -2259,9 +2265,8 @@
         }
 
         for (const item of items) {
-            if (!item.product_id || !Number.isFinite(item.quantity) || item.quantity <= 0 ||
-                !Number.isFinite(item.unit_cost) || item.unit_cost < 0) {
-                showStockMessage(t("load_error"), "error");
+            if (!item.product_id || !item.variant_id || !Number.isFinite(item.quantity) || item.quantity <= 0) {
+                showStockMessage(currentLanguage === "sw" ? "Chagua Product, Unit, Volume na Quantity sahihi." : "Select Product, Unit, Volume and a valid Quantity.", "error");
                 return;
             }
         }
@@ -2487,20 +2492,100 @@
     function showSalesPage(open=false){document.querySelectorAll(".page-view").forEach(p=>p.classList.remove("active"));document.querySelector(".content > .welcome").style.display="none";document.querySelector(".content > .cards").style.display="none";document.querySelector(".content > .grid-two").style.display="none";salesPage.classList.add("active");stockPage.classList.remove("active");productsPage.classList.remove("active");document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));salesNavBtn.classList.add("active");if(window.innerWidth<=800)sidebar.classList.remove("open");loadSalesData();if(open)openNewSaleForm()}
     async function loadSalesData(){try{const [pd,cr]=await Promise.all([supabaseRPC("get_products_for_owner"),fetch(`${SUPABASE_URL}/rest/v1/customers?select=id,name,phone&is_active=eq.true&order=name.asc`,{headers:{apikey:SUPABASE_PUBLISHABLE_KEY,Authorization:`Bearer ${accessToken}`}})]);if(!cr.ok)throw new Error("Customer request failed.");const cd=await cr.json();salesProducts=(Array.isArray(pd)?pd:[]).filter(p=>p.is_active===true);salesCustomers=Array.isArray(cd)?cd:[];renderSaleCustomers();await Promise.all([loadSalesList(),loadTodaySalesSummary()]);if(!saleItems.children.length&&salesProducts.length)addSaleItemRow()}catch(e){console.error(e);salesTableBody.innerHTML=`<tr><td colspan="9" class="empty-row">${escapeHtml(e.message||t("sale_error"))}</td></tr>`}}
     function renderSaleCustomers(){saleCustomer.innerHTML=`<option value="">${escapeHtml(t("walk_in_customer"))}</option>`+salesCustomers.map(c=>`<option value="${c.id}">${escapeHtml(c.name||"-")}${c.phone?` — ${escapeHtml(c.phone)}`:""}</option>`).join("")}
-    function addSaleItemRow(item={}){if(!salesProducts.length){showSalesMessage(currentLanguage==="sw"?"Hakuna bidhaa hai.":"No active products.","error");return}const row=document.createElement("div");row.className="sale-item-row";const opts=salesProducts.map(p=>`<option value="${p.id}" ${p.id===item.product_id?"selected":""}>${escapeHtml(p.name)}</option>`).join("");row.innerHTML=`<div class="form-group product-field"><label>${t("product")}</label><select class="sale-line-product"><option value="">${escapeHtml(t("product"))}</option>${opts}</select></div><div class="form-group"><label>${t("quantity")}</label><input class="sale-line-quantity" type="number" min="0.01" step="0.01" value="${item.quantity??""}"></div><div class="form-group"><label>${t("selling_price")}</label><input class="sale-line-price sale-price-readonly" type="number" readonly value="0"></div><div><div style="font-size:12px;font-weight:bold;margin-bottom:7px">${t("total")}</div><div class="sale-line-total">TZS 0</div></div><button type="button" class="remove-line-btn">×</button>`;saleItems.appendChild(row);row.querySelector(".sale-line-product").addEventListener("change",()=>updateSaleRow(row));row.querySelector(".sale-line-quantity").addEventListener("input",updateSaleTotals);row.querySelector(".remove-line-btn").addEventListener("click",()=>{row.remove();updateSaleTotals();if(!saleItems.children.length&&salesProducts.length)addSaleItemRow()});updateSaleRow(row)}
-    function updateSaleRow(row){const p=salesProducts.find(x=>x.id===row.querySelector(".sale-line-product").value);row.querySelector(".sale-line-price").value=Number(p?.selling_price||0);updateSaleTotals()}
+    async function loadSaleRowVariants(row, productId, selectedVariantId = null) {
+        const unitSelect = row.querySelector(".sale-line-unit");
+        const volumeSelect = row.querySelector(".sale-line-volume");
+        const priceInput = row.querySelector(".sale-line-price");
+        const stockDisplay = row.querySelector(".sale-line-stock");
+
+        unitSelect.innerHTML = `<option value="">${currentLanguage === "sw" ? "Chagua Unit" : "Select Unit"}</option>`;
+        volumeSelect.innerHTML = `<option value="">${currentLanguage === "sw" ? "Chagua Volume" : "Select Volume"}</option>`;
+        priceInput.value = "0";
+        stockDisplay.textContent = "";
+        row._variants = [];
+
+        if (!productId) return;
+
+        try {
+            const variants = await supabaseRPC("get_variants_for_sale", { p_product_id: productId });
+            row._variants = Array.isArray(variants) ? variants : [];
+            const units = [...new Map(row._variants.map(v => [v.unit, v])).values()];
+            unitSelect.innerHTML += units.map(v => {
+                const label = v.unit === "cotton" ? "Carton" : "Crates";
+                return `<option value="${escapeHtml(v.unit)}">${label}</option>`;
+            }).join("");
+
+            if (selectedVariantId) {
+                const selected = row._variants.find(v => v.variant_id === selectedVariantId);
+                if (selected) {
+                    unitSelect.value = selected.unit;
+                    populateSaleVolumes(row);
+                    volumeSelect.value = String(selected.variant_id);
+                    updateSaleVariant(row);
+                }
+            }
+        } catch (error) {
+            console.error("Sale variants error:", error);
+            showSalesMessage(error.message || t("sale_error"), "error");
+        }
+    }
+
+    function populateSaleVolumes(row) {
+        const unit = row.querySelector(".sale-line-unit").value;
+        const volumeSelect = row.querySelector(".sale-line-volume");
+        const variants = (row._variants || []).filter(v => v.unit === unit);
+        volumeSelect.innerHTML = `<option value="">${currentLanguage === "sw" ? "Chagua Volume" : "Select Volume"}</option>` +
+            variants.map(v => `<option value="${v.variant_id}">${Number(v.volume_value).toLocaleString()} ${escapeHtml(v.volume_unit)}</option>`).join("");
+        updateSaleVariant(row);
+    }
+
+    function updateSaleVariant(row) {
+        const variantId = row.querySelector(".sale-line-volume").value;
+        const variant = (row._variants || []).find(v => v.variant_id === variantId);
+        row.querySelector(".sale-line-price").value = variant ? Number(variant.selling_price || 0) : 0;
+        row.querySelector(".sale-line-stock").textContent = variant
+            ? `${currentLanguage === "sw" ? "Stock" : "Stock"}: ${Number(variant.current_stock || 0).toLocaleString()}`
+            : "";
+        updateSaleTotals();
+    }
+
+    function addSaleItemRow(item={}) {
+        if(!salesProducts.length){showSalesMessage(currentLanguage==="sw"?"Hakuna bidhaa hai.":"No active products.","error");return}
+        const row=document.createElement("div");row.className="sale-item-row";row._variants=[];
+        const opts=salesProducts.map(p=>`<option value="${p.id}" ${p.id===item.product_id?"selected":""}>${escapeHtml(p.name)}</option>`).join("");
+        row.innerHTML=`
+            <div class="form-group product-field"><label>${t("product")}</label><select class="sale-line-product"><option value="">${escapeHtml(t("product"))}</option>${opts}</select></div>
+            <div class="form-group"><label>Unit</label><select class="sale-line-unit"><option value="">Chagua Unit</option></select></div>
+            <div class="form-group"><label>Volume</label><select class="sale-line-volume"><option value="">Chagua Volume</option></select><small class="sale-line-stock"></small></div>
+            <div class="form-group"><label>${t("quantity")}</label><input class="sale-line-quantity" type="number" min="0.01" step="0.01" value="${item.quantity??""}"></div>
+            <div class="form-group"><label>${t("selling_price")}</label><input class="sale-line-price sale-price-readonly" type="number" readonly value="0"></div>
+            <div><div style="font-size:12px;font-weight:bold;margin-bottom:7px">${t("total")}</div><div class="sale-line-total">TZS 0</div></div>
+            <button type="button" class="remove-line-btn">×</button>`;
+        saleItems.appendChild(row);
+        row.querySelector(".sale-line-product").addEventListener("change",()=>loadSaleRowVariants(row,row.querySelector(".sale-line-product").value));
+        row.querySelector(".sale-line-unit").addEventListener("change",()=>populateSaleVolumes(row));
+        row.querySelector(".sale-line-volume").addEventListener("change",()=>updateSaleVariant(row));
+        row.querySelector(".sale-line-quantity").addEventListener("input",updateSaleTotals);
+        row.querySelector(".remove-line-btn").addEventListener("click",()=>{row.remove();updateSaleTotals();if(!saleItems.children.length&&salesProducts.length)addSaleItemRow()});
+        if(item.product_id)loadSaleRowVariants(row,item.product_id,item.variant_id||null);else updateSaleTotals();
+    }
+
     function updateSaleTotals(){let total=0;saleItems.querySelectorAll(".sale-item-row").forEach(r=>{const q=Number(r.querySelector(".sale-line-quantity").value||0),p=Number(r.querySelector(".sale-line-price").value||0),line=q*p;total+=line;r.querySelector(".sale-line-total").textContent=`TZS ${line.toLocaleString()}`});const paid=Math.max(0,Number(salePaidAmount.value||0));document.getElementById("saleGrandTotal").textContent=`TZS ${total.toLocaleString()}`;document.getElementById("salePaidDisplay").textContent=`TZS ${paid.toLocaleString()}`;document.getElementById("saleBalance").textContent=`TZS ${Math.max(0,total-paid).toLocaleString()}`}
-    function collectSaleItems(){const items=[],seen=new Set();for(const r of saleItems.querySelectorAll(".sale-item-row")){const id=r.querySelector(".sale-line-product").value,q=Number(r.querySelector(".sale-line-quantity").value);if(!id&&!q)continue;if(!id||!Number.isFinite(q)||q<=0)throw new Error(t("no_sale_items"));if(seen.has(id))throw new Error(t("duplicate_sale_product"));seen.add(id);items.push({product_id:id,quantity:q})}if(!items.length)throw new Error(t("no_sale_items"));return items}
-    function openNewSaleForm(){salesFormCard.style.display="block";clearSaleForm();setTimeout(()=>saleItems.querySelector(".sale-line-product")?.focus(),50)}
-    function clearSaleForm(){clearSalesMessage();saleCustomer.value="";salePaymentMethod.value="cash";salePaidAmount.value="0";saleNotes.value="";saleItems.innerHTML="";if(salesProducts.length)addSaleItemRow();updateSaleTotals()}
-    salePaidAmount.addEventListener("input",updateSaleTotals);salePaymentMethod.addEventListener("change",()=>{if(salePaymentMethod.value==="credit")salePaidAmount.value="0";updateSaleTotals()});document.getElementById("addSaleLineBtn").addEventListener("click",()=>addSaleItemRow());document.getElementById("newSaleBtn").addEventListener("click",openNewSaleForm);document.getElementById("closeSaleFormBtn").addEventListener("click",()=>salesFormCard.style.display="none");document.getElementById("clearSaleBtn").addEventListener("click",clearSaleForm);document.getElementById("refreshSalesBtn").addEventListener("click",loadSalesData);salesSearch.addEventListener("input",loadSalesList);document.getElementById("quickSaleBtn").addEventListener("click",()=>showSalesPage(true));
-    document.getElementById("saveSaleBtn").addEventListener("click",async()=>{clearSalesMessage();const b=document.getElementById("saveSaleBtn");try{const items=collectSaleItems();const total=items.reduce((sum,i)=>sum+i.quantity*Number(salesProducts.find(p=>p.id===i.product_id)?.selling_price||0),0);let paid=Number(salePaidAmount.value||0);if(!Number.isFinite(paid)||paid<0||paid>total)throw new Error(currentLanguage==="sw"?"Kiasi kilicholipwa si sahihi.":"Paid amount is invalid.");if(salePaymentMethod.value==="credit")paid=0;if((paid<total||salePaymentMethod.value==="credit")&&!saleCustomer.value)throw new Error(t("customer_required_credit"));b.disabled=true;const result=await supabaseRPC("create_sale",{p_customer_id:saleCustomer.value||null,p_paid_amount:paid,p_payment_method:salePaymentMethod.value,p_notes:saleNotes.value.trim()||null,p_items:items});const sale=Array.isArray(result)?result[0]:result;salesFormCard.style.display="none";await Promise.all([loadSalesList(),loadTodaySalesSummary(),loadDashboardSummary()]);alert(`${t("sale_saved")} ${sale?.receipt_no||""}`)}catch(e){console.error(e);showSalesMessage(e.message||t("sale_error"),"error")}finally{b.disabled=false}});
-    async function loadTodaySalesSummary(){try{const d=await supabaseRPC("get_today_sales_summary"),r=Array.isArray(d)?d[0]:d;document.getElementById("salesTodayTotal").textContent=`TZS ${Number(r?.total_sales||0).toLocaleString()}`;document.getElementById("salesTodayPaid").textContent=`TZS ${Number(r?.total_paid||0).toLocaleString()}`;document.getElementById("salesTodayCredit").textContent=`TZS ${Number(r?.total_credit||0).toLocaleString()}`;document.getElementById("salesTodayTransactions").textContent=Number(r?.transaction_count||0).toLocaleString()}catch(e){console.error(e)}}
-    async function loadSalesList(){salesTableBody.innerHTML=`<tr><td colspan="9" class="loading-row">${t("loading")}</td></tr>`;try{const d=await supabaseRPC("get_sales_for_current_user",{p_search:salesSearch.value.trim()||null,p_limit:50,p_offset:0});salesRows=Array.isArray(d)?d:[];if(!salesRows.length){salesTableBody.innerHTML=`<tr><td colspan="9" class="empty-row">${currentLanguage==="sw"?"Hakuna mauzo yaliyopatikana.":"No sales found."}</td></tr>`;return}salesTableBody.innerHTML=salesRows.map(r=>`<tr><td><strong>${escapeHtml(r.receipt_no||"-")}</strong></td><td>${escapeHtml(r.customer_name||(currentLanguage==="sw"?"Mteja wa kawaida":"Walk-in Customer"))}</td><td>${escapeHtml(r.salesman_name||"-")}</td><td class="price">TZS ${Number(r.total_amount||0).toLocaleString()}</td><td>TZS ${Number(r.paid_amount||0).toLocaleString()}</td><td>TZS ${Number(r.balance||0).toLocaleString()}</td><td>${escapeHtml(r.payment_method||"-")}</td><td>${escapeHtml(r.created_at?new Date(r.created_at).toLocaleString():"-")}</td><td><button class="small-btn edit" data-sale-id="${r.id}">👁️ ${t("view")}</button></td></tr>`).join("")}catch(e){console.error(e);salesTableBody.innerHTML=`<tr><td colspan="9" class="empty-row">${escapeHtml(e.message||t("sale_error"))}</td></tr>`}}
+    function collectSaleItems(){const items=[];for(const r of saleItems.querySelectorAll(".sale-item-row")){const productId=r.querySelector(".sale-line-product").value,variantId=r.querySelector(".sale-line-volume").value,q=Number(r.querySelector(".sale-line-quantity").value);if(productId||variantId||q)items.push({product_id:productId,variant_id:variantId,quantity:q})}return items}
+    function openNewSaleForm(){salesFormCard.style.display="block";clearSalesMessage();if(!saleItems.children.length&&salesProducts.length)addSaleItemRow()}
+    function clearSaleForm(){saleItems.innerHTML="";saleCustomer.value="";salePaymentMethod.value="cash";salePaidAmount.value="0";saleNotes.value="";clearSalesMessage();if(salesProducts.length)addSaleItemRow();updateSaleTotals()}
+    document.getElementById("newSaleBtn")?.addEventListener("click",openNewSaleForm);
+    document.getElementById("clearSaleBtn")?.addEventListener("click",clearSaleForm);
+    salePaidAmount.addEventListener("input",updateSaleTotals);
+    salesSearch.addEventListener("input",()=>{clearTimeout(window.__salesSearchTimer);window.__salesSearchTimer=setTimeout(loadSalesList,300)});
+    document.getElementById("addSaleLineBtn")?.addEventListener("click",()=>addSaleItemRow());
+    document.getElementById("saleForm")?.addEventListener("submit",async e=>{e.preventDefault();clearSalesMessage();const items=collectSaleItems();const paid=Math.max(0,Number(salePaidAmount.value||0));if(!items.length||items.some(i=>!i.product_id||!i.variant_id||!Number.isFinite(i.quantity)||i.quantity<=0)){showSalesMessage(currentLanguage==="sw"?"Chagua Product, Unit, Volume na Quantity sahihi.":"Select Product, Unit, Volume and a valid Quantity.","error");return}const btn=document.getElementById("saveSaleBtn");btn.disabled=true;try{await supabaseRPC("create_sale",{p_customer_id:saleCustomer.value||null,p_paid_amount:paid,p_payment_method:salePaymentMethod.value,p_notes:saleNotes.value.trim()||null,p_items:items});showSalesMessage(currentLanguage==="sw"?"Sale imehifadhiwa.":"Sale saved successfully.","success");clearSaleForm();await loadSalesList();await loadTodaySalesSummary();await loadDashboardSummary()}catch(err){console.error(err);showSalesMessage(err.message||t("sale_error"),"error")}finally{btn.disabled=false}});
+    async function loadTodaySalesSummary(){try{const d=await supabaseRPC("get_today_sales_summary");const x=Array.isArray(d)?d[0]:d;document.getElementById("todaySalesTotal").textContent=`TZS ${Number(x?.total_sales||0).toLocaleString()}`;document.getElementById("todaySalesPaid").textContent=`TZS ${Number(x?.total_paid||0).toLocaleString()}`;document.getElementById("todaySalesCredit").textContent=`TZS ${Number(x?.total_credit||0).toLocaleString()}`;document.getElementById("todaySalesTransactions").textContent=Number(x?.transaction_count||0).toLocaleString()}catch(e){console.error(e)}}
+    async function loadSalesList(){salesTableBody.innerHTML=`<tr><td colspan="9" class="loading-row">${t("loading")}</td></tr>`;try{const d=await supabaseRPC("get_sales_for_current_user",{p_search:salesSearch.value.trim()||null,p_limit:50,p_offset:0});salesRows=Array.isArray(d)?d:[];if(!salesRows.length){salesTableBody.innerHTML=`<tr><td colspan="9" class="empty-row">${currentLanguage==="sw"?"Hakuna mauzo yaliyopatikana.":"No sales found."}</td></tr>`;return}salesTableBody.innerHTML=salesRows.map(r=>`<tr><td><strong>${escapeHtml(r.receipt_no||"-")}</strong></td><td>${escapeHtml(r.customer_name||(currentLanguage==="sw"?"Mteja wa kawaida":"Walk-in Customer"))}</td><td>${escapeHtml(r.salesman_name||"-")}</td><td class="price">TZS ${Number(r.total_amount||0).toLocaleString()}</td><td>TZS ${Number(r.paid_amount||0).toLocaleString()}</td><td>TZS ${Number(r.balance||0).toLocaleString()}</td><td>${escapeHtml(r.payment_method||"-")}</td><td>${escapeHtml(r.created_at?new Date(r.created_at).toLocaleString():"-")}</td><td><button class="small-btn edit" data-sale-id="${r.sale_id}">👁️ ${t("view")}</button></td></tr>`).join("")}catch(e){console.error(e);salesTableBody.innerHTML=`<tr><td colspan="9" class="empty-row">${escapeHtml(e.message||t("sale_error"))}</td></tr>`}}
     salesTableBody.addEventListener("click",e=>{const b=e.target.closest("button[data-sale-id]");if(b)openSaleReceipt(b.dataset.saleId)});
-    async function openSaleReceipt(id){try{const result=await supabaseRPC("get_sale_details",{p_sale_id:id});const d=Array.isArray(result)?result[0]:result;if(!d)throw new Error(t("sale_error"));renderSaleReceipt(d);document.getElementById("saleReceiptModal").classList.add("show")}catch(e){alert(e.message||t("sale_error"))}}
-    function renderSaleReceipt(d){const items=Array.isArray(d.items)?d.items:(Array.isArray(d.sale_items)?d.sale_items:[]),customer=d.customer_name||(currentLanguage==="sw"?"Mteja wa kawaida":"Walk-in Customer");document.getElementById("saleReceiptBody").innerHTML=`<div class="receipt-paper"><div class="receipt-brand"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgRsGllLOBF63Unp0kzICif6C1tapkNBLRntsN7FJJPLlytEa9m1uBi_CdMVtnA7HmE1niKAeRc7FaKka9HamTfaSy4Mp5V8jnfl0DJt12zb4S4WhtI3PSJH9mHkxhu65YXSVA7sD5b8sOfw8jakPYp3H8Um8qvyjlDzxWgNcdsH2qVTmnMbjsZF4TN/s1280/244759.png" alt="SGC"><h2>SGC SOFT DRINKS</h2><p>SGC SOFT DRINKS MANAGEMENT</p></div><div class="receipt-meta"><div><span>${t("receipt_no")}</span><strong>${escapeHtml(d.receipt_no||"-")}</strong></div><div><span>${t("date")}</span><strong>${escapeHtml(d.created_at?new Date(d.created_at).toLocaleString():"-")}</strong></div><div><span>${t("customer")}</span><strong>${escapeHtml(customer)}</strong></div><div><span>${t("salesman")}</span><strong>${escapeHtml(d.salesman_name||"-")}</strong></div></div><table><thead><tr><th>${t("product")}</th><th>Qty</th><th>${t("selling_price")}</th><th>${t("total")}</th></tr></thead><tbody>${items.map(i=>`<tr><td>${escapeHtml(i.product_name||"-")}</td><td>${Number(i.quantity||0).toLocaleString()}</td><td>TZS ${Number(i.selling_price||0).toLocaleString()}</td><td>TZS ${Number(i.line_total||0).toLocaleString()}</td></tr>`).join("")}</tbody></table><div class="receipt-grand"><div><span>${t("grand_total")}</span><strong>TZS ${Number(d.total_amount||0).toLocaleString()}</strong></div><div><span>${t("paid_amount")}</span><strong>TZS ${Number(d.paid_amount||0).toLocaleString()}</strong></div><div class="grand"><span>${t("balance")}</span><strong>TZS ${Number(d.balance||0).toLocaleString()}</strong></div></div><div class="receipt-footer">Asante kwa kufanya biashara na SGC SOFT DRINKS.</div></div>`}
-    document.body.insertAdjacentHTML("beforeend",`<div class="modal-backdrop sale-receipt-modal" id="saleReceiptModal"><div class="modal"><div class="modal-head"><h3>${t("receipt_no")}</h3><button class="modal-close" id="closeSaleReceipt">×</button></div><div id="saleReceiptBody"></div><div class="modal-actions" style="padding:0 22px 20px"><button class="secondary-btn" id="closeSaleReceipt2">${t("cancel")}</button><button class="primary-btn" id="printSaleReceipt">🖨️ ${t("print")}</button></div></div></div>`);
+    async function openSaleReceipt(id){try{const result=await supabaseRPC("get_sale_details",{p_sale_id:id});const rows=Array.isArray(result)?result:[];if(!rows.length)throw new Error(t("sale_error"));renderSaleReceipt(rows);document.getElementById("saleReceiptModal").classList.add("show")}catch(e){alert(e.message||t("sale_error"))}}
+    function renderSaleReceipt(rows){const d=rows[0],customer=d.customer_name||(currentLanguage==="sw"?"Mteja wa kawaida":"Walk-in Customer");document.getElementById("saleReceiptBody").innerHTML=`<div class="receipt-paper"><div class="receipt-brand"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgRsGllLOBF63Unp0kzICif6C1tapkNBLRntsN7FJJPLlytEa9m1uBi_CdMVtnA7HmE1niKAeRc7FaKka9HamTfaSy4Mp5V8jnfl0DJt12zb4S4WhtI3PSJH9mHkxhu65YXSVA7sD5b8sOfw8jakPYp3H8Um8qvyjlDzxWgNcdsH2qVTmnMbjsZF4TN/s1280/244759.png" alt="SGC"><h2>SGC SOFT DRINKS</h2><p>SGC SOFT DRINKS MANAGEMENT</p></div><div class="receipt-meta"><div><span>${t("receipt_no")}</span><strong>${escapeHtml(d.receipt_no||"-")}</strong></div><div><span>${t("date")}</span><strong>${escapeHtml(d.sale_created_at?new Date(d.sale_created_at).toLocaleString():"-")}</strong></div><div><span>${t("customer")}</span><strong>${escapeHtml(customer)}</strong></div><div><span>${t("salesman")}</span><strong>${escapeHtml(d.salesman_name||"-")}</strong></div></div><table><thead><tr><th>${t("product")}</th><th>Unit</th><th>Volume</th><th>Qty</th><th>${t("selling_price")}</th><th>${t("total")}</th></tr></thead><tbody>${rows.map(i=>`<tr><td>${escapeHtml(i.product_name||"-")}</td><td>${escapeHtml(i.unit==="cotton"?"Carton":i.unit||"-")}</td><td>${Number(i.volume_value||0).toLocaleString()} ${escapeHtml(i.volume_unit||"")}</td><td>${Number(i.quantity||0).toLocaleString()}</td><td>TZS ${Number(i.selling_price||0).toLocaleString()}</td><td>TZS ${Number(i.line_total||0).toLocaleString()}</td></tr>`).join("")}</tbody></table><div class="receipt-grand"><div><span>${t("grand_total")}</span><strong>TZS ${Number(d.total_amount||0).toLocaleString()}</strong></div><div><span>${t("paid_amount")}</span><strong>TZS ${Number(d.paid_amount||0).toLocaleString()}</strong></div><div class="grand"><span>${t("balance")}</span><strong>TZS ${Number(d.balance||0).toLocaleString()}</strong></div></div><div class="receipt-footer">Asante kwa kufanya biashara na SGC SOFT DRINKS.</div></div>`}
+
     document.getElementById("closeSaleReceipt").addEventListener("click",()=>document.getElementById("saleReceiptModal").classList.remove("show"));document.getElementById("closeSaleReceipt2").addEventListener("click",()=>document.getElementById("saleReceiptModal").classList.remove("show"));document.getElementById("printSaleReceipt").addEventListener("click",()=>window.print());salesNavBtn.addEventListener("click",()=>showSalesPage(false));
 
 
@@ -2525,23 +2610,6 @@
 
     let products = [];
     let editingProduct = null;
-    let selectedVariantProduct = null;
-    let editingVariant = null;
-    let currentVariants = [];
-
-    const variantModal = document.getElementById("variantModal");
-    const variantForm = document.getElementById("variantForm");
-    const variantId = document.getElementById("variantId");
-    const variantProductId = document.getElementById("variantProductId");
-    const variantProductLabel = document.getElementById("variantProductLabel");
-    const variantUnit = document.getElementById("variantUnit");
-    const variantVolumeValue = document.getElementById("variantVolumeValue");
-    const variantVolumeUnit = document.getElementById("variantVolumeUnit");
-    const variantBuyingPrice = document.getElementById("variantBuyingPrice");
-    const variantSellingPrice = document.getElementById("variantSellingPrice");
-    const variantLowStock = document.getElementById("variantLowStock");
-    const variantModalMessage = document.getElementById("variantModalMessage");
-    const variantList = document.getElementById("variantList");
 
     function t(key) {
         return translations[currentLanguage]?.[key] || translations.en[key] || key;
@@ -2613,7 +2681,7 @@
             console.error("Products loading error:", error);
             productsTableBody.innerHTML = `
                 <tr>
-                    <td colspan="6" class="empty-row">${t("product_error")}</td>
+                    <td colspan="5" class="empty-row">${t("product_error")}</td>
                 </tr>
             `;
         }
@@ -2621,26 +2689,56 @@
 
     function renderProducts() {
         const query = (productSearch.value || "").trim().toLowerCase();
-        const filtered = products.filter(product => String(product.name || "").toLowerCase().includes(query));
+
+        const filtered = products.filter(product =>
+            String(product.name || "").toLowerCase().includes(query)
+        );
+
         productCount.textContent = `${filtered.length}/${products.length}`;
+
         if (!filtered.length) {
-            productsTableBody.innerHTML = `<tr><td colspan="6" class="empty-row">${t("no_products")}</td></tr>`;
+            productsTableBody.innerHTML = `
+                <tr>
+                    <td colspan="5" class="empty-row">${t("no_products")}</td>
+                </tr>
+            `;
             return;
         }
+
         productsTableBody.innerHTML = filtered.map(product => {
             const active = product.is_active === true;
             const price = Number(product.selling_price || 0).toLocaleString();
-            return `<tr>
-                <td><span class="product-name">${escapeHtml(product.name)}</span></td>
-                <td><button class="small-btn edit" data-action="variants" data-id="${product.id}">⚙️ ${t("variants")}</button></td>
-                <td><span class="price">TZS ${price}</span></td>
-                <td>${Number(product.low_stock_level || 0).toLocaleString()}</td>
-                <td><span class="status-badge ${active ? "status-active" : "status-inactive"}">${active ? "● " + t("active") : "● " + t("inactive")}</span></td>
-                <td><div class="table-actions">
-                    <button class="small-btn edit" data-action="edit" data-id="${product.id}">✏️ ${t("edit")}</button>
-                    <button class="small-btn ${active ? "deactivate" : "activate"}" data-action="toggle" data-id="${product.id}">${active ? "⏸️ " + t("deactivate") : "▶️ " + t("activate")}</button>
-                </div></td>
-            </tr>`;
+
+            return `
+                <tr>
+                    <td>
+                        <span class="product-name">${escapeHtml(product.name)}</span>
+                    </td>
+                    <td>
+                        <span class="price">TZS ${price}</span>
+                    </td>
+                    <td>${Number(product.low_stock_level || 0).toLocaleString()}</td>
+                    <td>
+                        <span class="status-badge ${active ? "status-active" : "status-inactive"}">
+                            ${active ? "● " + t("active") : "● " + t("inactive")}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="table-actions">
+                            <button class="small-btn edit" data-action="edit" data-id="${product.id}">
+                                ✏️ ${t("edit")}
+                            </button>
+                            <button
+                                class="small-btn ${active ? "deactivate" : "activate"}"
+                                data-action="toggle"
+                                data-id="${product.id}"
+                            >
+                                ${active ? "⏸️ " + t("deactivate") : "▶️ " + t("activate")}
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
         }).join("");
     }
 
@@ -2742,42 +2840,6 @@
             }
         }
     });
-
-    function unitLabel(unit) { return unit === "cotton" ? "Carton" : "Crates"; }
-    function volumeLabel(v) { return `${Number(v.volume_value).toLocaleString()} ${v.volume_unit === "l" ? "Litre" : "ml"}`; }
-
-    async function loadVariants(productIdValue) {
-        currentVariants = await supabaseRPC("get_product_variants", { p_product_id: productIdValue });
-        currentVariants = Array.isArray(currentVariants) ? currentVariants : [];
-        if (!currentVariants.length) { variantList.innerHTML = `<div class="empty-row" style="padding:12px 0;">${t("no_variants")}</div>`; return; }
-        variantList.innerHTML = currentVariants.map(v => `<div style="border:1px solid var(--border);border-radius:10px;padding:12px;margin-top:8px;display:flex;justify-content:space-between;gap:10px;align-items:center;">
-            <div><strong>${unitLabel(v.unit)} • ${volumeLabel(v)}</strong><div class="form-hint">Buy: TZS ${Number(v.buying_price).toLocaleString()} · Sell: TZS ${Number(v.selling_price).toLocaleString()} · Low: ${Number(v.low_stock_level).toLocaleString()}</div></div>
-            <div class="table-actions"><button type="button" class="small-btn edit" data-variant-action="edit" data-variant-id="${v.id}">✏️</button><button type="button" class="small-btn ${v.is_active ? "deactivate" : "activate"}" data-variant-action="toggle" data-variant-id="${v.id}" data-active="${v.is_active}">${v.is_active ? "⏸️" : "▶️"}</button></div>
-        </div>`).join("");
-    }
-
-    function openVariantModal(product, variant=null) {
-        selectedVariantProduct = product; editingVariant = variant;
-        variantProductId.value = product.id; variantProductLabel.textContent = `${product.name} — ${t("variants")}`;
-        variantModalMessage.className = "modal-message"; variantModalMessage.textContent = "";
-        if (variant) {
-            variantId.value=variant.id; variantUnit.value=variant.unit; variantVolumeValue.value=variant.volume_value; variantVolumeUnit.value=variant.volume_unit; variantBuyingPrice.value=variant.buying_price; variantSellingPrice.value=variant.selling_price; variantLowStock.value=variant.low_stock_level;
-        } else { variantForm.reset(); variantId.value=""; variantProductId.value=product.id; variantLowStock.value=0; }
-        variantModal.classList.add("show"); loadVariants(product.id).catch(e=>showVariantMessage(e.message||t("variant_error"),"error"));
-    }
-    function closeVariantModal(){ variantModal.classList.remove("show"); editingVariant=null; selectedVariantProduct=null; variantForm.reset(); variantList.innerHTML=""; }
-    function showVariantMessage(message,type){variantModalMessage.textContent=message;variantModalMessage.className=`modal-message show ${type}`;}
-
-    productsTableBody.addEventListener("click", async event => {
-        const button=event.target.closest("button[data-action]"); if(!button) return;
-        const product=products.find(x=>x.id===button.dataset.id); if(!product) return;
-        if(button.dataset.action==="variants"){openVariantModal(product);return;}
-    });
-    document.getElementById("closeVariantModal").addEventListener("click",closeVariantModal);
-    document.getElementById("cancelVariantBtn").addEventListener("click",closeVariantModal);
-    variantModal.addEventListener("click",e=>{if(e.target===variantModal)closeVariantModal();});
-    variantList.addEventListener("click",async e=>{const b=e.target.closest("button[data-variant-action]");if(!b)return;const v=currentVariants.find(x=>x.id===b.dataset.variantId);if(!v)return;if(b.dataset.variantAction==="edit"){openVariantModal(selectedVariantProduct,v);return;}try{await supabaseRPC("set_product_variant_active",{p_variant_id:v.id,p_is_active:b.dataset.active!=="true"});await loadVariants(selectedVariantProduct.id);}catch(err){showVariantMessage(err.message||t("variant_error"),"error");}});
-    variantForm.addEventListener("submit",async e=>{e.preventDefault();const b=document.getElementById("saveVariantBtn");try{const payload={p_product_id:variantProductId.value,p_unit:variantUnit.value,p_volume_value:Number(variantVolumeValue.value),p_volume_unit:variantVolumeUnit.value,p_buying_price:Number(variantBuyingPrice.value),p_selling_price:Number(variantSellingPrice.value),p_low_stock_level:Number(variantLowStock.value)};b.disabled=true;if(editingVariant){await supabaseRPC("update_product_variant",{p_variant_id:editingVariant.id,...payload});showVariantMessage(t("variant_updated"),"success");}else{await supabaseRPC("create_product_variant",payload);showVariantMessage(t("variant_saved"),"success");}await loadVariants(variantProductId.value);await loadProducts();}catch(err){console.error(err);showVariantMessage(err.message||t("variant_error"),"error");}finally{b.disabled=false;}});
 
     productForm.addEventListener("submit", async event => {
         event.preventDefault();
