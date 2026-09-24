@@ -2539,16 +2539,115 @@
     function showSalesMessage(m,type){saleFormMessage.textContent=m;saleFormMessage.className=`sale-message show ${type}`}
     function clearSalesMessage(){saleFormMessage.textContent="";saleFormMessage.className="sale-message"}
     function showSalesPage(open=false){document.querySelectorAll(".page-view").forEach(p=>p.classList.remove("active"));document.querySelector(".content > .welcome").style.display="none";document.querySelector(".content > .cards").style.display="none";document.querySelector(".content > .grid-two").style.display="none";salesPage.classList.add("active");stockPage.classList.remove("active");productsPage.classList.remove("active");document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));salesNavBtn.classList.add("active");if(window.innerWidth<=800)sidebar.classList.remove("open");loadSalesData();if(open)openNewSaleForm()}
-    async function loadSalesData(){try{const [pd,cr]=await Promise.all([supabaseRPC("get_products_for_owner"),fetch(`${SUPABASE_URL}/rest/v1/customers?select=id,name,phone&is_active=eq.true&order=name.asc`,{headers:{apikey:SUPABASE_PUBLISHABLE_KEY,Authorization:`Bearer ${accessToken}`}})]);if(!cr.ok)throw new Error("Customer request failed.");const cd=await cr.json();salesProducts=(Array.isArray(pd)?pd:[]).filter(p=>p.is_active===true);salesCustomers=Array.isArray(cd)?cd:[];renderSaleCustomers();await Promise.all([loadSalesList(),loadTodaySalesSummary()]);if(!saleItems.children.length&&salesProducts.length)addSaleItemRow()}catch(e){console.error(e);salesTableBody.innerHTML=`<tr><td colspan="9" class="empty-row">${escapeHtml(e.message||t("sale_error"))}</td></tr>`}}
+
+    async function loadSalesData(){
+        try{
+            const [vd,cr]=await Promise.all([
+                supabaseRPC("get_active_product_variants"),
+                fetch(`${SUPABASE_URL}/rest/v1/customers?select=id,name,phone&is_active=eq.true&order=name.asc`,{headers:{apikey:SUPABASE_PUBLISHABLE_KEY,Authorization:`Bearer ${accessToken}`}})
+            ]);
+            if(!cr.ok) throw new Error("Customer request failed.");
+            const variants=Array.isArray(vd)?vd:[];
+            const cd=await cr.json();
+            const productMap=new Map();
+            variants.forEach(v=>{
+                if(!productMap.has(v.product_id)) productMap.set(v.product_id,{id:v.product_id,name:v.product_name,is_active:true});
+            });
+            salesProducts=[...productMap.values()];
+            salesCustomers=Array.isArray(cd)?cd:[];
+            renderSaleCustomers();
+            await Promise.all([loadSalesList(),loadTodaySalesSummary()]);
+            if(!saleItems.children.length) addSaleItemRow();
+        }catch(e){
+            console.error(e);
+            salesTableBody.innerHTML=`<tr><td colspan="9" class="empty-row">${escapeHtml(e.message||t("sale_error"))}</td></tr>`;
+        }
+    }
+
     function renderSaleCustomers(){saleCustomer.innerHTML=`<option value="">${escapeHtml(t("walk_in_customer"))}</option>`+salesCustomers.map(c=>`<option value="${c.id}">${escapeHtml(c.name||"-")}${c.phone?` — ${escapeHtml(c.phone)}`:""}</option>`).join("")}
-    function addSaleItemRow(item={}){if(!salesProducts.length){showSalesMessage(currentLanguage==="sw"?"Hakuna bidhaa hai.":"No active products.","error");return}const row=document.createElement("div");row.className="sale-item-row";const opts=salesProducts.map(p=>`<option value="${p.id}" ${p.id===item.product_id?"selected":""}>${escapeHtml(p.name)}</option>`).join("");row.innerHTML=`<div class="form-group product-field"><label>${t("product")}</label><select class="sale-line-product"><option value="">${escapeHtml(t("product"))}</option>${opts}</select></div><div class="form-group"><label>${t("quantity")}</label><input class="sale-line-quantity" type="number" min="0.01" step="0.01" value="${item.quantity??""}"></div><div class="form-group"><label>${t("selling_price")}</label><input class="sale-line-price sale-price-readonly" type="number" readonly value="0"></div><div><div style="font-size:12px;font-weight:bold;margin-bottom:7px">${t("total")}</div><div class="sale-line-total">TZS 0</div></div><button type="button" class="remove-line-btn">×</button>`;saleItems.appendChild(row);row.querySelector(".sale-line-product").addEventListener("change",()=>updateSaleRow(row));row.querySelector(".sale-line-quantity").addEventListener("input",updateSaleTotals);row.querySelector(".remove-line-btn").addEventListener("click",()=>{row.remove();updateSaleTotals();if(!saleItems.children.length&&salesProducts.length)addSaleItemRow()});updateSaleRow(row)}
-    function updateSaleRow(row){const p=salesProducts.find(x=>x.id===row.querySelector(".sale-line-product").value);row.querySelector(".sale-line-price").value=Number(p?.selling_price||0);updateSaleTotals()}
+
+    async function loadSaleRowVariants(row, productId, selectedVariantId=null){
+        const unitSelect=row.querySelector(".sale-line-unit");
+        const volumeSelect=row.querySelector(".sale-line-volume");
+        const priceInput=row.querySelector(".sale-line-price");
+        const stockDisplay=row.querySelector(".sale-line-stock");
+        unitSelect.innerHTML=`<option value="">Chagua Unit</option>`;
+        volumeSelect.innerHTML=`<option value="">Chagua Volume</option>`;
+        priceInput.value="0"; stockDisplay.textContent=""; row._variants=[];
+        if(!productId){updateSaleTotals();return;}
+        try{
+            const variants=await supabaseRPC("get_variants_for_sale",{p_product_id:productId});
+            row._variants=Array.isArray(variants)?variants:[];
+            const units=[...new Map(row._variants.map(v=>[v.unit,v])).values()];
+            unitSelect.innerHTML+=units.map(v=>`<option value="${escapeHtml(v.unit)}">${v.unit==="cotton"?"Carton":"Crates"}</option>`).join("");
+            if(selectedVariantId){
+                const selected=row._variants.find(v=>v.variant_id===selectedVariantId);
+                if(selected){unitSelect.value=selected.unit;populateSaleVolumes(row);volumeSelect.value=String(selected.variant_id);updateSaleVariant(row);}
+            }
+        }catch(e){console.error(e);showSalesMessage(e.message||t("sale_error"),"error")}
+    }
+
+    function populateSaleVolumes(row){
+        const unit=row.querySelector(".sale-line-unit").value;
+        const volumeSelect=row.querySelector(".sale-line-volume");
+        const variants=(row._variants||[]).filter(v=>v.unit===unit);
+        volumeSelect.innerHTML=`<option value="">Chagua Volume</option>`+variants.map(v=>`<option value="${v.variant_id}">${Number(v.volume_value).toLocaleString()} ${escapeHtml(v.volume_unit)}</option>`).join("");
+        updateSaleVariant(row);
+    }
+
+    function updateSaleVariant(row){
+        const variantId=row.querySelector(".sale-line-volume").value;
+        const variant=(row._variants||[]).find(v=>String(v.variant_id)===String(variantId));
+        row.querySelector(".sale-line-price").value=variant?Number(variant.selling_price||0):0;
+        row.querySelector(".sale-line-stock").textContent=variant?`Stock: ${Number(variant.current_stock||0).toLocaleString()}`:"";
+        updateSaleTotals();
+    }
+
+    function addSaleItemRow(item={}){
+        if(!salesProducts.length){showSalesMessage(currentLanguage==="sw"?"Hakuna bidhaa yenye variant hai.":"No active product variants.","error");return}
+        const row=document.createElement("div"); row.className="sale-item-row"; row._variants=[];
+        const opts=salesProducts.map(p=>`<option value="${p.id}" ${p.id===item.product_id?"selected":""}>${escapeHtml(p.name)}</option>`).join("");
+        row.innerHTML=`<div class="form-group product-field"><label>${t("product")}</label><select class="sale-line-product"><option value="">${escapeHtml(t("product"))}</option>${opts}</select></div><div class="form-group"><label>Unit</label><select class="sale-line-unit"><option value="">Chagua Unit</option></select></div><div class="form-group"><label>Volume</label><select class="sale-line-volume"><option value="">Chagua Volume</option></select><small class="sale-line-stock"></small></div><div class="form-group"><label>${t("quantity")}</label><input class="sale-line-quantity" type="number" min="0.01" step="0.01" value="${item.quantity??""}"></div><div class="form-group"><label>${t("selling_price")}</label><input class="sale-line-price sale-price-readonly" type="number" readonly value="0"></div><div><div style="font-size:12px;font-weight:bold;margin-bottom:7px">${t("total")}</div><div class="sale-line-total">TZS 0</div></div><button type="button" class="remove-line-btn">×</button>`;
+        saleItems.appendChild(row);
+        row.querySelector(".sale-line-product").addEventListener("change",()=>loadSaleRowVariants(row,row.querySelector(".sale-line-product").value));
+        row.querySelector(".sale-line-unit").addEventListener("change",()=>populateSaleVolumes(row));
+        row.querySelector(".sale-line-volume").addEventListener("change",()=>updateSaleVariant(row));
+        row.querySelector(".sale-line-quantity").addEventListener("input",updateSaleTotals);
+        row.querySelector(".remove-line-btn").addEventListener("click",()=>{row.remove();updateSaleTotals();if(!saleItems.children.length)addSaleItemRow()});
+        if(item.product_id)loadSaleRowVariants(row,item.product_id,item.variant_id||null); else updateSaleTotals();
+    }
+
     function updateSaleTotals(){let total=0;saleItems.querySelectorAll(".sale-item-row").forEach(r=>{const q=Number(r.querySelector(".sale-line-quantity").value||0),p=Number(r.querySelector(".sale-line-price").value||0),line=q*p;total+=line;r.querySelector(".sale-line-total").textContent=`TZS ${line.toLocaleString()}`});const paid=Math.max(0,Number(salePaidAmount.value||0));document.getElementById("saleGrandTotal").textContent=`TZS ${total.toLocaleString()}`;document.getElementById("salePaidDisplay").textContent=`TZS ${paid.toLocaleString()}`;document.getElementById("saleBalance").textContent=`TZS ${Math.max(0,total-paid).toLocaleString()}`}
-    function collectSaleItems(){const items=[],seen=new Set();for(const r of saleItems.querySelectorAll(".sale-item-row")){const id=r.querySelector(".sale-line-product").value,q=Number(r.querySelector(".sale-line-quantity").value);if(!id&&!q)continue;if(!id||!Number.isFinite(q)||q<=0)throw new Error(t("no_sale_items"));if(seen.has(id))throw new Error(t("duplicate_sale_product"));seen.add(id);items.push({product_id:id,quantity:q})}if(!items.length)throw new Error(t("no_sale_items"));return items}
+
+    function collectSaleItems(){
+        const items=[];
+        for(const r of saleItems.querySelectorAll(".sale-item-row")){
+            const productId=r.querySelector(".sale-line-product").value;
+            const variantId=r.querySelector(".sale-line-volume").value;
+            const q=Number(r.querySelector(".sale-line-quantity").value);
+            if(!productId&&!variantId&&!q) continue;
+            if(!productId||!variantId||!Number.isFinite(q)||q<=0) throw new Error(currentLanguage==="sw"?"Chagua Product, Unit, Volume na Quantity sahihi.":"Select Product, Unit, Volume and a valid Quantity.");
+            if(items.some(i=>i.variant_id===variantId)) throw new Error(currentLanguage==="sw"?"Variant hiyo tayari ipo kwenye mstari mwingine.":"That variant is already on another line.");
+            items.push({product_id:productId,variant_id:variantId,quantity:q});
+        }
+        if(!items.length) throw new Error(t("no_sale_items"));
+        return items;
+    }
+
     function openNewSaleForm(){salesFormCard.style.display="block";clearSaleForm();setTimeout(()=>saleItems.querySelector(".sale-line-product")?.focus(),50)}
-    function clearSaleForm(){clearSalesMessage();saleCustomer.value="";salePaymentMethod.value="cash";salePaidAmount.value="0";saleNotes.value="";saleItems.innerHTML="";if(salesProducts.length)addSaleItemRow();updateSaleTotals()}
-    salePaidAmount.addEventListener("input",updateSaleTotals);salePaymentMethod.addEventListener("change",()=>{if(salePaymentMethod.value==="credit")salePaidAmount.value="0";updateSaleTotals()});document.getElementById("addSaleLineBtn").addEventListener("click",()=>addSaleItemRow());document.getElementById("newSaleBtn").addEventListener("click",openNewSaleForm);document.getElementById("closeSaleFormBtn").addEventListener("click",()=>salesFormCard.style.display="none");document.getElementById("clearSaleBtn").addEventListener("click",clearSaleForm);document.getElementById("refreshSalesBtn").addEventListener("click",loadSalesData);salesSearch.addEventListener("input",loadSalesList);document.getElementById("quickSaleBtn").addEventListener("click",()=>showSalesPage(true));
-    document.getElementById("saveSaleBtn").addEventListener("click",async()=>{clearSalesMessage();const b=document.getElementById("saveSaleBtn");try{const items=collectSaleItems();const total=items.reduce((sum,i)=>sum+i.quantity*Number(salesProducts.find(p=>p.id===i.product_id)?.selling_price||0),0);let paid=Number(salePaidAmount.value||0);if(!Number.isFinite(paid)||paid<0||paid>total)throw new Error(currentLanguage==="sw"?"Kiasi kilicholipwa si sahihi.":"Paid amount is invalid.");if(salePaymentMethod.value==="credit")paid=0;if((paid<total||salePaymentMethod.value==="credit")&&!saleCustomer.value)throw new Error(t("customer_required_credit"));b.disabled=true;const result=await supabaseRPC("create_sale",{p_customer_id:saleCustomer.value||null,p_paid_amount:paid,p_payment_method:salePaymentMethod.value,p_notes:saleNotes.value.trim()||null,p_items:items});const sale=Array.isArray(result)?result[0]:result;salesFormCard.style.display="none";await Promise.all([loadSalesList(),loadTodaySalesSummary(),loadDashboardSummary()]);alert(`${t("sale_saved")} ${sale?.receipt_no||""}`)}catch(e){console.error(e);showSalesMessage(e.message||t("sale_error"),"error")}finally{b.disabled=false}});
+    function clearSaleForm(){clearSalesMessage();saleCustomer.value="";salePaymentMethod.value="cash";salePaidAmount.value="0";saleNotes.value="";saleItems.innerHTML="";addSaleItemRow();updateSaleTotals()}
+    salePaidAmount.addEventListener("input",updateSaleTotals);salePaymentMethod.addEventListener("change",()=>{if(salePaymentMethod.value==="credit")salePaidAmount.value="0";updateSaleTotals()});document.getElementById("addSaleLineBtn")?.addEventListener("click",async (event)=>{
+        event.preventDefault();
+        if(!salesProducts.length){
+            await loadSalesData();
+            if(!salesProducts.length){
+                showSalesMessage(currentLanguage==="sw"?"Hakuna bidhaa/variant hai. Tengeneza Product Variant kwanza.":"No active product variants. Create a Product Variant first.","error");
+                return;
+            }
+        }
+        addSaleItemRow();
+    });document.getElementById("newSaleBtn").addEventListener("click",openNewSaleForm);document.getElementById("closeSaleFormBtn").addEventListener("click",()=>salesFormCard.style.display="none");document.getElementById("clearSaleBtn").addEventListener("click",clearSaleForm);document.getElementById("refreshSalesBtn").addEventListener("click",loadSalesData);salesSearch.addEventListener("input",loadSalesList);document.getElementById("quickSaleBtn").addEventListener("click",()=>showSalesPage(true));
+    document.getElementById("saveSaleBtn").addEventListener("click",async()=>{clearSalesMessage();const b=document.getElementById("saveSaleBtn");try{const items=collectSaleItems();const total=items.reduce((sum,i)=>sum+Number(i.quantity)*Number((saleItems.querySelector(`.sale-item-row .sale-line-volume option[value="${i.variant_id}"]`)?.closest(".sale-item-row")?.querySelector(".sale-line-price")?.value)||0),0);let paid=Number(salePaidAmount.value||0);if(!Number.isFinite(paid)||paid<0||paid>total)throw new Error(currentLanguage==="sw"?"Kiasi kilicholipwa si sahihi.":"Paid amount is invalid.");if(salePaymentMethod.value==="credit")paid=0;if((paid<total||salePaymentMethod.value==="credit")&&!saleCustomer.value)throw new Error(t("customer_required_credit"));b.disabled=true;const result=await supabaseRPC("create_sale",{p_customer_id:saleCustomer.value||null,p_paid_amount:paid,p_payment_method:salePaymentMethod.value,p_notes:saleNotes.value.trim()||null,p_items:items});const sale=Array.isArray(result)?result[0]:result;salesFormCard.style.display="none";await Promise.all([loadSalesList(),loadTodaySalesSummary(),loadDashboardSummary()]);alert(`${t("sale_saved")} ${sale?.receipt_no||""}`)}catch(e){console.error(e);showSalesMessage(e.message||t("sale_error"),"error")}finally{b.disabled=false}});
     async function loadTodaySalesSummary(){try{const d=await supabaseRPC("get_today_sales_summary"),r=Array.isArray(d)?d[0]:d;document.getElementById("salesTodayTotal").textContent=`TZS ${Number(r?.total_sales||0).toLocaleString()}`;document.getElementById("salesTodayPaid").textContent=`TZS ${Number(r?.total_paid||0).toLocaleString()}`;document.getElementById("salesTodayCredit").textContent=`TZS ${Number(r?.total_credit||0).toLocaleString()}`;document.getElementById("salesTodayTransactions").textContent=Number(r?.transaction_count||0).toLocaleString()}catch(e){console.error(e)}}
     async function loadSalesList(){salesTableBody.innerHTML=`<tr><td colspan="9" class="loading-row">${t("loading")}</td></tr>`;try{const d=await supabaseRPC("get_sales_for_current_user",{p_search:salesSearch.value.trim()||null,p_limit:50,p_offset:0});salesRows=Array.isArray(d)?d:[];if(!salesRows.length){salesTableBody.innerHTML=`<tr><td colspan="9" class="empty-row">${currentLanguage==="sw"?"Hakuna mauzo yaliyopatikana.":"No sales found."}</td></tr>`;return}salesTableBody.innerHTML=salesRows.map(r=>`<tr><td><strong>${escapeHtml(r.receipt_no||"-")}</strong></td><td>${escapeHtml(r.customer_name||(currentLanguage==="sw"?"Mteja wa kawaida":"Walk-in Customer"))}</td><td>${escapeHtml(r.salesman_name||"-")}</td><td class="price">TZS ${Number(r.total_amount||0).toLocaleString()}</td><td>TZS ${Number(r.paid_amount||0).toLocaleString()}</td><td>TZS ${Number(r.balance||0).toLocaleString()}</td><td>${escapeHtml(r.payment_method||"-")}</td><td>${escapeHtml(r.created_at?new Date(r.created_at).toLocaleString():"-")}</td><td><button class="small-btn edit" data-sale-id="${r.id}">👁️ ${t("view")}</button></td></tr>`).join("")}catch(e){console.error(e);salesTableBody.innerHTML=`<tr><td colspan="9" class="empty-row">${escapeHtml(e.message||t("sale_error"))}</td></tr>`}}
     salesTableBody.addEventListener("click",e=>{const b=e.target.closest("button[data-sale-id]");if(b)openSaleReceipt(b.dataset.saleId)});
