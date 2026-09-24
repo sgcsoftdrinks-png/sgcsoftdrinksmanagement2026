@@ -972,6 +972,10 @@
         .sale-item-row, .receipt-item-row { align-items:end; }
         .sale-item-row .form-group, .receipt-item-row .form-group { min-width:0; }
         .sale-line-price, .stock-line-cost { background:#f7f7f7; }
+
+/* S6.3F — CUSTOMER UI */
+.customer-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}.customer-mini-card{background:var(--card,#fff);border:1px solid rgba(0,0,0,.07);border-radius:14px;padding:16px;box-shadow:0 4px 14px rgba(0,0,0,.04)}.customer-mini-card span{display:block;font-size:12px;color:var(--gray,#777);margin-bottom:7px}.customer-mini-card strong{font-size:20px}.detail-summary{margin-top:14px}.customer-detail-card{margin-top:18px;background:var(--card,#fff);border-radius:16px;padding:18px;box-shadow:0 5px 20px rgba(0,0,0,.05)}.customer-detail-actions{display:flex;justify-content:flex-end;margin:12px 0 18px}.nested-card{margin-top:16px}.modal.show{display:flex}.customer-detail-card .table-card{box-shadow:none;border:1px solid rgba(0,0,0,.06)}
+@media(max-width:800px){.customer-summary{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
 
@@ -1016,7 +1020,7 @@
                 <span data-i18n="sales">Sales</span>
             </button>
 
-            <button>
+            <button id="customersNavBtn">
                 <span class="nav-icon">👥</span>
                 <span data-i18n="customers">Customers</span>
             </button>
@@ -1263,7 +1267,7 @@
                         </button>
 
 
-                        <button class="quick-action">
+                        <button class="quick-action" id="quickCustomerBtn">
 
                             <strong>
                                 👤
@@ -1500,6 +1504,94 @@
                 </div>
             </section>
 
+            <!-- CUSTOMERS PAGE -->
+            <section class="page-view" id="customersPage">
+                <div class="welcome">
+                    <h2><span data-i18n="customers_title">Wateja</span> 👥</h2>
+                    <p data-i18n="customers_subtitle">Simamia wateja, madeni na malipo.</p>
+                </div>
+
+                <div class="customer-summary">
+                    <div class="customer-mini-card"><span data-i18n="customer_total">Wateja</span><strong id="customerTotalCount">0</strong></div>
+                    <div class="customer-mini-card"><span data-i18n="customer_credit_total">Madeni</span><strong id="customerCreditTotal">TZS 0</strong></div>
+                </div>
+
+                <div class="products-toolbar">
+                    <div class="search-box">
+                        <span class="search-icon">🔍</span>
+                        <input id="customerSearch" type="text" data-i18n-placeholder="search_customers" placeholder="Tafuta mteja...">
+                    </div>
+                    <button class="primary-btn" id="addCustomerBtn">＋ <span data-i18n="new_customer">Mteja Mpya</span></button>
+                </div>
+
+                <div class="table-card">
+                    <div class="section-head"><h3 data-i18n="customers_list">Orodha ya Wateja</h3><button class="small-btn" id="refreshCustomersBtn">↻ <span data-i18n="refresh">Refresh</span></button></div>
+                    <div class="table-wrap">
+                        <table class="products-table">
+                            <thead><tr>
+                                <th data-i18n="customer_name">Jina</th><th data-i18n="phone">Simu</th><th data-i18n="address">Anwani</th><th data-i18n="customer_balance">Balance</th><th data-i18n="status">Hali</th><th data-i18n="actions">Vitendo</th>
+                            </tr></thead>
+                            <tbody id="customersTableBody"><tr><td colspan="6" class="loading-row" data-i18n="loading">Inapakia...</td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="customer-detail-card" id="customerDetailCard" style="display:none;">
+                    <div class="section-head"><h3 id="customerDetailTitle">Customer</h3><button class="small-btn" id="closeCustomerDetail">×</button></div>
+                    <div class="customer-summary detail-summary">
+                        <div class="customer-mini-card"><span data-i18n="total_sales">Total Sales</span><strong id="detailTotalSales">TZS 0</strong></div>
+                        <div class="customer-mini-card"><span data-i18n="total_paid">Paid</span><strong id="detailTotalPaid">TZS 0</strong></div>
+                        <div class="customer-mini-card"><span data-i18n="customer_balance">Balance</span><strong id="detailBalance">TZS 0</strong></div>
+                        <div class="customer-mini-card"><span data-i18n="credit_sales">Credit Sales</span><strong id="detailCreditCount">0</strong></div>
+                    </div>
+                    <div class="customer-detail-actions">
+                        <button class="primary-btn" id="recordCustomerPaymentBtn">💰 <span data-i18n="record_payment">Record Payment</span></button>
+                    </div>
+                    <div class="table-card nested-card">
+                        <div class="section-head"><h4 data-i18n="customer_sales_history">Sales History</h4></div>
+                        <div class="table-wrap"><table class="products-table"><thead><tr><th>Receipt</th><th>Total</th><th>Paid</th><th>Balance</th><th>Status</th><th>Date</th></tr></thead><tbody id="customerSalesBody"></tbody></table></div>
+                    </div>
+                    <div class="table-card nested-card">
+                        <div class="section-head"><h4 data-i18n="customer_payment_history">Payment History</h4></div>
+                        <div class="table-wrap"><table class="products-table"><thead><tr><th>Receipt</th><th>Amount</th><th>Method</th><th>Reference</th><th>Date</th></tr></thead><tbody id="customerPaymentsBody"></tbody></table></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CUSTOMER MODAL -->
+            <div class="modal" id="customerModal">
+                <div class="modal-content">
+                    <div class="modal-header"><h3 id="customerModalTitle">Mteja Mpya</h3><button class="modal-close" id="closeCustomerModal">×</button></div>
+                    <div class="modal-body">
+                        <div class="modal-message" id="customerModalMessage"></div>
+                        <form id="customerForm">
+                            <input type="hidden" id="customerId">
+                            <div class="form-group"><label data-i18n="customer_name">Jina la Mteja</label><input id="customerName" type="text" required></div>
+                            <div class="form-group"><label data-i18n="phone">Simu</label><input id="customerPhone" type="text"></div>
+                            <div class="form-group"><label data-i18n="address">Anwani</label><textarea id="customerAddress"></textarea></div>
+                            <div class="modal-actions"><button type="button" class="secondary-btn" id="cancelCustomerBtn" data-i18n="cancel">Ghairi</button><button type="submit" class="primary-btn" id="saveCustomerBtn"><span data-i18n="save">Hifadhi</span></button></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAYMENT MODAL -->
+            <div class="modal" id="customerPaymentModal">
+                <div class="modal-content">
+                    <div class="modal-header"><h3 data-i18n="record_payment">Record Payment</h3><button class="modal-close" id="closeCustomerPaymentModal">×</button></div>
+                    <div class="modal-body">
+                        <div class="modal-message" id="customerPaymentMessage"></div>
+                        <form id="customerPaymentForm">
+                            <div class="form-group"><label data-i18n="sale">Sale / Receipt</label><select id="customerPaymentSale" required></select></div>
+                            <div class="form-group"><label data-i18n="payment_amount">Kiasi</label><input id="customerPaymentAmount" type="number" min="0.01" step="0.01" required></div>
+                            <div class="form-group"><label data-i18n="payment_method">Njia ya Malipo</label><select id="customerPaymentMethod"><option value="cash">Cash</option><option value="mobile_money">Mobile Money</option><option value="bank">Bank</option></select></div>
+                            <div class="form-group"><label data-i18n="payment_reference">Payment Reference</label><input id="customerPaymentReference" type="text"></div>
+                            <div class="modal-actions"><button type="button" class="secondary-btn" id="cancelCustomerPaymentBtn" data-i18n="cancel">Ghairi</button><button type="submit" class="primary-btn" id="saveCustomerPaymentBtn">💾 <span data-i18n="save">Hifadhi</span></button></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
             <!-- PRODUCTS PAGE -->
             <section class="page-view" id="productsPage">
 
@@ -1640,7 +1732,7 @@
             welcome_message: "Karibu kwenye SGC SOFT DRINKS MANAGEMENT. Dhibiti biashara yako kwa urahisi.",
             today_sales: "Mauzo ya Leo", stock_value: "Thamani ya Stock", today_transactions: "Transactions Leo", customers_count: "Wateja",
             quick_actions: "Vitendo vya Haraka", receive_stock: "Pokea Stock", receive_stock_desc: "Rekodi bidhaa mpya zilizoingia",
-            new_sale: "Mauzo Mapya", new_sale_desc: "Rekodi mauzo ya bidhaa", sales_title: "Mauzo", sales_subtitle: "Rekodi mauzo, fuatilia malipo na tafuta receipts.", sales_total: "Mauzo ya Leo", sales_paid: "Zimelipwa", sales_credit: "Credit", sales_transactions: "Transactions", search_sales: "Tafuta receipt...", new_sale_title: "Mauzo Mapya", customer: "Mteja", walk_in_customer: "Mteja wa kawaida", payment_method: "Njia ya Malipo", paid_amount: "Kilicholipwa", sale_notes: "Notes", sale_items: "Bidhaa za Mauzo", grand_total: "Jumla", balance: "Balance", save_sale: "Hifadhi Sale", sales_history: "Historia ya Mauzo", receipt_no: "Receipt", salesman: "Salesman", view: "Tazama", print: "Print", sale_saved: "Sale imehifadhiwa vizuri.", sale_error: "Imeshindikana kuhifadhi sale.", customer_required_credit: "Credit/partial payment inahitaji customer.", no_sale_items: "Ongeza angalau bidhaa moja.", duplicate_sale_product: "Bidhaa hiyo tayari ipo kwenye mstari mwingine.", new_customer: "Mteja Mpya", new_customer_desc: "Ongeza mteja mpya",
+            new_sale: "Mauzo Mapya", new_sale_desc: "Rekodi mauzo ya bidhaa", sales_title: "Mauzo", sales_subtitle: "Rekodi mauzo, fuatilia malipo na tafuta receipts.", sales_total: "Mauzo ya Leo", sales_paid: "Zimelipwa", sales_credit: "Credit", sales_transactions: "Transactions", search_sales: "Tafuta receipt...", new_sale_title: "Mauzo Mapya", customer: "Mteja", walk_in_customer: "Mteja wa kawaida", payment_method: "Njia ya Malipo", paid_amount: "Kilicholipwa", sale_notes: "Notes", sale_items: "Bidhaa za Mauzo", grand_total: "Jumla", balance: "Balance", save_sale: "Hifadhi Sale", sales_history: "Historia ya Mauzo", receipt_no: "Receipt", salesman: "Salesman", view: "Tazama", print: "Print", sale_saved: "Sale imehifadhiwa vizuri.", sale_error: "Imeshindikana kuhifadhi sale.", customer_required_credit: "Credit/partial payment inahitaji customer.", no_sale_items: "Ongeza angalau bidhaa moja.", duplicate_sale_product: "Bidhaa hiyo tayari ipo kwenye mstari mwingine.", new_customer: "Mteja Mpya", new_customer_desc: "Ongeza mteja mpya", customers_title: "Wateja", customers_subtitle: "Simamia wateja, madeni na malipo.", customer_total: "Wateja", customer_credit_total: "Madeni", customers_list: "Orodha ya Wateja", customer_name: "Jina la Mteja", phone: "Simu", address: "Anwani", customer_balance: "Balance", total_sales: "Total Sales", total_paid: "Paid", credit_sales: "Credit Sales", record_payment: "Record Payment", customer_sales_history: "Sales History", customer_payment_history: "Payment History", payment_amount: "Kiasi", sale: "Sale / Receipt", search_customers: "Tafuta mteja...", no_customers: "Hakuna wateja.", no_credit_sales: "Hakuna mauzo yenye deni.",
             new_expense: "Expense Mpya", new_expense_desc: "Rekodi matumizi ya biashara", recent_activity: "Shughuli za Karibuni", no_activity: "Hakuna shughuli bado.",
             products_title: "Bidhaa", products_subtitle: "Simamia bidhaa, bei za mauzo na viwango vya stock.", search_products: "Tafuta bidhaa...",
             add_product: "Ongeza Bidhaa", products_list: "Orodha ya Bidhaa", product: "Bidhaa", selling_price: "Bei ya Mauzo",
@@ -1671,7 +1763,7 @@
             welcome_message: "Welcome to SGC SOFT DRINKS MANAGEMENT. Manage your business with ease.", today_sales: "Today's Sales",
             stock_value: "Stock Value", today_transactions: "Today's Transactions", customers_count: "Customers", quick_actions: "Quick Actions",
             receive_stock: "Receive Stock", receive_stock_desc: "Record newly received products", new_sale: "New Sale", new_sale_desc: "Record a product sale", sales_title: "Sales", sales_subtitle: "Record sales, track payments and search receipts.", sales_total: "Today Sales", sales_paid: "Paid", sales_credit: "Credit", sales_transactions: "Transactions", search_sales: "Search receipt...", new_sale_title: "New Sale", customer: "Customer", walk_in_customer: "Walk-in Customer", payment_method: "Payment Method", paid_amount: "Paid Amount", sale_notes: "Notes", sale_items: "Sale Items", grand_total: "Total", balance: "Balance", save_sale: "Save Sale", sales_history: "Sales History", receipt_no: "Receipt", salesman: "Salesman", view: "View", print: "Print", sale_saved: "Sale saved successfully.", sale_error: "Failed to save sale.", customer_required_credit: "Credit/partial payment requires a customer.", no_sale_items: "Add at least one product.", duplicate_sale_product: "That product is already on another line.",
-            new_customer: "New Customer", new_customer_desc: "Add a new customer", new_expense: "New Expense", new_expense_desc: "Record business expenses",
+            new_customer: "New Customer", new_customer_desc: "Add a new customer", customers_title: "Customers", customers_subtitle: "Manage customers, credit and payments.", customer_total: "Customers", customer_credit_total: "Outstanding Credit", customers_list: "Customer List", customer_name: "Customer Name", phone: "Phone", address: "Address", customer_balance: "Balance", total_sales: "Total Sales", total_paid: "Paid", credit_sales: "Credit Sales", record_payment: "Record Payment", customer_sales_history: "Sales History", customer_payment_history: "Payment History", payment_amount: "Amount", sale: "Sale / Receipt", search_customers: "Search customer...", no_customers: "No customers found.", no_credit_sales: "No outstanding credit sales.", new_expense: "New Expense", new_expense_desc: "Record business expenses",
             recent_activity: "Recent Activity", no_activity: "No activity yet.", products_title: "Products",
             products_subtitle: "Manage products, selling prices and stock levels.", search_products: "Search products...", add_product: "Add Product",
             products_list: "Product List", product: "Product", selling_price: "Selling Price", low_stock: "Low Stock", status: "Status", actions: "Actions",
@@ -2489,7 +2581,7 @@
     let salesProducts=[]; let salesCustomers=[]; let salesRows=[];
     function showSalesMessage(m,type){saleFormMessage.textContent=m;saleFormMessage.className=`sale-message show ${type}`}
     function clearSalesMessage(){saleFormMessage.textContent="";saleFormMessage.className="sale-message"}
-    function showSalesPage(open=false){document.querySelectorAll(".page-view").forEach(p=>p.classList.remove("active"));document.querySelector(".content > .welcome").style.display="none";document.querySelector(".content > .cards").style.display="none";document.querySelector(".content > .grid-two").style.display="none";salesPage.classList.add("active");stockPage.classList.remove("active");productsPage.classList.remove("active");document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));salesNavBtn.classList.add("active");if(window.innerWidth<=800)sidebar.classList.remove("open");loadSalesData();if(open)openNewSaleForm()}
+    function showSalesPage(open=false){document.querySelectorAll(".page-view").forEach(p=>p.classList.remove("active"));document.querySelector(".content > .welcome").style.display="none";document.querySelector(".content > .cards").style.display="none";document.querySelector(".content > .grid-two").style.display="none";salesPage.classList.add("active");stockPage.classList.remove("active");productsPage.classList.remove("active");customersPage.classList.remove("active");document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));salesNavBtn.classList.add("active");if(window.innerWidth<=800)sidebar.classList.remove("open");loadSalesData();if(open)openNewSaleForm()}
     async function loadSalesData(){try{const [pd,cr]=await Promise.all([supabaseRPC("get_products_for_owner"),fetch(`${SUPABASE_URL}/rest/v1/customers?select=id,name,phone&is_active=eq.true&order=name.asc`,{headers:{apikey:SUPABASE_PUBLISHABLE_KEY,Authorization:`Bearer ${accessToken}`}})]);if(!cr.ok)throw new Error("Customer request failed.");const cd=await cr.json();salesProducts=(Array.isArray(pd)?pd:[]).filter(p=>p.is_active===true);salesCustomers=Array.isArray(cd)?cd:[];renderSaleCustomers();await Promise.all([loadSalesList(),loadTodaySalesSummary()]);if(!saleItems.children.length&&salesProducts.length)addSaleItemRow()}catch(e){console.error(e);salesTableBody.innerHTML=`<tr><td colspan="9" class="empty-row">${escapeHtml(e.message||t("sale_error"))}</td></tr>`}}
     function renderSaleCustomers(){saleCustomer.innerHTML=`<option value="">${escapeHtml(t("walk_in_customer"))}</option>`+salesCustomers.map(c=>`<option value="${c.id}">${escapeHtml(c.name||"-")}${c.phone?` — ${escapeHtml(c.phone)}`:""}</option>`).join("")}
     async function loadSaleRowVariants(row, productId, selectedVariantId = null) {
@@ -2590,6 +2682,173 @@
 
 
     /* ==========================================
+       CUSTOMERS / CREDIT / PAYMENTS
+       ========================================== */
+
+    const customersPage = document.getElementById("customersPage");
+    const customersNavBtn = document.getElementById("customersNavBtn");
+    const quickCustomerBtn = document.getElementById("quickCustomerBtn");
+    const customerSearch = document.getElementById("customerSearch");
+    const customersTableBody = document.getElementById("customersTableBody");
+    const customerModal = document.getElementById("customerModal");
+    const customerForm = document.getElementById("customerForm");
+    const customerModalTitle = document.getElementById("customerModalTitle");
+    const customerModalMessage = document.getElementById("customerModalMessage");
+    const customerId = document.getElementById("customerId");
+    const customerName = document.getElementById("customerName");
+    const customerPhone = document.getElementById("customerPhone");
+    const customerAddress = document.getElementById("customerAddress");
+    const customerDetailCard = document.getElementById("customerDetailCard");
+    const customerPaymentModal = document.getElementById("customerPaymentModal");
+    const customerPaymentForm = document.getElementById("customerPaymentForm");
+    const customerPaymentSale = document.getElementById("customerPaymentSale");
+    const customerPaymentAmount = document.getElementById("customerPaymentAmount");
+    const customerPaymentMethod = document.getElementById("customerPaymentMethod");
+    const customerPaymentReference = document.getElementById("customerPaymentReference");
+    const customerPaymentMessage = document.getElementById("customerPaymentMessage");
+
+    let customers = [];
+    let editingCustomer = null;
+    let selectedCustomer = null;
+    let selectedCustomerSales = [];
+
+    function moneyCustomer(v){return `TZS ${Number(v||0).toLocaleString()}`}
+    function dateCustomer(v){return v ? new Date(v).toLocaleString() : "-"}
+    function customerMsg(el,msg,type="error"){el.textContent=msg;el.className=`modal-message ${type}`;el.style.display="block"}
+
+    function showCustomersPage(){
+        document.querySelectorAll(".page-view").forEach(p=>p.classList.remove("active"));
+        document.querySelector(".content > .welcome").style.display="none";
+        document.querySelector(".content > .cards").style.display="none";
+        document.querySelector(".content > .grid-two").style.display="none";
+        customersPage.classList.add("active");
+        stockPage.classList.remove("active");
+        salesPage.classList.remove("active");
+        productsPage.classList.remove("active");
+        document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
+        customersNavBtn.classList.add("active");
+        customerDetailCard.style.display="none";
+        loadCustomers();
+        if(window.innerWidth<=800) sidebar.classList.remove("open");
+    }
+
+    async function loadCustomers(){
+        customersTableBody.innerHTML=`<tr><td colspan="6" class="loading-row">${t("loading")}</td></tr>`;
+        try{
+            const data=await supabaseRPC("get_customers_for_current_user",{p_search:customerSearch.value.trim()||null});
+            customers=Array.isArray(data)?data:[];
+            document.getElementById("customerTotalCount").textContent=customers.length.toLocaleString();
+            renderCustomers();
+            await updateCustomerCreditTotal();
+        }catch(e){
+            console.error(e);
+            customersTableBody.innerHTML=`<tr><td colspan="6" class="empty-row">${escapeHtml(e.message||t("product_error"))}</td></tr>`;
+        }
+    }
+
+    async function updateCustomerCreditTotal(){
+        let total=0;
+        for(const c of customers){
+            try{const r=await supabaseRPC("get_customer_credit_summary",{p_customer_id:c.customer_id});if(r?.[0]) total+=Number(r[0].total_balance||0)}catch(e){console.warn(e)}
+        }
+        document.getElementById("customerCreditTotal").textContent=moneyCustomer(total);
+    }
+
+    async function renderCustomers(){
+        if(!customers.length){customersTableBody.innerHTML=`<tr><td colspan="6" class="empty-row">${t("no_customers")}</td></tr>`;return}
+        const rows=[];
+        for(const c of customers){
+            let bal=0;
+            try{const r=await supabaseRPC("get_customer_credit_summary",{p_customer_id:c.customer_id});bal=Number(r?.[0]?.total_balance||0)}catch(e){}
+            rows.push(`<tr><td><strong>${escapeHtml(c.name||"-")}</strong></td><td>${escapeHtml(c.phone||"-")}</td><td>${escapeHtml(c.address||"-")}</td><td>${moneyCustomer(bal)}</td><td><span class="status-badge ${c.is_active?"active":"inactive"}">${c.is_active?t("active"):t("inactive")}</span></td><td><button class="small-btn" data-customer-view="${c.customer_id}">${t("view")}</button> <button class="small-btn" data-customer-edit="${c.customer_id}">${t("edit")}</button> <button class="small-btn" data-customer-toggle="${c.customer_id}" data-active="${c.is_active}">${c.is_active?t("deactivate"):t("activate")}</button></td></tr>`);
+        }
+        customersTableBody.innerHTML=rows.join("");
+        customersTableBody.querySelectorAll("[data-customer-view]").forEach(b=>b.addEventListener("click",()=>openCustomerDetails(b.dataset.customerView)));
+        customersTableBody.querySelectorAll("[data-customer-edit]").forEach(b=>b.addEventListener("click",()=>openCustomerEditor(b.dataset.customerEdit)));
+        customersTableBody.querySelectorAll("[data-customer-toggle]").forEach(b=>b.addEventListener("click",()=>toggleCustomer(b.dataset.customerToggle,b.dataset.active==="true")));
+    }
+
+    function openCustomerEditor(id=null){
+        editingCustomer=id?customers.find(c=>c.customer_id===id):null;
+        customerId.value=editingCustomer?.customer_id||"";
+        customerName.value=editingCustomer?.name||"";
+        customerPhone.value=editingCustomer?.phone||"";
+        customerAddress.value=editingCustomer?.address||"";
+        customerModalTitle.textContent=editingCustomer?t("edit"):t("new_customer");
+        customerModalMessage.style.display="none";
+        customerModal.classList.add("show");
+        setTimeout(()=>customerName.focus(),50);
+    }
+
+    async function toggleCustomer(id,current){
+        try{await supabaseRPC("set_customer_active",{p_customer_id:id,p_is_active:!current});await loadCustomers()}catch(e){alert(e.message||t("product_error"))}
+    }
+
+    async function openCustomerDetails(id){
+        const c=customers.find(x=>x.customer_id===id);if(!c)return;
+        selectedCustomer=c;
+        document.getElementById("customerDetailTitle").textContent=`${c.name}${c.phone?` — ${c.phone}`:""}`;
+        customerDetailCard.style.display="block";
+        try{
+            const [summary,sales,payments]=await Promise.all([
+                supabaseRPC("get_customer_credit_summary",{p_customer_id:id}),
+                supabaseRPC("get_customer_sales_history",{p_customer_id:id}),
+                supabaseRPC("get_customer_payment_history",{p_customer_id:id})
+            ]);
+            const x=summary?.[0]||{};
+            document.getElementById("detailTotalSales").textContent=moneyCustomer(x.total_sales);
+            document.getElementById("detailTotalPaid").textContent=moneyCustomer(x.total_paid);
+            document.getElementById("detailBalance").textContent=moneyCustomer(x.total_balance);
+            document.getElementById("detailCreditCount").textContent=Number(x.credit_sales_count||0).toLocaleString();
+            selectedCustomerSales=Array.isArray(sales)?sales:[];
+            document.getElementById("customerSalesBody").innerHTML=selectedCustomerSales.length?selectedCustomerSales.map(s=>`<tr><td>${escapeHtml(s.receipt_no||"-")}</td><td>${moneyCustomer(s.total_amount)}</td><td>${moneyCustomer(s.paid_amount)}</td><td>${moneyCustomer(s.balance)}</td><td>${escapeHtml(s.payment_status||"-")}</td><td>${dateCustomer(s.created_at)}</td></tr>`).join(""):"<tr><td colspan=\"6\" class=\"empty-row\">-</td></tr>";
+            const pp=Array.isArray(payments)?payments:[];
+            document.getElementById("customerPaymentsBody").innerHTML=pp.length?pp.map(x=>`<tr><td>${escapeHtml(x.receipt_no||"-")}</td><td>${moneyCustomer(x.amount)}</td><td>${escapeHtml(x.payment_method||"-")}</td><td>${escapeHtml(x.payment_reference||"-")}</td><td>${dateCustomer(x.created_at)}</td></tr>`).join(""):"<tr><td colspan=\"5\" class=\"empty-row\">-</td></tr>";
+        }catch(e){alert(e.message||t("product_error"))}
+        customerDetailCard.scrollIntoView({behavior:"smooth",block:"start"});
+    }
+
+    function openCustomerPayment(){
+        if(!selectedCustomer)return;
+        const due=selectedCustomerSales.filter(s=>Number(s.balance)>0&&s.sale_status==="completed");
+        customerPaymentSale.innerHTML=due.length?due.map(s=>`<option value="${s.sale_id}">${escapeHtml(s.receipt_no||s.sale_id)} — ${moneyCustomer(s.balance)}</option>`).join(""): `<option value="">${t("no_credit_sales")}</option>`;
+        customerPaymentAmount.value="";customerPaymentReference.value="";customerPaymentMessage.style.display="none";
+        customerPaymentModal.classList.add("show");
+    }
+
+    customerForm.addEventListener("submit",async e=>{
+        e.preventDefault();
+        const btn=document.getElementById("saveCustomerBtn");btn.disabled=true;customerModalMessage.style.display="none";
+        try{
+            if(editingCustomer){await supabaseRPC("update_customer",{p_customer_id:editingCustomer.customer_id,p_name:customerName.value,p_phone:customerPhone.value||null,p_address:customerAddress.value||null})}
+            else{await supabaseRPC("create_customer",{p_name:customerName.value,p_phone:customerPhone.value||null,p_address:customerAddress.value||null})}
+            customerModal.classList.remove("show");await loadCustomers();
+        }catch(e){customerMsg(customerModalMessage,e.message||t("product_error"))}finally{btn.disabled=false}
+    });
+
+    customerPaymentForm.addEventListener("submit",async e=>{
+        e.preventDefault();
+        const btn=document.getElementById("saveCustomerPaymentBtn");btn.disabled=true;customerPaymentMessage.style.display="none";
+        try{
+            if(!customerPaymentSale.value)throw new Error(t("no_credit_sales"));
+            await supabaseRPC("record_customer_payment",{p_sale_id:customerPaymentSale.value,p_amount:Number(customerPaymentAmount.value),p_payment_method:customerPaymentMethod.value,p_payment_reference:customerPaymentReference.value||null});
+            customerPaymentModal.classList.remove("show");await openCustomerDetails(selectedCustomer.customer_id);await loadCustomers();
+        }catch(e){customerMsg(customerPaymentMessage,e.message||t("product_error"))}finally{btn.disabled=false}
+    });
+
+    customersNavBtn.addEventListener("click",()=>showCustomersPage());
+    quickCustomerBtn.addEventListener("click",()=>{showCustomersPage();setTimeout(()=>openCustomerEditor(),50)});
+    document.getElementById("addCustomerBtn").addEventListener("click",()=>openCustomerEditor());
+    document.getElementById("refreshCustomersBtn").addEventListener("click",loadCustomers);
+    document.getElementById("closeCustomerModal").addEventListener("click",()=>customerModal.classList.remove("show"));
+    document.getElementById("cancelCustomerBtn").addEventListener("click",()=>customerModal.classList.remove("show"));
+    document.getElementById("closeCustomerPaymentModal").addEventListener("click",()=>customerPaymentModal.classList.remove("show"));
+    document.getElementById("cancelCustomerPaymentBtn").addEventListener("click",()=>customerPaymentModal.classList.remove("show"));
+    document.getElementById("closeCustomerDetail").addEventListener("click",()=>customerDetailCard.style.display="none");
+    document.getElementById("recordCustomerPaymentBtn").addEventListener("click",openCustomerPayment);
+    customerSearch.addEventListener("input",()=>{clearTimeout(window.customerSearchTimer);window.customerSearchTimer=setTimeout(loadCustomers,350)});
+
+    /* ==========================================
        PRODUCTS MANAGEMENT
        ========================================== */
 
@@ -2622,6 +2881,8 @@
         document.querySelector(".content > .grid-two").style.display = "";
         document.querySelector(".content > #productsPage").classList.remove("active");
         salesPage.classList.remove("active");
+        customersPage.classList.remove("active");
+        customersPage.classList.remove("active");
 
         document.querySelectorAll(".nav button").forEach(btn => btn.classList.remove("active"));
         document.querySelector(".nav button:first-of-type").classList.add("active");
@@ -2635,6 +2896,7 @@
         productsPage.classList.add("active");
         stockPage.classList.remove("active");
         salesPage.classList.remove("active");
+        customersPage.classList.remove("active");
 
         document.querySelectorAll(".nav button").forEach(btn => btn.classList.remove("active"));
         productsNavBtn.classList.add("active");
