@@ -1852,7 +1852,63 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-
+<script>
+/* SGC EMERGENCY NAVIGATION — independent of database/auth/loading code.
+   RLS: USIBADILISHE — this is frontend navigation only. */
+(function(){
+  const routes={
+    dashboard:['dashboardNavBtn',null],
+    stock:['stockNavBtn','currentStockPage'],
+    products:['productsNavBtn','productsPage'],
+    receivedStock:['receivedStockNavBtn','receivedStockPage'],
+    sales:['salesNavBtn','salesPage'],
+    receipts:['receiptsNavBtn','receiptsPage'],
+    customers:['customersNavBtn','customersPage'],
+    suppliers:['suppliersNavBtn','suppliersPage'],
+    expenses:['expensesNavBtn','expensesPage'],
+    payments:['paymentsNavBtn','paymentsPage'],
+    reports:['reportsNavBtn','reportsPage'],
+    users:['usersNavBtn','usersPage'],
+    settings:['settingsNavBtn','settingsPage']
+  };
+  function openRoute(name){
+    const r=routes[name]; if(!r) return;
+    const all=document.querySelectorAll('.page-view');
+    all.forEach(p=>{p.classList.remove('active','sgc-force-active');p.style.display='none';p.style.visibility='hidden';});
+    document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
+    const welcome=document.querySelector('.content > .welcome');
+    const cards=document.querySelector('.content > .cards');
+    const grid=document.querySelector('.content > .grid-two');
+    const dashboard= name==='dashboard';
+    if(welcome) welcome.style.display=dashboard?'':'none';
+    if(cards) cards.style.display=dashboard?'':'none';
+    if(grid) grid.style.display=dashboard?'':'none';
+    const btn=document.getElementById(r[0]); if(btn) btn.classList.add('active');
+    if(r[1]){
+      const page=document.getElementById(r[1]);
+      if(page){page.classList.add('active','sgc-force-active');page.style.display='block';page.style.visibility='visible';}
+    }
+    window.__SGC_EMERGENCY_ROUTE=name;
+  }
+  function install(){
+    document.addEventListener('click',function(e){
+      const btn=e.target.closest('.nav button');
+      if(!btn) return;
+      const name=Object.keys(routes).find(k=>routes[k][0]===btn.id);
+      if(!name) return;
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      openRoute(name);
+      // Restore the selected page after any legacy handler/loader finishes.
+      setTimeout(()=>openRoute(name),0);
+    },true);
+    window.__SGCEmergencyOpen=openRoute;
+    window.__SGC_NAV_READY=true;
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',install,{once:true});
+  else install();
+})();
+</script>
 
 <script>
 window.__openSGCSection = function(section){
