@@ -402,6 +402,7 @@
         /* PRODUCTS PAGE */
         .page-view { display: none; }
         .page-view.active { display: block; }
+        .page-view.sgc-force-active { display: block !important; visibility: visible !important; }
 
         .products-toolbar {
             display: flex;
@@ -1854,22 +1855,25 @@
 <script>
 window.__openSGCSection = function(section){
     try{
-        document.querySelectorAll('.page-view').forEach(function(p){p.classList.remove('active');});
-        document.querySelectorAll('.nav button').forEach(function(b){b.classList.remove('active');});
+        var pageIds=['dashboardPage','currentStockPage','productsPage','receivedStockPage','salesPage','receiptsPage','customersPage','suppliersPage','expensesPage','paymentsPage','reportsPage','usersPage','settingsPage'];
+        pageIds.forEach(function(id){ var p=document.getElementById(id); if(p){ p.classList.remove('active','sgc-force-active'); p.style.removeProperty('display'); }});
+        document.querySelectorAll('.nav button').forEach(function(b){ b.classList.remove('active'); });
         var welcome=document.querySelector('.content > .welcome'); if(welcome) welcome.style.display='none';
         var cards=document.querySelector('.content > .cards'); if(cards) cards.style.display='none';
         var grid=document.querySelector('.content > .grid-two'); if(grid) grid.style.display='none';
         var page=document.getElementById(section+'Page');
         var btn=document.getElementById(section+'NavBtn');
-        if(!page || !btn) return false;
-        page.classList.add('active'); btn.classList.add('active');
-        if(window.innerWidth<=800 && typeof sidebar!=='undefined' && sidebar) sidebar.classList.remove('open');
+        if(!page || !btn){ console.error('SGC navigation target not found:',section); return false; }
+        page.classList.add('active','sgc-force-active');
+        page.style.display='block';
+        btn.classList.add('active');
         if(section==='customers' && typeof loadCustomers==='function') loadCustomers();
-        else if(section==='expenses' && typeof loadExpenses==='function') loadExpenses();
-        else if(section==='payments' && typeof loadPayments==='function') loadPayments();
-        else if(section==='reports' && typeof loadReports==='function') loadReports();
-        else if(section==='users' && typeof loadUsers==='function') loadUsers();
-        else if(section==='settings' && typeof loadSettings==='function') loadSettings();
+        if(section==='expenses' && typeof loadExpenses==='function') loadExpenses();
+        if(section==='payments' && typeof loadPayments==='function') loadPayments();
+        if(section==='reports' && typeof loadReports==='function') loadReports();
+        if(section==='users' && typeof loadUsers==='function') loadUsers();
+        if(section==='settings' && typeof loadSettings==='function') loadSettings();
+        if(window.innerWidth<=800 && typeof sidebar!=='undefined' && sidebar) sidebar.classList.remove('open');
         return false;
     }catch(error){ console.error('SGC section navigation error:',error); return false; }
 };
