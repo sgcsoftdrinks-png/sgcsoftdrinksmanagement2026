@@ -3932,10 +3932,12 @@
             }
 
             currentRoute = routeName;
-            if(routeName === 'dashboard' && typeof route.load === 'string' && typeof window[route.load] === 'function'){
-                await window[route.load]();
-            }else if(routeName !== 'dashboard' && typeof route.load === 'string' && typeof window[route.load] === 'function'){
-                await window[route.load]();
+            if(typeof route.load === 'string' && typeof window[route.load] === 'function'){
+                try { await window[route.load](); }
+                catch(loadError){
+                    console.error('SGC page loader error:', routeName, loadError);
+                    // Loading failure must never hide the page that was requested.
+                }
             }
 
             if(window.innerWidth <= 800){
@@ -3971,12 +3973,15 @@
         });
 
         // Single delegated navigation handler. Legacy nav listeners were removed in Phase 1.
+        // Capture-phase router: runs before legacy module handlers, so no old
+        // listener can hijack navigation. This is intentional during Phase 1.
         document.addEventListener('click', function(event){
             const navButton = event.target.closest('.nav button');
             if(navButton){
                 const route = Object.keys(ROUTES).find(name => ROUTES[name].button === navButton.id);
                 if(route){
                     event.preventDefault();
+                    event.stopPropagation();
                     event.stopImmediatePropagation();
                     open(route, {force:true});
                     return;
@@ -3986,10 +3991,11 @@
             const quickButton = event.target.closest('[id]');
             if(quickButton && quickRoutes[quickButton.id]){
                 event.preventDefault();
+                event.stopPropagation();
                 event.stopImmediatePropagation();
                 open(quickRoutes[quickButton.id], {force:true});
             }
-        });
+        }, true);
     }
 
     if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', install, {once:true});
