@@ -1947,22 +1947,149 @@
 
 
     /* ==========================================
-       AUTH SESSION
+       AUTH SESSION + AUTOMATIC JWT REFRESH
        ========================================== */
 
-    const accessToken =
+    let accessToken =
         localStorage.getItem("sgc_access_token");
+
+    let refreshToken =
+        localStorage.getItem("sgc_refresh_token");
 
     const storedUser =
         localStorage.getItem("sgc_user");
 
+    const nativeFetch = window.fetch.bind(window);
+    let refreshPromise = null;
 
-    if (!accessToken) {
+    function saveSession(session) {
+        if (!session?.access_token) return;
 
-        window.location.href =
-            "index.html";
+        accessToken = session.access_token;
+        localStorage.setItem("sgc_access_token", accessToken);
 
+        if (session.refresh_token) {
+            refreshToken = session.refresh_token;
+            localStorage.setItem("sgc_refresh_token", refreshToken);
+        }
+
+        if (session.user) {
+            localStorage.setItem("sgc_user", JSON.stringify(session.user));
+        }
     }
+
+    async function refreshAuthSession(force = false) {
+        if (!refreshToken) return false;
+
+        if (refreshPromise) return refreshPromise;
+
+        refreshPromise = (async () => {
+            try {
+                const response = await nativeFetch(
+                    `${SUPABASE_AUTH_URL}/token?grant_type=refresh_token`,
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "apikey": SUPABASE_PUBLISHABLE_KEY
+                        },
+                        body: JSON.stringify({
+                            refresh_token: refreshToken
+                        })
+                    }
+                );
+
+                const data = await response.json().catch(() => ({}));
+
+                if (!response.ok || !data.access_token) {
+                    console.error("JWT refresh failed:", data);
+                    return false;
+                }
+
+                saveSession(data);
+                return true;
+            } catch (error) {
+                console.error("JWT refresh error:", error);
+                return false;
+            } finally {
+                refreshPromise = null;
+            }
+        })();
+
+        return refreshPromise;
+    }
+
+    function tokenNeedsRefresh() {
+        if (!accessToken) return true;
+
+        try {
+            const payload = JSON.parse(
+                atob(accessToken.split(".")[1].replace(/-/g, "+").replace(/_/g, "/"))
+            );
+            return !payload.exp || (payload.exp * 1000 - Date.now()) < 5 * 60 * 1000;
+        } catch (_) {
+            return false;
+        }
+    }
+
+    async function ensureAuthSession() {
+        if (!accessToken) {
+            const refreshed = await refreshAuthSession(true);
+            if (!refreshed) {
+                window.location.href = "index.html";
+                return false;
+            }
+            return true;
+        }
+
+        if (tokenNeedsRefresh()) {
+            await refreshAuthSession(false);
+        }
+
+        return !!accessToken;
+    }
+
+    /* Automatically retry expired-token requests with a fresh JWT. */
+    window.fetch = async function(input, init = {}) {
+        const response = await nativeFetch(input, init);
+
+        if (response.status !== 401) {
+            return response;
+        }
+
+        const requestUrl = typeof input === "string"
+            ? input
+            : input?.url || "";
+
+        if (requestUrl.includes("/auth/v1/token") || requestUrl.includes("/auth/v1/logout")) {
+            return response;
+        }
+
+        const refreshed = await refreshAuthSession(true);
+        if (!refreshed) {
+            return response;
+        }
+
+        const retryInit = { ...init, headers: new Headers(init.headers || {}) };
+        retryInit.headers.set("Authorization", `Bearer ${accessToken}`);
+        retryInit.headers.set("apikey", SUPABASE_PUBLISHABLE_KEY);
+
+        return nativeFetch(input, retryInit);
+    };
+
+    /* Refresh periodically so normal use does not hit JWT expiry. */
+    setInterval(() => {
+        if (refreshToken && tokenNeedsRefresh()) {
+            refreshAuthSession(false);
+        }
+    }, 60 * 1000);
+
+    if (!accessToken && !refreshToken) {
+        window.location.href = "index.html";
+    }
+
+    /* If the stored access token is already expired/near expiry, refresh it now. */
+    ensureAuthSession();
 
 
     let user = null;
