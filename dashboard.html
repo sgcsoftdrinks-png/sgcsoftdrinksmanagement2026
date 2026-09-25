@@ -2988,22 +2988,35 @@
         return data;
     }
 
+    let productsLoadRequest = 0;
     async function loadProducts() {
+        const requestId = ++productsLoadRequest;
         productsTableBody.innerHTML = `<tr><td colspan="11" class="loading-row">${t("loading")}</td></tr>`;
         try {
-            const [data, variants] = await Promise.all([
-                supabaseRPC("get_products_for_owner"),
-                supabaseRPC("get_variant_stock_summary")
-            ]);
-            const base = Array.isArray(data) ? data : [];
-            const byProduct = new Map();
-            (Array.isArray(variants) ? variants : []).forEach(v => {
-                const id = v.product_id;
-                if (!byProduct.has(id)) byProduct.set(id, v);
-            });
-            products = base.map(p => ({...p, ...(byProduct.get(p.id) || {})}));
+            // Product list is the primary data. Stock summary is supplementary and
+            // must not prevent Products from opening when its RPC is slow/expired.
+            const productResult = await supabaseRPC("get_products_for_owner");
+            if (requestId !== productsLoadRequest) return;
+            const base = Array.isArray(productResult) ? productResult : [];
+            products = base.map(p => ({...p}));
             renderProducts();
+
+            // Load stock information separately so the Product page remains usable.
+            try {
+                const variants = await supabaseRPC("get_variant_stock_summary");
+                if (requestId !== productsLoadRequest) return;
+                const byProduct = new Map();
+                (Array.isArray(variants) ? variants : []).forEach(v => {
+                    if (!byProduct.has(v.product_id)) byProduct.set(v.product_id, v);
+                });
+                products = base.map(p => ({...p, ...(byProduct.get(p.id) || {})}));
+                renderProducts();
+            } catch (stockError) {
+                console.warn("Product stock summary unavailable:", stockError);
+                // Keep the product list visible even if stock summary fails.
+            }
         } catch (error) {
+            if (requestId !== productsLoadRequest) return;
             console.error("Products loading error:", error);
             productsTableBody.innerHTML = `<tr><td colspan="11" class="empty-row">${escapeHtml(error.message || t("product_error"))}</td></tr>`;
         }
@@ -3066,11 +3079,25 @@
         productVolumeUnit.value = "ml";
         productSellingPrice.value = product?.selling_price ?? "";
         productLowStock.value = product?.low_stock_level ?? 0;
+
         if (product) {
             productModalTitle.textContent = t("edit_product_title");
             productId.value = product.id;
+            productName.value = product.name || "";
+        } else {
+            productModalTitle.textContent = t("add_product_title");
+            productId.value = "";
+            productName.value = "";
+        }
+
+        // Open immediately; variant loading must never block the modal.
+        productModal.classList.add("show");
+        setTimeout(() => productName.focus(), 50);
+
+        if (product) {
             try {
                 const variants = await supabaseRPC("get_product_variants", {p_product_id: product.id});
+                if (editingProduct?.id !== product.id) return;
                 const v = Array.isArray(variants) ? variants[0] : null;
                 if (v) {
                     productUnit.value = v.unit || "crates";
@@ -3079,15 +3106,11 @@
                     productSellingPrice.value = v.selling_price ?? product.selling_price ?? 0;
                     productLowStock.value = v.low_stock_level ?? product.low_stock_level ?? 0;
                 }
-            } catch (e) { console.warn("Could not load product variant:", e); }
-        } else {
-            productModalTitle.textContent = t("add_product_title");
-            productId.value = "";
+            } catch (e) {
+                console.warn("Could not load product variant:", e);
+            }
         }
-        productModal.classList.add("show");
-        setTimeout(() => productName.focus(), 50);
     }
-
     function closeProductModal() {
         productModal.classList.remove("show");
         editingProduct = null;
@@ -3667,7 +3690,7 @@
 
 
 
-    document.getElementById("quickProductsBtn").addEventListener("click", showReceivedStockPage);
+    document.getElementById("quickProductsBtn").addEventListener("click", showProductsPage);
 
 
     /* ==========================================
