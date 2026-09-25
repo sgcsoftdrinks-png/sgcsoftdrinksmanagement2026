@@ -1852,40 +1852,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<script>
-/* SGC PRIMARY NAVIGATION CONTROLLER */
-(function(){
-  const sections = ['customers','expenses','payments','reports','users','settings'];
-  function openSection(section){
-    const pageIds = ['dashboardPage','currentStockPage','productsPage','receivedStockPage','salesPage','receiptsPage','customersPage','suppliersPage','expensesPage','paymentsPage','reportsPage','usersPage','settingsPage'];
-    pageIds.forEach(id=>{ const p=document.getElementById(id); if(p){ p.classList.remove('active','sgc-force-active'); p.style.setProperty('display','none','important'); }});
-    document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
-    ['welcome','cards','grid-two'].forEach(cls=>{ const el=document.querySelector('.content > .'+cls); if(el) el.style.display='none'; });
-    const page=document.getElementById(section+'Page');
-    const btn=document.getElementById(section+'NavBtn');
-    if(!page || !btn) return false;
-    page.classList.add('active','sgc-force-active');
-    page.style.setProperty('display','block','important');
-    btn.classList.add('active');
-    if(window.innerWidth<=800){ const sb=document.getElementById('sidebar'); if(sb) sb.classList.remove('open'); }
-    const loaders={customers:'loadCustomers',expenses:'loadExpenses',payments:'loadPayments',reports:'loadReports',users:'loadUsers',settings:'loadSettings'};
-    const fn=window[loaders[section]];
-    if(typeof fn==='function'){ try{ Promise.resolve(fn()).catch(err=>console.error('SGC '+section+' load error:',err)); }catch(err){ console.error('SGC '+section+' load error:',err); } }
-    return false;
-  }
-  window.__SGC_PRIMARY_NAV__ = openSection;
-  document.addEventListener('DOMContentLoaded',()=>{
-    sections.forEach(section=>{
-      const btn=document.getElementById(section+'NavBtn');
-      if(!btn) return;
-      btn.addEventListener('click',function(e){
-        e.preventDefault(); e.stopImmediatePropagation();
-        openSection(section);
-      },true);
-    });
-  });
-})();
-</script>
+
 
 <script>
 window.__openSGCSection = function(section){
@@ -3860,6 +3827,75 @@ window.__openSGCSection = function(section){
 
     loadDashboardSummary();
 
+</script>
+
+<script>
+/* SGC FINAL FUNCTIONAL NAV — CUSTOMERS & EXPENSES */
+(function () {
+    function bindSection(section) {
+        const btnId = section + 'NavBtn';
+        const pageId = section + 'Page';
+        const loaderName = section === 'customers' ? 'loadCustomers' : 'loadExpenses';
+        const oldBtn = document.getElementById(btnId);
+        const page = document.getElementById(pageId);
+        if (!oldBtn || !page) return;
+
+        // Clone removes every old click listener attached to this button.
+        const btn = oldBtn.cloneNode(true);
+        oldBtn.replaceWith(btn);
+
+        btn.onclick = function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            // Hide every page and dashboard-only content first.
+            document.querySelectorAll('.page-view').forEach(function (p) {
+                p.classList.remove('active', 'sgc-force-active');
+                p.style.setProperty('display', 'none', 'important');
+            });
+            const welcome = document.querySelector('.content > .welcome');
+            const cards = document.querySelector('.content > .cards');
+            const grid = document.querySelector('.content > .grid-two');
+            if (welcome) welcome.style.setProperty('display', 'none', 'important');
+            if (cards) cards.style.setProperty('display', 'none', 'important');
+            if (grid) grid.style.setProperty('display', 'none', 'important');
+
+            document.querySelectorAll('.nav button').forEach(function (b) {
+                b.classList.remove('active');
+            });
+
+            // Show the requested section.
+            page.classList.add('active', 'sgc-force-active');
+            page.style.setProperty('display', 'block', 'important');
+            page.style.setProperty('visibility', 'visible', 'important');
+            btn.classList.add('active');
+
+            const loader = window[loaderName];
+            if (typeof loader === 'function') {
+                Promise.resolve(loader()).catch(function (err) {
+                    console.error('SGC ' + section + ' load error:', err);
+                });
+            }
+
+            if (window.innerWidth <= 800) {
+                const sidebar = document.getElementById('sidebar');
+                if (sidebar) sidebar.classList.remove('open');
+            }
+            return false;
+        };
+    }
+
+    // Run after the complete dashboard script has defined all loaders.
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function () {
+            bindSection('customers');
+            bindSection('expenses');
+        });
+    } else {
+        bindSection('customers');
+        bindSection('expenses');
+    }
+})();
 </script>
 
 </body>
