@@ -3830,71 +3830,49 @@ window.__openSGCSection = function(section){
 </script>
 
 <script>
-/* SGC FINAL FUNCTIONAL NAV — CUSTOMERS & EXPENSES */
+/* SGC FINAL FUNCTIONAL NAV — CUSTOMERS & EXPENSES (DIRECT) */
 (function () {
-    function bindSection(section) {
-        const btnId = section + 'NavBtn';
-        const pageId = section + 'Page';
-        const loaderName = section === 'customers' ? 'loadCustomers' : 'loadExpenses';
-        const oldBtn = document.getElementById(btnId);
-        const page = document.getElementById(pageId);
-        if (!oldBtn || !page) return;
+    function openDirect(section) {
+        var page = document.getElementById(section + 'Page');
+        var btn = document.getElementById(section + 'NavBtn');
+        if (!page || !btn) return;
 
-        // Clone removes every old click listener attached to this button.
-        const btn = oldBtn.cloneNode(true);
-        oldBtn.replaceWith(btn);
-
-        btn.onclick = function (event) {
-            event.preventDefault();
-            event.stopPropagation();
-
-            // Hide every page and dashboard-only content first.
-            document.querySelectorAll('.page-view').forEach(function (p) {
-                p.classList.remove('active', 'sgc-force-active');
-                p.style.setProperty('display', 'none', 'important');
-            });
-            const welcome = document.querySelector('.content > .welcome');
-            const cards = document.querySelector('.content > .cards');
-            const grid = document.querySelector('.content > .grid-two');
-            if (welcome) welcome.style.setProperty('display', 'none', 'important');
-            if (cards) cards.style.setProperty('display', 'none', 'important');
-            if (grid) grid.style.setProperty('display', 'none', 'important');
-
-            document.querySelectorAll('.nav button').forEach(function (b) {
-                b.classList.remove('active');
-            });
-
-            // Show the requested section.
-            page.classList.add('active', 'sgc-force-active');
-            page.style.setProperty('display', 'block', 'important');
-            page.style.setProperty('visibility', 'visible', 'important');
-            btn.classList.add('active');
-
-            const loader = window[loaderName];
-            if (typeof loader === 'function') {
-                Promise.resolve(loader()).catch(function (err) {
-                    console.error('SGC ' + section + ' load error:', err);
-                });
-            }
-
-            if (window.innerWidth <= 800) {
-                const sidebar = document.getElementById('sidebar');
-                if (sidebar) sidebar.classList.remove('open');
-            }
-            return false;
-        };
-    }
-
-    // Run after the complete dashboard script has defined all loaders.
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', function () {
-            bindSection('customers');
-            bindSection('expenses');
+        document.querySelectorAll('.page-view').forEach(function(p){
+            p.classList.remove('active','sgc-force-active');
+            p.style.display = 'none';
         });
-    } else {
-        bindSection('customers');
-        bindSection('expenses');
+        document.querySelectorAll('.nav button').forEach(function(b){ b.classList.remove('active'); });
+
+        var welcome=document.querySelector('.content > .welcome');
+        var cards=document.querySelector('.content > .cards');
+        var grid=document.querySelector('.content > .grid-two');
+        if(welcome) welcome.style.display='none';
+        if(cards) cards.style.display='none';
+        if(grid) grid.style.display='none';
+
+        page.classList.add('active','sgc-force-active');
+        page.style.display='block';
+        page.style.visibility='visible';
+        btn.classList.add('active');
+
+        if(section==='customers' && typeof loadCustomers==='function') {
+            loadCustomers().catch(function(e){ console.error(e); });
+        }
+        if(section==='expenses' && typeof loadExpenses==='function') {
+            loadExpenses().catch(function(e){ console.error(e); });
+        }
+        var sidebar=document.getElementById('sidebar');
+        if(window.innerWidth<=800 && sidebar) sidebar.classList.remove('open');
     }
+
+    function install(){
+        var c=document.getElementById('customersNavBtn');
+        var e=document.getElementById('expensesNavBtn');
+        if(c){ c.type='button'; c.onclick=function(ev){ev.preventDefault();ev.stopImmediatePropagation();openDirect('customers');return false;}; }
+        if(e){ e.type='button'; e.onclick=function(ev){ev.preventDefault();ev.stopImmediatePropagation();openDirect('expenses');return false;}; }
+    }
+    if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',install);
+    else install();
 })();
 </script>
 
