@@ -1909,7 +1909,7 @@
         </div>
     </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script></script>
 
 
 
@@ -3859,152 +3859,159 @@
 
 <script>
 /* =========================================================
-   SGC-SDM PHASE 1 — SINGLE NAVIGATION ARCHITECTURE (CLEANED)
-   One router owns page visibility, active nav state and page loading.
+   SGC-SDM PHASE 1 — CLEAN SINGLE ROUTER
+   Navigation is owned here. No page visibility is controlled by nav buttons elsewhere.
    ========================================================= */
-(function(){
-    const ROUTES = {
-        dashboard: { page: null, button: 'dashboardNavBtn', load: 'loadDashboardSummary' },
-        stock: { page: 'currentStockPage', button: 'stockNavBtn', load: 'loadCurrentStock' },
-        products: { page: 'productsPage', button: 'productsNavBtn', load: 'loadProducts' },
-        receivedStock: { page: 'receivedStockPage', button: 'receivedStockNavBtn', load: 'loadReceivedPage' },
-        sales: { page: 'salesPage', button: 'salesNavBtn', load: 'loadSalesData' },
-        receipts: { page: 'receiptsPage', button: 'receiptsNavBtn', load: 'loadSalesReceipts' },
-        customers: { page: 'customersPage', button: 'customersNavBtn', load: 'loadCustomers' },
-        suppliers: { page: 'suppliersPage', button: 'suppliersNavBtn', load: 'loadSuppliers' },
-        expenses: { page: 'expensesPage', button: 'expensesNavBtn', load: 'loadExpenses' },
-        payments: { page: 'paymentsPage', button: 'paymentsNavBtn', load: 'loadPayments' },
-        reports: { page: 'reportsPage', button: 'reportsNavBtn', load: 'loadReports' },
-        users: { page: 'usersPage', button: 'usersNavBtn', load: 'loadUsers' },
-        settings: { page: 'settingsPage', button: 'settingsNavBtn', load: 'loadSettings' }
-    };
+(function SGCNavigation(){
+    'use strict';
+
+    const ROUTES = Object.freeze({
+        dashboard:     { page: null,               button: 'dashboardNavBtn',     load: 'loadDashboardSummary' },
+        stock:         { page: 'currentStockPage', button: 'stockNavBtn',          load: 'loadCurrentStock' },
+        products:      { page: 'productsPage',     button: 'productsNavBtn',       load: 'loadProducts' },
+        receivedStock: { page: 'receivedStockPage',button: 'receivedStockNavBtn',  load: 'loadReceivedPage' },
+        sales:         { page: 'salesPage',        button: 'salesNavBtn',          load: 'loadSalesData' },
+        receipts:      { page: 'receiptsPage',     button: 'receiptsNavBtn',       load: 'loadSalesReceipts' },
+        customers:     { page: 'customersPage',    button: 'customersNavBtn',      load: 'loadCustomers' },
+        suppliers:     { page: 'suppliersPage',    button: 'suppliersNavBtn',      load: 'loadSuppliers' },
+        expenses:      { page: 'expensesPage',     button: 'expensesNavBtn',       load: 'loadExpenses' },
+        payments:      { page: 'paymentsPage',     button: 'paymentsNavBtn',       load: 'loadPayments' },
+        reports:       { page: 'reportsPage',      button: 'reportsNavBtn',        load: 'loadReports' },
+        users:         { page: 'usersPage',        button: 'usersNavBtn',          load: 'loadUsers' },
+        settings:      { page: 'settingsPage',     button: 'settingsNavBtn',       load: 'loadSettings' }
+    });
 
     let currentRoute = null;
-    let navigationBusy = false;
+    let busy = false;
+    let installed = false;
 
-    function hideDashboardChrome(){
-        document.querySelectorAll('.content > .welcome,.content > .cards,.content > .grid-two')
-            .forEach(el => el.style.display = 'none');
+    const DASHBOARD_CHROME = '.content > .welcome,.content > .cards,.content > .grid-two';
+
+    function setDashboardChrome(show) {
+        document.querySelectorAll(DASHBOARD_CHROME).forEach(el => {
+            el.style.display = show ? '' : 'none';
+        });
     }
 
-    function showDashboardChrome(){
-        document.querySelectorAll('.content > .welcome,.content > .cards,.content > .grid-two')
-            .forEach(el => el.style.display = '');
-    }
-
-    function resetViews(){
+    function clearNavigationState() {
         document.querySelectorAll('.page-view').forEach(page => {
-            page.classList.remove('active','sgc-force-active');
+            page.classList.remove('active', 'sgc-force-active');
             page.style.removeProperty('display');
             page.style.removeProperty('visibility');
         });
         document.querySelectorAll('.nav button').forEach(button => button.classList.remove('active'));
     }
 
-    async function loadReceivedPage(){
-        if(typeof loadReceivedDependencies === 'function') await loadReceivedDependencies();
-        if(typeof loadReceivedHistory === 'function') await loadReceivedHistory();
-        if(!document.querySelector('#receivedLines .rs-line') && typeof addReceivedLine === 'function') addReceivedLine();
+    async function runLoader(routeName, route) {
+        if (!route.load || typeof window[route.load] !== 'function') return;
+        try {
+            await window[route.load]();
+        } catch (error) {
+            // A loader error must not undo navigation. The requested page stays visible.
+            console.error(`[SGC] ${routeName} loader failed:`, error);
+        }
     }
 
-    async function open(routeName, options = {}){
+    async function open(routeName, options = {}) {
         const route = ROUTES[routeName];
-        if(!route){ console.error('SGC route not found:', routeName); return false; }
-        if(navigationBusy && !options.force) return false;
-        navigationBusy = true;
-        try{
-            resetViews();
-            const button = document.getElementById(route.button);
-            if(button) button.classList.add('active');
+        if (!route) return false;
+        if (busy && !options.force) return false;
 
-            if(routeName === 'dashboard'){
-                showDashboardChrome();
-            }else{
-                hideDashboardChrome();
+        busy = true;
+        try {
+            clearNavigationState();
+
+            const button = document.getElementById(route.button);
+            if (button) button.classList.add('active');
+
+            if (routeName === 'dashboard') {
+                setDashboardChrome(true);
+            } else {
+                setDashboardChrome(false);
                 const page = document.getElementById(route.page);
-                if(!page){
-                    console.error('SGC route page missing:', route.page);
+                if (!page) {
+                    console.error(`[SGC] Missing page element: ${route.page}`);
                     return false;
                 }
-                page.classList.add('active','sgc-force-active');
+                page.classList.add('active', 'sgc-force-active');
                 page.style.display = 'block';
                 page.style.visibility = 'visible';
             }
 
             currentRoute = routeName;
-            if(typeof route.load === 'string' && typeof window[route.load] === 'function'){
-                try { await window[route.load](); }
-                catch(loadError){
-                    console.error('SGC page loader error:', routeName, loadError);
-                    // Loading failure must never hide the page that was requested.
-                }
-            }
+            await runLoader(routeName, route);
 
-            if(window.innerWidth <= 800){
-                const sidebar = document.getElementById('sidebar');
-                if(sidebar) sidebar.classList.remove('open');
-            }
+            const sidebarEl = document.getElementById('sidebar');
+            if (sidebarEl && window.innerWidth <= 800) sidebarEl.classList.remove('open');
             return true;
-        }catch(error){
-            console.error('SGC navigation error:', routeName, error);
-            return false;
-        }finally{
-            navigationBusy = false;
+        } finally {
+            busy = false;
         }
     }
 
-    // Public router API. Other modules should use this instead of changing page visibility directly.
-    window.SGCAppRouter = Object.freeze({
-        open,
-        getCurrent: () => currentRoute,
-        routes: Object.freeze(Object.keys(ROUTES))
-    });
-    window.__sgcOpenSection = open;
-    window.__openSGCSection = open;
-
-    const quickRoutes = {
-        quickProductsBtn: 'receivedStock',
-        quickSaleBtn: 'sales'
-    };
-
-    function install(){
-        document.querySelectorAll('.nav button').forEach(button => {
-            button.type = 'button';
-        });
-
-        // Single delegated navigation handler. Legacy nav listeners were removed in Phase 1.
-        // Capture-phase router: runs before legacy module handlers, so no old
-        // listener can hijack navigation. This is intentional during Phase 1.
-        document.addEventListener('click', function(event){
-            const navButton = event.target.closest('.nav button');
-            if(navButton){
-                const route = Object.keys(ROUTES).find(name => ROUTES[name].button === navButton.id);
-                if(route){
-                    event.preventDefault();
-                    event.stopPropagation();
-                    event.stopImmediatePropagation();
-                    open(route, {force:true});
-                    return;
-                }
-            }
-
-            const quickButton = event.target.closest('[id]');
-            if(quickButton && quickRoutes[quickButton.id]){
-                event.preventDefault();
-                event.stopPropagation();
-                event.stopImmediatePropagation();
-                open(quickRoutes[quickButton.id], {force:true});
-            }
-        }, true);
+    function routeFromButton(button) {
+        if (!button || !button.id) return null;
+        for (const [name, route] of Object.entries(ROUTES)) {
+            if (route.button === button.id) return name;
+        }
+        return null;
     }
 
-    if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', install, {once:true});
-    else install();
+    function install() {
+        if (installed) return;
+        const nav = document.querySelector('.nav');
+        if (!nav) {
+            console.error('[SGC] Navigation container .nav was not found.');
+            return;
+        }
 
-    // Initial route is always dashboard.
-    setTimeout(() => open('dashboard', {force:true}), 0);
-})();
-</script>
+        installed = true;
+        nav.querySelectorAll('button').forEach(button => { button.type = 'button'; });
+
+        // ONE navigation listener for all sidebar buttons.
+        nav.addEventListener('click', event => {
+            const button = event.target.closest('button');
+            if (!button || !nav.contains(button)) return;
+            const routeName = routeFromButton(button);
+            if (!routeName) return;
+            event.preventDefault();
+            event.stopPropagation();
+            event.stopImmediatePropagation();
+            open(routeName, { force: true });
+        }, true);
+
+        // Quick actions are deliberately mapped here too, so they cannot create a second router.
+        const quickRoutes = Object.freeze({ quickProductsBtn: 'receivedStock', quickSaleBtn: 'sales' });
+        document.addEventListener('click', event => {
+            const target = event.target.closest('[id]');
+            if (!target || !quickRoutes[target.id]) return;
+            // Sidebar navigation already handled above.
+            if (target.closest('.nav')) return;
+            event.preventDefault();
+            event.stopPropagation();
+            event.stopImmediatePropagation();
+            open(quickRoutes[target.id], { force: true });
+        }, true);
+
+        // Expose a single public API for modules and future phases.
+        window.SGCAppRouter = Object.freeze({
+            open,
+            getCurrent: () => currentRoute,
+            routes: Object.freeze(Object.keys(ROUTES))
+        });
+        window.__sgcOpenSection = open;
+        window.__openSGCSection = open;
+
+        // Start on Dashboard only after the router is installed.
+        setTimeout(() => open('dashboard', { force: true }), 0);
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', install, { once: true });
+    } else {
+        install();
+    }
+})();</script>
 
 </body>
 </html>
