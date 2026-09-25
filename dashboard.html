@@ -999,7 +999,7 @@
 
             <div class="nav-title" data-i18n="main_menu">Main Menu</div>
 
-            <button class="active">
+            <button id="dashboardNavBtn" class="active" type="button">
                 <span class="nav-icon">📊</span>
                 <span data-i18n="dashboard">Dashboard</span>
             </button>
@@ -1652,19 +1652,19 @@
                 <div class="stock-summary" id="expenseSummaryCards"></div>
                 <div class="section-card">
                     <div class="section-head"><h3>Matumizi</h3><button class="primary-btn" id="addExpenseBtn">＋ Expense Mpya</button></div>
-                    <div class="form-grid"><div class="form-group"><label>Tafuta</label><input id="expenseSearch" placeholder="Description, reference..."></div></div>
+                    <div class="form-grid"><div class="form-group"><label>Tafuta</label><input id="expenseSearch" placeholder="Description, category, reference..."></div></div>
                     <div class="table-wrap"><table class="products-table"><thead><tr><th>Tarehe</th><th>Category</th><th>Description</th><th>Amount</th><th>Payment</th><th>Reference</th><th>Vitendo</th></tr></thead><tbody id="expensesBody"><tr><td colspan="7" class="loading-row">Inapakia...</td></tr></tbody></table></div>
                 </div>
             </section>
 
             <!-- PAYMENTS PAGE -->
             <section class="page-view" id="paymentsPage">
-                <div class="welcome"><h2>Payments 💳</h2><p>Fuatilia malipo ya wateja na supplier.</p></div>
+                <div class="welcome"><h2>Payments 💳</h2><p>Fuatilia malipo ya wateja na supplier, na rekodi partial/full payments kwa usalama.</p></div>
                 <div class="section-card">
                     <div class="section-head"><h3>Customer Payments / Credit</h3><button class="secondary-btn" id="refreshPaymentsBtn">↻ Refresh</button></div>
-                    <div class="table-wrap"><table class="products-table"><thead><tr><th>Receipt</th><th>Customer</th><th>Total</th><th>Paid</th><th>Balance</th><th>Payment Method</th><th>Date</th></tr></thead><tbody id="customerPaymentsBody"><tr><td colspan="7" class="loading-row">Inapakia...</td></tr></tbody></table></div>
+                    <div class="table-wrap"><table class="products-table"><thead><tr><th>Receipt</th><th>Customer</th><th>Total</th><th>Paid</th><th>Balance</th><th>Payment Method</th><th>Date</th><th>Vitendo</th></tr></thead><tbody id="customerPaymentsBody"><tr><td colspan="8" class="loading-row">Inapakia...</td></tr></tbody></table></div>
                 </div>
-                <div class="section-card" style="margin-top:16px"><div class="section-head"><h3>Supplier Payments</h3></div><p style="color:var(--gray);font-size:13px">Malipo ya supplier yanaendelea kurekodiwa kupitia Suppliers → Pay. Hapa utaona muhtasari wa supplier balances.</p><div class="table-wrap"><table class="products-table"><thead><tr><th>Supplier</th><th>Total Purchases</th><th>Total Paid</th><th>Outstanding</th></tr></thead><tbody id="supplierPaymentsBody"><tr><td colspan="4" class="loading-row">Inapakia...</td></tr></tbody></table></div></div>
+                <div class="section-card" style="margin-top:16px"><div class="section-head"><h3>Supplier Payments</h3></div><p style="color:var(--gray);font-size:13px">Malipo ya supplier yanaweza kurekodiwa kupitia Suppliers → Pay. Hapa utaona muhtasari wa supplier balances.</p><div class="table-wrap"><table class="products-table"><thead><tr><th>Supplier</th><th>Total Purchases</th><th>Total Paid</th><th>Outstanding</th></tr></thead><tbody id="supplierPaymentsBody"><tr><td colspan="4" class="loading-row">Inapakia...</td></tr></tbody></table></div></div>
             </section>
 
             <!-- REPORTS PAGE -->
@@ -1745,6 +1745,65 @@
                     <div class="form-group"><label>Payment Method</label><select id="supplierPaymentMethod"><option value="cash">Cash</option><option value="mobile_money">Mobile Money</option><option value="bank">Bank</option></select></div>
                     <div class="form-group"><label>Payment Reference</label><input id="supplierPaymentReference" type="text"></div>
                     <div class="modal-actions"><button type="button" class="secondary-btn" id="cancelSupplierPayment">Ghairi</button><button type="submit" class="primary-btn" id="saveSupplierPayment">Record Payment</button></div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- PHASE 2 FUNCTIONAL MODALS -->
+    <div class="modal-backdrop" id="customerModal">
+        <div class="modal">
+            <div class="modal-head"><h3 id="customerModalTitle">Mteja Mpya</h3><button class="modal-close" id="closeCustomerModal">×</button></div>
+            <div class="modal-body">
+                <div class="modal-message" id="customerModalMessage"></div>
+                <form id="customerForm"><input type="hidden" id="customerId">
+                    <div class="form-group"><label>Jina la Mteja</label><input id="customerName" required></div>
+                    <div class="form-grid" style="grid-template-columns:1fr 1fr;">
+                        <div class="form-group"><label>Simu</label><input id="customerPhone" type="tel"></div>
+                        <div class="form-group"><label>Anwani</label><input id="customerAddress"></div>
+                    </div>
+                    <div class="modal-actions"><button type="button" class="secondary-btn" id="cancelCustomerBtn">Ghairi</button><button type="submit" class="primary-btn" id="saveCustomerBtn">Hifadhi</button></div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-backdrop" id="expenseModal">
+        <div class="modal">
+            <div class="modal-head"><h3 id="expenseModalTitle">Expense Mpya</h3><button class="modal-close" id="closeExpenseModal">×</button></div>
+            <div class="modal-body">
+                <div class="modal-message" id="expenseModalMessage"></div>
+                <form id="expenseForm"><input type="hidden" id="expenseId">
+                    <div class="form-grid" style="grid-template-columns:1fr 1fr;">
+                        <div class="form-group"><label>Category</label><select id="expenseCategory" required><option value="food">Food</option><option value="rent">Rent</option><option value="transport">Transport</option><option value="tra">TRA</option><option value="municipality">Municipality</option><option value="electricity">Electricity</option><option value="water">Water</option><option value="fuel">Fuel</option><option value="internet">Internet</option><option value="salary">Salary</option><option value="maintenance">Maintenance</option><option value="other">Other</option></select></div>
+                        <div class="form-group"><label>Tarehe</label><input id="expenseDate" type="date" required></div>
+                    </div>
+                    <div class="form-group"><label>Description</label><textarea id="expenseDescription" rows="3" required></textarea></div>
+                    <div class="form-grid" style="grid-template-columns:1fr 1fr;">
+                        <div class="form-group"><label>Amount (TZS)</label><input id="expenseAmount" type="number" min="0.01" step="0.01" required></div>
+                        <div class="form-group"><label>Payment Method</label><select id="expensePaymentMethod" required><option value="cash">Cash</option><option value="mobile_money">Mobile Money</option><option value="bank">Bank</option><option value="credit">Credit</option></select></div>
+                    </div>
+                    <div class="form-group"><label>Payment Reference <span style="font-weight:400;opacity:.65">(optional)</span></label><input id="expensePaymentReference"></div>
+                    <div class="modal-actions"><button type="button" class="secondary-btn" id="cancelExpenseBtn">Ghairi</button><button type="submit" class="primary-btn" id="saveExpenseBtn">Hifadhi</button></div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-backdrop" id="customerPaymentModal">
+        <div class="modal">
+            <div class="modal-head"><h3>Rekodi Malipo ya Mteja</h3><button class="modal-close" id="closeCustomerPayment">×</button></div>
+            <div class="modal-body">
+                <div class="modal-message" id="customerPaymentMessage"></div>
+                <form id="customerPaymentForm">
+                    <div class="form-group"><label>Receipt</label><select id="customerPaymentSale" required></select></div>
+                    <div class="form-group"><label>Outstanding</label><input id="customerPaymentOutstanding" readonly></div>
+                    <div class="form-grid" style="grid-template-columns:1fr 1fr;">
+                        <div class="form-group"><label>Amount</label><input id="customerPaymentAmount" type="number" min="0.01" step="0.01" required></div>
+                        <div class="form-group"><label>Payment Method</label><select id="customerPaymentMethod"><option value="cash">Cash</option><option value="mobile_money">Mobile Money</option><option value="bank">Bank</option><option value="credit">Credit</option></select></div>
+                    </div>
+                    <div class="form-group"><label>Payment Reference</label><input id="customerPaymentReference"></div>
+                    <div class="modal-actions"><button type="button" class="secondary-btn" id="cancelCustomerPayment">Ghairi</button><button type="submit" class="primary-btn" id="saveCustomerPayment">Record Payment</button></div>
                 </form>
             </div>
         </div>
@@ -2858,7 +2917,7 @@ window.__openSGCSection = function(section){
     const salesNavBtn = document.getElementById("salesNavBtn");
     const salesFormCard = document.getElementById("salesFormCard");
     const saleItems = document.getElementById("saleItems");
-    const saleCustomer = document.getElementById("saleCustomer");
+    const saleCustomer = document.getElementById("saleCustomerName");
     const salePaymentMethod = document.getElementById("salePaymentMethod");
     const salePaidAmount = document.getElementById("salePaidAmount");
     const saleNotes = document.getElementById("saleNotes");
@@ -2988,7 +3047,7 @@ window.__openSGCSection = function(section){
     });document.getElementById("newSaleBtn").addEventListener("click",openNewSaleForm);document.getElementById("closeSaleFormBtn").addEventListener("click",()=>salesFormCard.style.display="none");document.getElementById("clearSaleBtn").addEventListener("click",clearSaleForm);document.getElementById("refreshSalesBtn").addEventListener("click",loadSalesData);salesSearch.addEventListener("input",loadSalesList);document.getElementById("quickSaleBtn").addEventListener("click",()=>showSalesPage(true));
     document.getElementById("saveSaleBtn").addEventListener("click",async()=>{clearSalesMessage();const b=document.getElementById("saveSaleBtn");try{const items=collectSaleItems();const total=items.reduce((sum,i)=>sum+Number(i.quantity)*Number((saleItems.querySelector(`.sale-item-row .sale-line-volume option[value="${i.variant_id}"]`)?.closest(".sale-item-row")?.querySelector(".sale-line-price")?.value)||0),0);let paid=Number(salePaidAmount.value||0);if(!Number.isFinite(paid)||paid<0||paid>total)throw new Error(currentLanguage==="sw"?"Kiasi kilicholipwa si sahihi.":"Paid amount is invalid.");if(salePaymentMethod.value==="credit")paid=0;const customerName=document.getElementById("saleCustomerName").value.trim();
         const customerId=document.getElementById("saleCustomerId").value||null;
-        if((paid<total||salePaymentMethod.value==="credit")&&!customerName)throw new Error(t("customer_required_credit"));b.disabled=true;const result=await supabaseRPC("create_sale",{p_customer_id:customerId,p_customer_name:customerName||null,p_paid_amount:paid,p_payment_method:salePaymentMethod.value,p_notes:saleNotes.value.trim()||null,p_items:items});const sale=Array.isArray(result)?result[0]:result;salesFormCard.style.display="none";await Promise.all([loadSalesList(),loadTodaySalesSummary(),loadDashboardSummary()]);alert(`${t("sale_saved")} ${sale?.receipt_no||""}`)}catch(e){console.error(e);showSalesMessage(e.message||t("sale_error"),"error")}finally{b.disabled=false}});
+        if((paid<total||salePaymentMethod.value==="credit")&&!customerName)throw new Error(t("customer_required_credit"));b.disabled=true;const result=await supabaseRPC("create_sale",{p_customer_name:customerName||null,p_paid_amount:paid,p_payment_method:salePaymentMethod.value,p_notes:saleNotes.value.trim()||null,p_items:items});const sale=Array.isArray(result)?result[0]:result;salesFormCard.style.display="none";await Promise.all([loadSalesList(),loadTodaySalesSummary(),loadDashboardSummary()]);alert(`${t("sale_saved")} ${sale?.receipt_no||""}`)}catch(e){console.error(e);showSalesMessage(e.message||t("sale_error"),"error")}finally{b.disabled=false}});
     async function loadTodaySalesSummary(){try{const d=await supabaseRPC("get_today_sales_summary"),r=Array.isArray(d)?d[0]:d;document.getElementById("salesTodayTotal").textContent=`TZS ${Number(r?.total_sales||0).toLocaleString()}`;document.getElementById("salesTodayPaid").textContent=`TZS ${Number(r?.total_paid||0).toLocaleString()}`;document.getElementById("salesTodayCredit").textContent=`TZS ${Number(r?.total_credit||0).toLocaleString()}`;document.getElementById("salesTodayTransactions").textContent=Number(r?.transaction_count||0).toLocaleString()}catch(e){console.error(e)}}
     async function loadSalesList(){salesTableBody.innerHTML=`<tr><td colspan="9" class="loading-row">${t("loading")}</td></tr>`;try{const d=await supabaseRPC("get_sales_for_current_user",{p_search:salesSearch.value.trim()||null,p_limit:50,p_offset:0});salesRows=Array.isArray(d)?d:[];if(!salesRows.length){salesTableBody.innerHTML=`<tr><td colspan="9" class="empty-row">${currentLanguage==="sw"?"Hakuna mauzo yaliyopatikana.":"No sales found."}</td></tr>`;return}salesTableBody.innerHTML=salesRows.map(r=>`<tr><td><strong>${escapeHtml(r.receipt_no||"-")}</strong></td><td>${escapeHtml(r.customer_name||(currentLanguage==="sw"?"Mteja wa kawaida":"Walk-in Customer"))}</td><td>${escapeHtml(r.salesman_name||"-")}</td><td class="price">TZS ${Number(r.total_amount||0).toLocaleString()}</td><td>TZS ${Number(r.paid_amount||0).toLocaleString()}</td><td>TZS ${Number(r.balance||0).toLocaleString()}</td><td>${escapeHtml(r.payment_method||"-")}</td><td>${escapeHtml(r.created_at?new Date(r.created_at).toLocaleString():"-")}</td><td><button class="small-btn edit" data-sale-id="${r.id}">👁️ ${t("view")}</button></td></tr>`).join("")}catch(e){console.error(e);salesTableBody.innerHTML=`<tr><td colspan="9" class="empty-row">${escapeHtml(e.message||t("sale_error"))}</td></tr>`}}
     salesTableBody.addEventListener("click",e=>{const b=e.target.closest("button[data-sale-id]");if(b)openSaleReceipt(b.dataset.saleId)});
@@ -3790,21 +3849,32 @@ window.__openSGCSection = function(section){
     }
     function openFunctionalPage(page,btn,loader){hideAllBusinessPages();page.classList.add('active');btn.classList.add('active');if(window.innerWidth<=800)sidebar.classList.remove('open');if(loader)loader();}
     function renderCustomers(){const q=(document.getElementById('customerSearch').value||'').trim().toLowerCase();const rows=customersRows.filter(r=>`${r.name||''} ${r.phone||''} ${r.address||''}`.toLowerCase().includes(q));document.getElementById('customersBody').innerHTML=rows.length?rows.map(r=>`<tr><td><strong>${esc(r.name||'-')}</strong></td><td>${esc(r.phone||'-')}</td><td>${esc(r.address||'-')}</td><td>${r.is_active?'Active':'Inactive'}</td><td><button class="small-btn edit" data-customer-edit="${r.id}">Edit</button><button class="small-btn" data-customer-toggle="${r.id}">${r.is_active?'Deactivate':'Activate'}</button></td></tr>`).join(''):'<tr><td colspan="5" class="empty-row">Hakuna wateja.</td></tr>'}
-    async function loadCustomers(){const body=document.getElementById('customersBody');body.innerHTML='<tr><td colspan="5" class="loading-row">Inapakia...</td></tr>';try{customersRows=await supabaseREST('customers?select=id,name,phone,address,is_active,created_at&order=created_at.desc')||[];renderCustomers()}catch(e){body.innerHTML=`<tr><td colspan="5" class="empty-row">${esc(e.message||'Failed')}</td></tr>`}}
-    async function customerForm(existing=null){const name=prompt('Jina la mteja:',existing?.name||'');if(name===null)return;const n=name.trim();if(!n)return alert('Weka jina la mteja.');const phone=prompt('Simu (hiari):',existing?.phone||'');const address=prompt('Anwani (hiari):',existing?.address||'');try{if(existing){await supabaseREST(`customers?id=eq.${encodeURIComponent(existing.id)}`,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({name:n,phone:phone?.trim()||null,address:address?.trim()||null})});}else{await supabaseREST('customers',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify({name:n,phone:phone?.trim()||null,address:address?.trim()||null,is_active:true})});}await loadCustomers()}catch(e){alert(e.message||'Customer save failed')}}
-    async function toggleCustomer(id){const r=customersRows.find(x=>x.id===id);if(!r)return;try{await supabaseREST(`customers?id=eq.${encodeURIComponent(id)}`,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({is_active:!r.is_active})});await loadCustomers()}catch(e){alert(e.message||'Failed')}}
-    document.getElementById('addCustomerBtn').addEventListener('click',()=>customerForm());document.getElementById('customerSearch').addEventListener('input',renderCustomers);document.getElementById('customersBody').addEventListener('click',e=>{const edit=e.target.closest('[data-customer-edit]'),tog=e.target.closest('[data-customer-toggle]');if(edit)return customerForm(customersRows.find(x=>x.id===edit.dataset.customerEdit));if(tog)return toggleCustomer(tog.dataset.customerToggle)});
+    async function loadCustomers(){const body=document.getElementById('customersBody');body.innerHTML='<tr><td colspan="5" class="loading-row">Inapakia...</td></tr>';try{const rows=await supabaseRPC('get_customers_for_current_user',{p_search:null});customersRows=Array.isArray(rows)?rows:[];renderCustomers()}catch(e){body.innerHTML=`<tr><td colspan="5" class="empty-row">${esc(e.message||'Failed')}</td></tr>`}}
+    function openCustomerModal(existing=null){const m=document.getElementById('customerModal'),f=document.getElementById('customerForm');f.reset();document.getElementById('customerModalMessage').className='modal-message';document.getElementById('customerModalMessage').textContent='';document.getElementById('customerId').value=existing?.id||'';document.getElementById('customerName').value=existing?.name||'';document.getElementById('customerPhone').value=existing?.phone||'';document.getElementById('customerAddress').value=existing?.address||'';document.getElementById('customerModalTitle').textContent=existing?'Hariri Mteja':'Mteja Mpya';m.classList.add('show');document.getElementById('customerName').focus()}
+    function closeCustomerModal(){document.getElementById('customerModal').classList.remove('show')}
+    document.getElementById('customerForm').addEventListener('submit',async e=>{e.preventDefault();const btn=document.getElementById('saveCustomerBtn'),msg=document.getElementById('customerModalMessage');const id=document.getElementById('customerId').value||null;const name=document.getElementById('customerName').value.trim();if(!name){msg.textContent='Weka jina la mteja.';msg.className='modal-message show error';return}btn.disabled=true;try{if(id){await supabaseRPC('update_customer',{p_customer_id:id,p_name:name,p_phone:document.getElementById('customerPhone').value.trim()||null,p_address:document.getElementById('customerAddress').value.trim()||null})}else{await supabaseRPC('create_customer',{p_name:name,p_phone:document.getElementById('customerPhone').value.trim()||null,p_address:document.getElementById('customerAddress').value.trim()||null})}closeCustomerModal();await loadCustomers()}catch(err){msg.textContent=err.message||'Customer save failed';msg.className='modal-message show error'}finally{btn.disabled=false}})
+    async function toggleCustomer(id){const r=customersRows.find(x=>x.id===id);if(!r)return;try{await supabaseRPC('set_customer_active',{p_customer_id:id,p_is_active:!r.is_active});await loadCustomers()}catch(e){alert(e.message||'Failed')}}
+    document.getElementById('addCustomerBtn').addEventListener('click',()=>openCustomerModal());document.getElementById('closeCustomerModal').addEventListener('click',closeCustomerModal);document.getElementById('cancelCustomerBtn').addEventListener('click',closeCustomerModal);document.getElementById('customerSearch').addEventListener('input',renderCustomers);document.getElementById('customersBody').addEventListener('click',e=>{const edit=e.target.closest('[data-customer-edit]'),tog=e.target.closest('[data-customer-toggle]');if(edit)return openCustomerModal(customersRows.find(x=>x.id===edit.dataset.customerEdit));if(tog)return toggleCustomer(tog.dataset.customerToggle)});
 
     function renderExpenseSummary(s){const cards=[['Leo',s?.today_total],['Wiki',s?.week_total],['Mwezi',s?.month_total],['Mwaka',s?.year_total]];document.getElementById('expenseSummaryCards').innerHTML=cards.map(x=>`<div class="stock-mini-card"><span>${x[0]}</span><strong>${money(x[1])}</strong></div>`).join('')}
     function renderExpenses(){const q=(document.getElementById('expenseSearch').value||'').trim().toLowerCase();const rows=expensesRows.filter(r=>`${r.description||''} ${r.category||''} ${r.payment_reference||''}`.toLowerCase().includes(q));document.getElementById('expensesBody').innerHTML=rows.length?rows.map(r=>`<tr><td>${esc(r.expense_date||'-')}</td><td>${esc(r.category||'-')}</td><td>${esc(r.description||'-')}</td><td>${money(r.amount)}</td><td>${esc(r.payment_method||'-')}</td><td>${esc(r.payment_reference||'-')}</td><td><button class="small-btn edit" data-exp-edit="${r.id}">Edit</button><button class="small-btn" data-exp-del="${r.id}">Delete</button></td></tr>`).join(''):'<tr><td colspan="7" class="empty-row">Hakuna expenses.</td></tr>'}
     async function loadExpenses(){try{const [rows,sum]=await Promise.all([supabaseRPC('get_expenses_for_current_user',{p_search:null}),supabaseRPC('get_expense_summary')]);expensesRows=Array.isArray(rows)?rows:[];renderExpenseSummary(Array.isArray(sum)?sum[0]:sum);renderExpenses()}catch(e){document.getElementById('expensesBody').innerHTML=`<tr><td colspan="7" class="empty-row">${esc(e.message||'Failed')}</td></tr>`}}
-    async function expenseForm(existing=null){const category=prompt('Category (food, rent, transport, tra, municipality, electricity, water, fuel, internet, salary, maintenance, other):',existing?.category||'other');if(category===null)return;const description=prompt('Description:',existing?.description||'');if(description===null)return;const amount=Number(prompt('Amount:',existing?.amount||''));if(!Number.isFinite(amount)||amount<=0)return alert('Amount si sahihi.');const date=prompt('Date YYYY-MM-DD:',existing?.expense_date||new Date().toISOString().slice(0,10));if(date===null)return;const method=prompt('Payment method (cash/mobile_money/bank/credit):',existing?.payment_method||'cash');if(method===null)return;const ref=prompt('Payment reference (optional):',existing?.payment_reference||'');try{if(existing)await supabaseRPC('update_expense',{p_expense_id:existing.id,p_category:category,p_description:description,p_amount:amount,p_expense_date:date,p_payment_method:method,p_payment_reference:ref?.trim()||null});else await supabaseRPC('create_expense',{p_category:category,p_description:description,p_amount:amount,p_expense_date:date,p_payment_method:method,p_payment_reference:ref?.trim()||null});await loadExpenses()}catch(e){alert(e.message||'Expense save failed')}}
-    document.getElementById('addExpenseBtn').addEventListener('click',()=>expenseForm());document.getElementById('expenseSearch').addEventListener('input',renderExpenses);document.getElementById('expensesBody').addEventListener('click',async e=>{const ed=e.target.closest('[data-exp-edit]'),dl=e.target.closest('[data-exp-del]');if(ed)return expenseForm(expensesRows.find(x=>x.id===ed.dataset.expEdit));if(dl&&confirm('Delete this expense?')){try{await supabaseRPC('delete_expense',{p_expense_id:dl.dataset.expDel});await loadExpenses()}catch(err){alert(err.message||'Delete failed')}}});
+    function openExpenseModal(existing=null){const f=document.getElementById('expenseForm');f.reset();document.getElementById('expenseModalMessage').className='modal-message';document.getElementById('expenseModalMessage').textContent='';document.getElementById('expenseId').value=existing?.id||'';document.getElementById('expenseCategory').value=existing?.category||'other';document.getElementById('expenseDescription').value=existing?.description||'';document.getElementById('expenseAmount').value=existing?.amount||'';document.getElementById('expenseDate').value=existing?.expense_date||new Date().toISOString().slice(0,10);document.getElementById('expensePaymentMethod').value=existing?.payment_method||'cash';document.getElementById('expensePaymentReference').value=existing?.payment_reference||'';document.getElementById('expenseModalTitle').textContent=existing?'Hariri Expense':'Expense Mpya';document.getElementById('expenseModal').classList.add('show')}
+    function closeExpenseModal(){document.getElementById('expenseModal').classList.remove('show')}
+    document.getElementById('expenseForm').addEventListener('submit',async e=>{e.preventDefault();const btn=document.getElementById('saveExpenseBtn'),msg=document.getElementById('expenseModalMessage');const id=document.getElementById('expenseId').value||null;const amount=Number(document.getElementById('expenseAmount').value);if(!Number.isFinite(amount)||amount<=0){msg.textContent='Amount si sahihi.';msg.className='modal-message show error';return}btn.disabled=true;const body={p_category:document.getElementById('expenseCategory').value,p_description:document.getElementById('expenseDescription').value.trim(),p_amount:amount,p_expense_date:document.getElementById('expenseDate').value,p_payment_method:document.getElementById('expensePaymentMethod').value,p_payment_reference:document.getElementById('expensePaymentReference').value.trim()||null};try{if(id)await supabaseRPC('update_expense',{p_expense_id:id,...body});else await supabaseRPC('create_expense',body);closeExpenseModal();await loadExpenses()}catch(err){msg.textContent=err.message||'Expense save failed';msg.className='modal-message show error'}finally{btn.disabled=false}})
+    document.getElementById('addExpenseBtn').addEventListener('click',()=>openExpenseModal());document.getElementById('closeExpenseModal').addEventListener('click',closeExpenseModal);document.getElementById('cancelExpenseBtn').addEventListener('click',closeExpenseModal);document.getElementById('expenseSearch').addEventListener('input',renderExpenses);document.getElementById('expensesBody').addEventListener('click',async e=>{const ed=e.target.closest('[data-exp-edit]'),dl=e.target.closest('[data-exp-del]');if(ed)return openExpenseModal(expensesRows.find(x=>x.id===ed.dataset.expEdit));if(dl&&confirm('Delete this expense?')){try{await supabaseRPC('delete_expense',{p_expense_id:dl.dataset.expDel});await loadExpenses()}catch(err){alert(err.message||'Delete failed')}}});
 
-    async function loadPayments(){const b=document.getElementById('customerPaymentsBody'),s=document.getElementById('supplierPaymentsBody');b.innerHTML='<tr><td colspan="7" class="loading-row">Inapakia...</td></tr>';s.innerHTML='<tr><td colspan="4" class="loading-row">Inapakia...</td></tr>';try{const sales=await supabaseRPC('get_sales_for_current_user',{p_search:null,p_limit:100,p_offset:0});b.innerHTML=(sales||[]).filter(r=>Number(r.paid_amount||0)>0||Number(r.balance||0)>0).map(r=>`<tr><td>${esc(r.receipt_no||'-')}</td><td>${esc(r.customer_name||'Walk-in')}</td><td>${money(r.total_amount)}</td><td>${money(r.paid_amount)}</td><td>${money(r.balance)}</td><td>${esc(r.payment_method||'-')}</td><td>${esc(r.created_at?new Date(r.created_at).toLocaleString():'-')}</td></tr>`).join('')||'<tr><td colspan="7" class="empty-row">Hakuna customer payments.</td></tr>';const sups=await supabaseRPC('get_suppliers_for_current_user',{p_search:null});const balances=await Promise.all((sups||[]).slice(0,100).map(async x=>{try{const r=await supabaseRPC('get_supplier_balance',{p_supplier_id:x.id});return Array.isArray(r)?r[0]:r}catch(_){return null}}));s.innerHTML=balances.filter(Boolean).map(r=>`<tr><td>${esc(r.supplier_name||'-')}</td><td>${money(r.total_purchases)}</td><td>${money(r.total_paid)}</td><td>${money(r.outstanding_balance)}</td></tr>`).join('')||'<tr><td colspan="4" class="empty-row">Hakuna supplier balances.</td></tr>'}catch(e){b.innerHTML=`<tr><td colspan="7" class="empty-row">${esc(e.message||'Failed')}</td></tr>`}}
-    document.getElementById('refreshPaymentsBtn').addEventListener('click',loadPayments);
+    let customerPaymentSales=[];
+    function updateCustomerPaymentOutstanding(){const opt=document.getElementById('customerPaymentSale').selectedOptions[0];const bal=Number(opt?.dataset.balance||0);document.getElementById('customerPaymentOutstanding').value=money(bal);document.getElementById('customerPaymentAmount').max=bal||0}
+    async function openCustomerPaymentModal(saleId=null){const m=document.getElementById('customerPaymentModal'),sel=document.getElementById('customerPaymentSale'),msg=document.getElementById('customerPaymentMessage');msg.textContent='';msg.className='modal-message';sel.innerHTML='<option value="">Inapakia...</option>';m.classList.add('show');try{const sales=await supabaseRPC('get_sales_for_current_user',{p_search:null,p_limit:200,p_offset:0});customerPaymentSales=(sales||[]).filter(r=>Number(r.balance||0)>0 && r.customer_name);sel.innerHTML=customerPaymentSales.length?customerPaymentSales.map(r=>`<option value="${r.id}" data-balance="${Number(r.balance||0)}">${esc(r.receipt_no||r.id)} — ${esc(r.customer_name||'-')} — ${money(r.balance)}</option>`).join(''):'<option value="">Hakuna customer credit outstanding.</option>';if(saleId&&customerPaymentSales.some(x=>x.id===saleId))sel.value=saleId;updateCustomerPaymentOutstanding()}catch(e){sel.innerHTML='<option value="">Imeshindikana kupakia.</option>';msg.textContent=e.message||'Failed';msg.className='modal-message show error'}}
+    function closeCustomerPaymentModal(){document.getElementById('customerPaymentModal').classList.remove('show')}
+    document.getElementById('customerPaymentSale').addEventListener('change',updateCustomerPaymentOutstanding);document.getElementById('closeCustomerPayment').addEventListener('click',closeCustomerPaymentModal);document.getElementById('cancelCustomerPayment').addEventListener('click',closeCustomerPaymentModal);
+    document.getElementById('customerPaymentForm').addEventListener('submit',async e=>{e.preventDefault();const msg=document.getElementById('customerPaymentMessage'),btn=document.getElementById('saveCustomerPayment'),saleId=document.getElementById('customerPaymentSale').value,amount=Number(document.getElementById('customerPaymentAmount').value);const outstanding=Number(document.getElementById('customerPaymentSale').selectedOptions[0]?.dataset.balance||0);if(!saleId||!Number.isFinite(amount)||amount<=0||amount>outstanding){msg.textContent='Kiasi cha malipo si sahihi.';msg.className='modal-message show error';return}btn.disabled=true;try{await supabaseRPC('record_customer_payment',{p_sale_id:saleId,p_amount:amount,p_payment_method:document.getElementById('customerPaymentMethod').value,p_payment_reference:document.getElementById('customerPaymentReference').value.trim()||null});closeCustomerPaymentModal();await loadPayments()}catch(err){msg.textContent=err.message||'Payment failed';msg.className='modal-message show error'}finally{btn.disabled=false}});
 
-    async function loadReports(){const cards=document.getElementById('reportSummaryCards');try{const [sales,exp,stock,cat]=await Promise.all([supabaseRPC('get_sales_for_current_user',{p_search:null,p_limit:500,p_offset:0}),supabaseRPC('get_expense_summary'),supabaseRPC('get_variant_stock_summary',{p_product_id:null}),supabaseRPC('get_expense_summary_by_category')]);const today=new Date().toISOString().slice(0,10);const sr=(sales||[]).filter(x=>(x.created_at||'').slice(0,10)===today);const revenue=sr.reduce((a,x)=>a+Number(x.total_amount||0),0);const paid=sr.reduce((a,x)=>a+Number(x.paid_amount||0),0);const expenses=Array.isArray(exp)?exp[0]:exp;cards.innerHTML=[['Sales Today',revenue],['Paid Today',paid],['Expenses Today',expenses?.today_total||0],['Transactions',sr.length]].map(x=>`<div class="stock-mini-card"><span>${x[0]}</span><strong>${typeof x[1]==='number'&&x[0]!=='Transactions'?money(x[1]):x[1]}</strong></div>`).join('');document.getElementById('reportExpenseBody').innerHTML=(cat||[]).map(r=>`<tr><td>${esc(r.category)}</td><td>${r.transaction_count||0}</td><td>${money(r.total_amount)}</td></tr>`).join('')||'<tr><td colspan="3" class="empty-row">Hakuna data.</td></tr>';document.getElementById('reportStockBody').innerHTML=(stock||[]).slice(0,100).map(r=>`<tr><td>${esc(r.product_name)}</td><td>${esc(r.volume_value)} ${esc(r.volume_unit)} ${esc(r.unit||'')}</td><td>${r.current_stock||0}</td><td>${esc(r.stock_status||'-')}</td></tr>`).join('')||'<tr><td colspan="4" class="empty-row">Hakuna stock.</td></tr>'}catch(e){cards.innerHTML=`<div class="stock-mini-card"><span>Error</span><strong style="font-size:12px">${esc(e.message||'Failed')}</strong></div>`}}
+    async function loadPayments(){const b=document.getElementById('customerPaymentsBody'),s=document.getElementById('supplierPaymentsBody');b.innerHTML='<tr><td colspan="8" class="loading-row">Inapakia...</td></tr>';s.innerHTML='<tr><td colspan="4" class="loading-row">Inapakia...</td></tr>';try{const sales=await supabaseRPC('get_sales_for_current_user',{p_search:null,p_limit:100,p_offset:0});b.innerHTML=(sales||[]).filter(r=>Number(r.paid_amount||0)>0||Number(r.balance||0)>0).map(r=>`<tr><td>${esc(r.receipt_no||'-')}</td><td>${esc(r.customer_name||'Walk-in')}</td><td>${money(r.total_amount)}</td><td>${money(r.paid_amount)}</td><td>${money(r.balance)}</td><td>${esc(r.payment_method||'-')}</td><td>${esc(r.created_at?new Date(r.created_at).toLocaleString():'-')}</td><td>${Number(r.balance||0)>0&&r.customer_name?`<button class="small-btn edit" data-customer-payment="${r.id}">Pay</button>`:'-'}</td></tr>`).join('')||'<tr><td colspan="8" class="empty-row">Hakuna customer payments.</td></tr>';const sups=await supabaseRPC('get_suppliers_for_current_user',{p_search:null});const balances=await Promise.all((sups||[]).slice(0,100).map(async x=>{try{const r=await supabaseRPC('get_supplier_balance',{p_supplier_id:x.id});return Array.isArray(r)?r[0]:r}catch(_){return null}}));s.innerHTML=balances.filter(Boolean).map(r=>`<tr><td>${esc(r.supplier_name||'-')}</td><td>${money(r.total_purchases)}</td><td>${money(r.total_paid)}</td><td>${money(r.outstanding_balance)}</td></tr>`).join('')||'<tr><td colspan="4" class="empty-row">Hakuna supplier balances.</td></tr>'}catch(e){b.innerHTML=`<tr><td colspan="8" class="empty-row">${esc(e.message||'Failed')}</td></tr>`}}
+    document.getElementById('refreshPaymentsBtn').addEventListener('click',loadPayments);document.getElementById('customerPaymentsBody').addEventListener('click',e=>{const b=e.target.closest('[data-customer-payment]');if(b)openCustomerPaymentModal(b.dataset.customerPayment)});
+
+    async function loadReports(){const cards=document.getElementById('reportSummaryCards');try{const [sales,exp,stock,cat]=await Promise.all([supabaseRPC('get_sales_for_current_user',{p_search:null,p_limit:500,p_offset:0}),supabaseRPC('get_expense_summary'),supabaseRPC('get_variant_stock_summary',{p_product_id:null}),supabaseRPC('get_expense_summary_by_category')]);const today=new Date().toISOString().slice(0,10);const sr=(sales||[]).filter(x=>(x.created_at||'').slice(0,10)===today);const revenue=sr.reduce((a,x)=>a+Number(x.total_amount||0),0);const paid=sr.reduce((a,x)=>a+Number(x.paid_amount||0),0);const outstanding=sr.reduce((a,x)=>a+Number(x.balance||0),0);const expenses=Array.isArray(exp)?exp[0]:exp;cards.innerHTML=[['Sales Today',revenue],['Paid Today',paid],['Outstanding Today',outstanding],['Expenses Today',expenses?.today_total||0]].map(x=>`<div class="stock-mini-card"><span>${x[0]}</span><strong>${money(x[1])}</strong></div>`).join('');document.getElementById('reportExpenseBody').innerHTML=(cat||[]).map(r=>`<tr><td>${esc(r.category)}</td><td>${r.transaction_count||0}</td><td>${money(r.total_amount)}</td></tr>`).join('')||'<tr><td colspan="3" class="empty-row">Hakuna data.</td></tr>';document.getElementById('reportStockBody').innerHTML=(stock||[]).slice(0,100).map(r=>`<tr><td>${esc(r.product_name)}</td><td>${esc(r.volume_value)} ${esc(r.volume_unit)} ${esc(r.unit||'')}</td><td>${r.current_stock||0}</td><td>${esc(r.stock_status||'-')}</td></tr>`).join('')||'<tr><td colspan="4" class="empty-row">Hakuna stock.</td></tr>'}catch(e){cards.innerHTML=`<div class="stock-mini-card"><span>Error</span><strong style="font-size:12px">${esc(e.message||'Failed')}</strong></div>`}}
 
     async function loadUsers(){const b=document.getElementById('usersBody');b.innerHTML='<tr><td colspan="6" class="loading-row">Inapakia...</td></tr>';try{const rows=await supabaseREST('profiles?select=id,full_name,username,email,phone,role,is_active,created_at&order=created_at.desc');b.innerHTML=(rows||[]).map(r=>`<tr><td>${esc(r.full_name||'-')}</td><td>${esc(r.username||'-')}</td><td>${esc(r.email||'-')}</td><td>${esc(r.phone||'-')}</td><td>${esc(r.role||'-')}</td><td>${r.is_active?'Active':'Inactive'}</td></tr>`).join('')||'<tr><td colspan="6" class="empty-row">Hakuna users.</td></tr>'}catch(e){b.innerHTML=`<tr><td colspan="6" class="empty-row">${esc(e.message||'Failed')}</td></tr>`}}
     document.getElementById('refreshUsersBtn').addEventListener('click',loadUsers);
@@ -3812,6 +3882,7 @@ window.__openSGCSection = function(section){
     async function loadSettings(){try{const rows=await supabaseREST('settings?select=id,business_name,system_name,default_language,receipt_prefix,receipt_number_digits&limit=1');const r=rows?.[0]||{};document.getElementById('setBusinessName').value=r.business_name||'';document.getElementById('setSystemName').value=r.system_name||'';document.getElementById('setLanguage').value=r.default_language||'sw';document.getElementById('setReceiptPrefix').value=r.receipt_prefix||'SGC';document.getElementById('setReceiptDigits').value=r.receipt_number_digits||6}catch(e){document.getElementById('settingsMessage').textContent=e.message||'Failed to load settings';document.getElementById('settingsMessage').className='stock-message show error'}}
     document.getElementById('settingsForm').addEventListener('submit',async e=>{e.preventDefault();const msg=document.getElementById('settingsMessage'),btn=document.getElementById('saveSettingsBtn');btn.disabled=true;try{const rows=await supabaseREST('settings?select=id&limit=1');const id=rows?.[0]?.id;if(!id)throw new Error('Settings row haijapatikana.');await supabaseREST(`settings?id=eq.${encodeURIComponent(id)}`,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({business_name:document.getElementById('setBusinessName').value.trim(),system_name:document.getElementById('setSystemName').value.trim(),default_language:document.getElementById('setLanguage').value,receipt_prefix:document.getElementById('setReceiptPrefix').value.trim(),receipt_number_digits:Number(document.getElementById('setReceiptDigits').value)})});msg.textContent='Settings zimehifadhiwa.';msg.className='stock-message show success'}catch(e){msg.textContent=e.message||'Save failed';msg.className='stock-message show error'}finally{btn.disabled=false}});
 
+    ['customerModal','expenseModal','customerPaymentModal'].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('show')})});
 
     /* ==========================================
        INITIALIZE
@@ -3830,72 +3901,145 @@ window.__openSGCSection = function(section){
 </script>
 
 <script>
-/* SGC FINAL NAVIGATION CONTROLLER — SINGLE CAPTURE HANDLER */
+/* =========================================================
+   SGC-SDM PHASE 1 — SINGLE NAVIGATION ARCHITECTURE
+   One router owns page visibility, active nav state and page loading.
+   ========================================================= */
 (function(){
-    const SGC_NAV_MAP={
-        customers:'customers', expenses:'expenses', payments:'payments', reports:'reports',
-        users:'users', settings:'settings', suppliers:'suppliers', products:'products',
-        stock:'stock', receivedStock:'receivedStock', receipts:'receipts', sales:'sales', dashboard:'dashboard'
+    const ROUTES = {
+        dashboard: { page: null, button: 'dashboardNavBtn', load: 'loadDashboardSummary' },
+        stock: { page: 'currentStockPage', button: 'stockNavBtn', load: 'loadCurrentStock' },
+        products: { page: 'productsPage', button: 'productsNavBtn', load: 'loadProducts' },
+        receivedStock: { page: 'receivedStockPage', button: 'receivedStockNavBtn', load: 'loadReceivedPage' },
+        sales: { page: 'salesPage', button: 'salesNavBtn', load: 'loadSalesData' },
+        receipts: { page: 'receiptsPage', button: 'receiptsNavBtn', load: 'loadSalesReceipts' },
+        customers: { page: 'customersPage', button: 'customersNavBtn', load: 'loadCustomers' },
+        suppliers: { page: 'suppliersPage', button: 'suppliersNavBtn', load: 'loadSuppliers' },
+        expenses: { page: 'expensesPage', button: 'expensesNavBtn', load: 'loadExpenses' },
+        payments: { page: 'paymentsPage', button: 'paymentsNavBtn', load: 'loadPayments' },
+        reports: { page: 'reportsPage', button: 'reportsNavBtn', load: 'loadReports' },
+        users: { page: 'usersPage', button: 'usersNavBtn', load: 'loadUsers' },
+        settings: { page: 'settingsPage', button: 'settingsNavBtn', load: 'loadSettings' }
     };
-    function sgcOpen(section){
-        const pageId=section==='dashboard' ? null : section+'Page';
-        const page=pageId ? document.getElementById(pageId) : null;
-        const btn=document.getElementById(section==='dashboard' ? 'dashboardNavBtn' : section+'NavBtn');
-        if(section!=='dashboard' && !page) { console.error('SGC NAV missing page:',pageId); return; }
 
-        document.querySelectorAll('.page-view').forEach(p=>{
-            p.classList.remove('active','sgc-force-active');
-            p.style.display='none';
-            p.style.visibility='hidden';
+    let currentRoute = null;
+    let navigationBusy = false;
+
+    function hideDashboardChrome(){
+        document.querySelectorAll('.content > .welcome,.content > .cards,.content > .grid-two')
+            .forEach(el => el.style.display = 'none');
+    }
+
+    function showDashboardChrome(){
+        document.querySelectorAll('.content > .welcome,.content > .cards,.content > .grid-two')
+            .forEach(el => el.style.display = '');
+    }
+
+    function resetViews(){
+        document.querySelectorAll('.page-view').forEach(page => {
+            page.classList.remove('active','sgc-force-active');
+            page.style.removeProperty('display');
+            page.style.removeProperty('visibility');
         });
-        document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
-        document.querySelectorAll('.content > .welcome,.content > .cards,.content > .grid-two').forEach(el=>el.style.display='none');
+        document.querySelectorAll('.nav button').forEach(button => button.classList.remove('active'));
+    }
 
-        if(section==='dashboard'){
-            const welcome=document.querySelector('.content > .welcome');
-            const cards=document.querySelector('.content > .cards');
-            const grid=document.querySelector('.content > .grid-two');
-            if(welcome) welcome.style.display='';
-            if(cards) cards.style.display='';
-            if(grid) grid.style.display='';
-            if(btn) btn.classList.add('active');
-            if(typeof loadDashboardSummary==='function') Promise.resolve(loadDashboardSummary()).catch(console.error);
-        }else{
-            page.classList.add('active','sgc-force-active');
-            page.style.display='block';
-            page.style.visibility='visible';
-            if(btn) btn.classList.add('active');
-            const loaders={
-                customers:'loadCustomers', expenses:'loadExpenses', payments:'loadPayments', reports:'loadReports',
-                users:'loadUsers', settings:'loadSettings', suppliers:'loadSuppliers', products:'loadProducts',
-                stock:'showCurrentStockPage', receivedStock:'showReceivedStockPage', receipts:'showReceiptsPage', sales:'loadSalesData'
-            };
-            const fn=window[loaders[section]];
-            if(typeof fn==='function') Promise.resolve(fn()).catch(err=>console.error('SGC NAV loader error:',section,err));
+    async function loadReceivedPage(){
+        if(typeof loadReceivedDependencies === 'function') await loadReceivedDependencies();
+        if(typeof loadReceivedHistory === 'function') await loadReceivedHistory();
+        if(!document.querySelector('#receivedLines .rs-line') && typeof addReceivedLine === 'function') addReceivedLine();
+    }
+
+    async function open(routeName, options = {}){
+        const route = ROUTES[routeName];
+        if(!route){ console.error('SGC route not found:', routeName); return false; }
+        if(navigationBusy && !options.force) return false;
+        navigationBusy = true;
+        try{
+            resetViews();
+            const button = document.getElementById(route.button);
+            if(button) button.classList.add('active');
+
+            if(routeName === 'dashboard'){
+                showDashboardChrome();
+            }else{
+                hideDashboardChrome();
+                const page = document.getElementById(route.page);
+                if(!page){
+                    console.error('SGC route page missing:', route.page);
+                    return false;
+                }
+                page.classList.add('active','sgc-force-active');
+                page.style.display = 'block';
+                page.style.visibility = 'visible';
+            }
+
+            currentRoute = routeName;
+            if(routeName === 'dashboard' && typeof route.load === 'string' && typeof window[route.load] === 'function'){
+                await window[route.load]();
+            }else if(routeName !== 'dashboard' && typeof route.load === 'string' && typeof window[route.load] === 'function'){
+                await window[route.load]();
+            }
+
+            if(window.innerWidth <= 800){
+                const sidebar = document.getElementById('sidebar');
+                if(sidebar) sidebar.classList.remove('open');
+            }
+            return true;
+        }catch(error){
+            console.error('SGC navigation error:', routeName, error);
+            return false;
+        }finally{
+            navigationBusy = false;
         }
-        const sidebar=document.getElementById('sidebar');
-        if(window.innerWidth<=800 && sidebar) sidebar.classList.remove('open');
     }
-    const sectionById={
-        customersNavBtn:'customers', expensesNavBtn:'expenses', paymentsNavBtn:'payments', reportsNavBtn:'reports',
-        usersNavBtn:'users', settingsNavBtn:'settings', suppliersNavBtn:'suppliers', productsNavBtn:'products',
-        stockNavBtn:'stock', receivedStockNavBtn:'receivedStock', receiptsNavBtn:'receipts', salesNavBtn:'sales'
+
+    // Public router API. Other modules should use this instead of changing page visibility directly.
+    window.SGCAppRouter = Object.freeze({
+        open,
+        getCurrent: () => currentRoute,
+        routes: Object.freeze(Object.keys(ROUTES))
+    });
+    window.__sgcOpenSection = open;
+    window.__openSGCSection = open;
+
+    const quickRoutes = {
+        quickProductsBtn: 'receivedStock',
+        quickSaleBtn: 'sales'
     };
+
     function install(){
-        Object.keys(sectionById).forEach(id=>{const b=document.getElementById(id);if(b)b.type='button';});
-        document.addEventListener('click',function(ev){
-            const b=ev.target.closest('.nav button');
-            if(!b) return;
-            const section=sectionById[b.id];
-            if(!section) return;
-            ev.preventDefault();
-            ev.stopImmediatePropagation();
-            sgcOpen(section);
-        },true);
-        window.__sgcOpenSection=sgcOpen;
+        document.querySelectorAll('.nav button').forEach(button => {
+            button.type = 'button';
+        });
+
+        // Capture phase is intentional: it prevents legacy per-button handlers from fighting the central router.
+        document.addEventListener('click', function(event){
+            const navButton = event.target.closest('.nav button');
+            if(navButton){
+                const route = Object.keys(ROUTES).find(name => ROUTES[name].button === navButton.id);
+                if(route){
+                    event.preventDefault();
+                    event.stopImmediatePropagation();
+                    open(route, {force:true});
+                    return;
+                }
+            }
+
+            const quickButton = event.target.closest('[id]');
+            if(quickButton && quickRoutes[quickButton.id]){
+                event.preventDefault();
+                event.stopImmediatePropagation();
+                open(quickRoutes[quickButton.id], {force:true});
+            }
+        }, true);
     }
-    if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',install,{once:true});
+
+    if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', install, {once:true});
     else install();
+
+    // Initial route is always dashboard.
+    setTimeout(() => open('dashboard', {force:true}), 0);
 })();
 </script>
 
