@@ -864,6 +864,134 @@
         </div>
     </div>
 
+<script>
+/* SGC-SDM — SINGLE FRONTEND NAVIGATION ROUTER
+   RLS: USIBADILISHE — this is frontend navigation only. */
+(function () {
+    "use strict";
+
+    const routes = {
+        dashboard:      { button: "dashboardNavBtn", page: null,                loader: "loadDashboardSummary" },
+        stock:          { button: "stockNavBtn",     page: "currentStockPage",  loader: "loadCurrentStock" },
+        products:       { button: "productsNavBtn",  page: "productsPage",      loader: "loadProducts" },
+        receivedStock:  { button: "receivedStockNavBtn", page: "receivedStockPage", loader: "loadReceivedPage" },
+        sales:          { button: "salesNavBtn",     page: "salesPage",         loader: "loadSalesData" },
+        receipts:       { button: "receiptsNavBtn",  page: "receiptsPage",      loader: "loadSalesReceipts" },
+        customers:      { button: "customersNavBtn", page: "customersPage",     loader: "loadCustomers" },
+        suppliers:      { button: "suppliersNavBtn", page: "suppliersPage",     loader: "loadSuppliers" },
+        expenses:       { button: "expensesNavBtn",  page: "expensesPage",      loader: "loadExpenses" },
+        payments:       { button: "paymentsNavBtn",  page: "paymentsPage",      loader: "loadPayments" },
+        reports:        { button: "reportsNavBtn",   page: "reportsPage",       loader: "loadReports" },
+        users:          { button: "usersNavBtn",     page: "usersPage",         loader: "loadUsers" },
+        settings:       { button: "settingsNavBtn",  page: "settingsPage",      loader: "loadSettings" }
+    };
+
+    const chromeSelectors = [
+        ".content > .welcome",
+        ".content > .cards",
+        ".content > .grid-two"
+    ];
+
+    function hideChrome() {
+        chromeSelectors.forEach(function (selector) {
+            document.querySelectorAll(selector).forEach(function (el) {
+                el.style.display = "none";
+            });
+        });
+    }
+
+    function showChrome() {
+        chromeSelectors.forEach(function (selector) {
+            document.querySelectorAll(selector).forEach(function (el) {
+                el.style.display = "";
+            });
+        });
+    }
+
+    function resetViews() {
+        document.querySelectorAll(".page-view").forEach(function (page) {
+            page.classList.remove("active", "sgc-force-active");
+            page.style.removeProperty("display");
+            page.style.removeProperty("visibility");
+        });
+        document.querySelectorAll(".nav button").forEach(function (button) {
+            button.classList.remove("active");
+        });
+    }
+
+    async function openSection(section) {
+        const route = routes[section];
+        if (!route) return false;
+
+        resetViews();
+        const button = document.getElementById(route.button);
+        if (button) button.classList.add("active");
+
+        if (section === "dashboard") {
+            showChrome();
+        } else {
+            hideChrome();
+            const page = document.getElementById(route.page);
+            if (!page) {
+                console.error("SGC page not found:", route.page);
+                return false;
+            }
+            page.classList.add("active", "sgc-force-active");
+            page.style.display = "block";
+            page.style.visibility = "visible";
+        }
+
+        window.__SGC_CURRENT_SECTION = section;
+
+        // Load data only after the visual navigation has succeeded.
+        // If a loader/auth/database call fails, the page remains open.
+        const loader = window[route.loader];
+        if (typeof loader === "function") {
+            try { await loader(); }
+            catch (error) { console.error("SGC loader failed:", section, error); }
+        }
+
+        if (window.innerWidth <= 800) {
+            const sidebar = document.getElementById("sidebar");
+            if (sidebar) sidebar.classList.remove("open");
+        }
+
+        return true;
+    }
+
+    function sectionFromButton(button) {
+        if (!button) return null;
+        return Object.keys(routes).find(function (key) {
+            return routes[key].button === button.id;
+        }) || null;
+    }
+
+    // Install immediately, before dashboard.js can fail on Auth/DB code.
+    document.addEventListener("click", function (event) {
+        const button = event.target && event.target.closest
+            ? event.target.closest(".nav button")
+            : null;
+        const section = sectionFromButton(button);
+        if (!section) return;
+
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        openSection(section);
+    }, true);
+
+    window.__openSGCSection = openSection;
+    window.__sgcOpenSection = openSection;
+    window.SGCAppRouter = Object.freeze({
+        open: openSection,
+        getCurrent: function () { return window.__SGC_CURRENT_SECTION || "dashboard"; },
+        routes: Object.freeze(Object.keys(routes))
+    });
+
+    // Initial state.
+    openSection("dashboard");
+})();
+</script>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <script src="dashboard.js"></script>
