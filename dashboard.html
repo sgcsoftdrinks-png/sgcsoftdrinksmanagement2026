@@ -6,6 +6,9 @@
 
     <title>SGC SOFT DRINKS MANAGEMENT</title>
 
+    <!-- Supabase JS client: required by the dashboard authentication/data layer. -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <style>
         :root {
             --blue: #0b5ed7;
@@ -3966,10 +3969,11 @@
         }
 
         installed = true;
+        document.documentElement.dataset.sgcRouter = 'installed';
         nav.querySelectorAll('button').forEach(button => { button.type = 'button'; });
 
         // ONE navigation listener for all sidebar buttons.
-        nav.addEventListener('click', event => {
+        const navigateFromButton = event => {
             const button = event.target.closest('button');
             if (!button || !nav.contains(button)) return;
             const routeName = routeFromButton(button);
@@ -3978,7 +3982,23 @@
             event.stopPropagation();
             event.stopImmediatePropagation();
             open(routeName, { force: true });
-        }, true);
+        };
+
+        // Delegated listener is the primary navigation path.
+        nav.addEventListener('click', navigateFromButton, true);
+
+        // Direct handlers are a deliberate safety net for environments where
+        // another script interferes with event propagation. They use the same
+        // router API, so there is still only ONE navigation owner.
+        nav.querySelectorAll('button').forEach(button => {
+            const routeName = routeFromButton(button);
+            if (!routeName) return;
+            button.onclick = event => {
+                event.preventDefault();
+                event.stopPropagation();
+                open(routeName, { force: true });
+            };
+        });
 
         // Quick actions are deliberately mapped here too, so they cannot create a second router.
         const quickRoutes = Object.freeze({ quickProductsBtn: 'receivedStock', quickSaleBtn: 'sales' });
@@ -4006,11 +4026,10 @@
         setTimeout(() => open('dashboard', { force: true }), 0);
     }
 
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', install, { once: true });
-    } else {
-        install();
-    }
+    // This router script is intentionally placed after the dashboard markup.
+    // Install immediately so navigation never depends on DOMContentLoaded or
+    // on another module finishing successfully.
+    install();
 })();</script>
 
 </body>
