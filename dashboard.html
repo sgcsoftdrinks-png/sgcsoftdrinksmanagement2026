@@ -1029,7 +1029,7 @@
                 <span data-i18n="receipts">Receipts</span>
             </button>
 
-            <button id="customersNavBtn" onclick="window.__openSGCSection('customers'); return false;">
+            <button id="customersNavBtn">
                 <span class="nav-icon">👥</span>
                 <span data-i18n="customers">Customers</span>
             </button>
@@ -1041,19 +1041,19 @@
 
             <div class="nav-title" data-i18n="finance">Fedha</div>
 
-            <button id="expensesNavBtn" onclick="window.__openSGCSection('expenses'); return false;">
+            <button id="expensesNavBtn">
                 <span class="nav-icon">💰</span>
                 <span data-i18n="expenses">Matumizi</span>
             </button>
 
-            <button id="paymentsNavBtn" onclick="window.__openSGCSection('payments'); return false;">
+            <button id="paymentsNavBtn">
                 <span class="nav-icon">💳</span>
                 <span data-i18n="payments">Malipo</span>
             </button>
 
             <div class="nav-title" data-i18n="reports">Ripoti</div>
 
-            <button id="reportsNavBtn" onclick="window.__openSGCSection('reports'); return false;">
+            <button id="reportsNavBtn">
                 <span class="nav-icon">📈</span>
                 <span data-i18n="reports_menu">Ripoti</span>
             </button>
@@ -1062,12 +1062,12 @@
                 Usimamizi
             </div>
 
-            <button id="usersNavBtn" onclick="window.__openSGCSection('users'); return false;">
+            <button id="usersNavBtn">
                 <span class="nav-icon">👤</span>
                 <span data-i18n="users">Watumiaji</span>
             </button>
 
-            <button id="settingsNavBtn" onclick="window.__openSGCSection('settings'); return false;">
+            <button id="settingsNavBtn">
                 <span class="nav-icon">⚙️</span>
                 <span data-i18n="settings">Mipangilio</span>
             </button>
@@ -1851,6 +1851,41 @@
     </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+/* SGC PRIMARY NAVIGATION CONTROLLER */
+(function(){
+  const sections = ['customers','expenses','payments','reports','users','settings'];
+  function openSection(section){
+    const pageIds = ['dashboardPage','currentStockPage','productsPage','receivedStockPage','salesPage','receiptsPage','customersPage','suppliersPage','expensesPage','paymentsPage','reportsPage','usersPage','settingsPage'];
+    pageIds.forEach(id=>{ const p=document.getElementById(id); if(p){ p.classList.remove('active','sgc-force-active'); p.style.setProperty('display','none','important'); }});
+    document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
+    ['welcome','cards','grid-two'].forEach(cls=>{ const el=document.querySelector('.content > .'+cls); if(el) el.style.display='none'; });
+    const page=document.getElementById(section+'Page');
+    const btn=document.getElementById(section+'NavBtn');
+    if(!page || !btn) return false;
+    page.classList.add('active','sgc-force-active');
+    page.style.setProperty('display','block','important');
+    btn.classList.add('active');
+    if(window.innerWidth<=800){ const sb=document.getElementById('sidebar'); if(sb) sb.classList.remove('open'); }
+    const loaders={customers:'loadCustomers',expenses:'loadExpenses',payments:'loadPayments',reports:'loadReports',users:'loadUsers',settings:'loadSettings'};
+    const fn=window[loaders[section]];
+    if(typeof fn==='function'){ try{ Promise.resolve(fn()).catch(err=>console.error('SGC '+section+' load error:',err)); }catch(err){ console.error('SGC '+section+' load error:',err); } }
+    return false;
+  }
+  window.__SGC_PRIMARY_NAV__ = openSection;
+  document.addEventListener('DOMContentLoaded',()=>{
+    sections.forEach(section=>{
+      const btn=document.getElementById(section+'NavBtn');
+      if(!btn) return;
+      btn.addEventListener('click',function(e){
+        e.preventDefault(); e.stopImmediatePropagation();
+        openSection(section);
+      },true);
+    });
+  });
+})();
+</script>
 
 <script>
 window.__openSGCSection = function(section){
@@ -3810,12 +3845,6 @@ window.__openSGCSection = function(section){
     async function loadSettings(){try{const rows=await supabaseREST('settings?select=id,business_name,system_name,default_language,receipt_prefix,receipt_number_digits&limit=1');const r=rows?.[0]||{};document.getElementById('setBusinessName').value=r.business_name||'';document.getElementById('setSystemName').value=r.system_name||'';document.getElementById('setLanguage').value=r.default_language||'sw';document.getElementById('setReceiptPrefix').value=r.receipt_prefix||'SGC';document.getElementById('setReceiptDigits').value=r.receipt_number_digits||6}catch(e){document.getElementById('settingsMessage').textContent=e.message||'Failed to load settings';document.getElementById('settingsMessage').className='stock-message show error'}}
     document.getElementById('settingsForm').addEventListener('submit',async e=>{e.preventDefault();const msg=document.getElementById('settingsMessage'),btn=document.getElementById('saveSettingsBtn');btn.disabled=true;try{const rows=await supabaseREST('settings?select=id&limit=1');const id=rows?.[0]?.id;if(!id)throw new Error('Settings row haijapatikana.');await supabaseREST(`settings?id=eq.${encodeURIComponent(id)}`,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({business_name:document.getElementById('setBusinessName').value.trim(),system_name:document.getElementById('setSystemName').value.trim(),default_language:document.getElementById('setLanguage').value,receipt_prefix:document.getElementById('setReceiptPrefix').value.trim(),receipt_number_digits:Number(document.getElementById('setReceiptDigits').value)})});msg.textContent='Settings zimehifadhiwa.';msg.className='stock-message show success'}catch(e){msg.textContent=e.message||'Save failed';msg.className='stock-message show error'}finally{btn.disabled=false}});
 
-    customersNavBtn.addEventListener('click',()=>openFunctionalPage(customersPage,customersNavBtn,loadCustomers));
-    expensesNavBtn.addEventListener('click',()=>openFunctionalPage(expensesPage,expensesNavBtn,loadExpenses));
-    paymentsNavBtn.addEventListener('click',()=>openFunctionalPage(paymentsPage,paymentsNavBtn,loadPayments));
-    reportsNavBtn.addEventListener('click',()=>openFunctionalPage(reportsPage,reportsNavBtn,loadReports));
-    usersNavBtn.addEventListener('click',()=>openFunctionalPage(usersPage,usersNavBtn,loadUsers));
-    settingsNavBtn.addEventListener('click',()=>openFunctionalPage(settingsPage,settingsNavBtn,loadSettings));
 
     /* ==========================================
        INITIALIZE
