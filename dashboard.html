@@ -1028,7 +1028,7 @@
                 <span data-i18n="receipts">Receipts</span>
             </button>
 
-            <button>
+            <button id="customersNavBtn" onclick="window.__openSGCSection('customers'); return false;">
                 <span class="nav-icon">👥</span>
                 <span data-i18n="customers">Customers</span>
             </button>
@@ -1040,19 +1040,19 @@
 
             <div class="nav-title" data-i18n="finance">Fedha</div>
 
-            <button>
+            <button id="expensesNavBtn" onclick="window.__openSGCSection('expenses'); return false;">
                 <span class="nav-icon">💰</span>
                 <span data-i18n="expenses">Matumizi</span>
             </button>
 
-            <button>
+            <button id="paymentsNavBtn" onclick="window.__openSGCSection('payments'); return false;">
                 <span class="nav-icon">💳</span>
                 <span data-i18n="payments">Malipo</span>
             </button>
 
             <div class="nav-title" data-i18n="reports">Ripoti</div>
 
-            <button>
+            <button id="reportsNavBtn" onclick="window.__openSGCSection('reports'); return false;">
                 <span class="nav-icon">📈</span>
                 <span data-i18n="reports_menu">Ripoti</span>
             </button>
@@ -1061,12 +1061,12 @@
                 Usimamizi
             </div>
 
-            <button>
+            <button id="usersNavBtn" onclick="window.__openSGCSection('users'); return false;">
                 <span class="nav-icon">👤</span>
                 <span data-i18n="users">Watumiaji</span>
             </button>
 
-            <button>
+            <button id="settingsNavBtn" onclick="window.__openSGCSection('settings'); return false;">
                 <span class="nav-icon">⚙️</span>
                 <span data-i18n="settings">Mipangilio</span>
             </button>
@@ -1631,6 +1631,77 @@
                 </div>
             </section>
 
+
+
+            <!-- CUSTOMERS PAGE -->
+            <section class="page-view" id="customersPage">
+                <div class="welcome"><h2>Customers 👥</h2><p>Dhibiti wateja, taarifa zao na historia ya mauzo.</p></div>
+                <div class="section-card">
+                    <div class="section-head"><h3>Customer Management</h3><button class="primary-btn" id="addCustomerBtn">＋ Mteja Mpya</button></div>
+                    <div class="form-grid">
+                        <div class="form-group"><label>Tafuta Mteja</label><input id="customerSearch" placeholder="Jina au simu..."></div>
+                    </div>
+                    <div class="table-wrap"><table class="products-table"><thead><tr><th>Jina</th><th>Simu</th><th>Anwani</th><th>Status</th><th>Vitendo</th></tr></thead><tbody id="customersBody"><tr><td colspan="5" class="loading-row">Inapakia...</td></tr></tbody></table></div>
+                </div>
+            </section>
+
+            <!-- EXPENSES PAGE -->
+            <section class="page-view" id="expensesPage">
+                <div class="welcome"><h2>Expenses 💰</h2><p>Rekodi na fuatilia matumizi ya biashara.</p></div>
+                <div class="stock-summary" id="expenseSummaryCards"></div>
+                <div class="section-card">
+                    <div class="section-head"><h3>Matumizi</h3><button class="primary-btn" id="addExpenseBtn">＋ Expense Mpya</button></div>
+                    <div class="form-grid"><div class="form-group"><label>Tafuta</label><input id="expenseSearch" placeholder="Description, reference..."></div></div>
+                    <div class="table-wrap"><table class="products-table"><thead><tr><th>Tarehe</th><th>Category</th><th>Description</th><th>Amount</th><th>Payment</th><th>Reference</th><th>Vitendo</th></tr></thead><tbody id="expensesBody"><tr><td colspan="7" class="loading-row">Inapakia...</td></tr></tbody></table></div>
+                </div>
+            </section>
+
+            <!-- PAYMENTS PAGE -->
+            <section class="page-view" id="paymentsPage">
+                <div class="welcome"><h2>Payments 💳</h2><p>Fuatilia malipo ya wateja na supplier.</p></div>
+                <div class="section-card">
+                    <div class="section-head"><h3>Customer Payments / Credit</h3><button class="secondary-btn" id="refreshPaymentsBtn">↻ Refresh</button></div>
+                    <div class="table-wrap"><table class="products-table"><thead><tr><th>Receipt</th><th>Customer</th><th>Total</th><th>Paid</th><th>Balance</th><th>Payment Method</th><th>Date</th></tr></thead><tbody id="customerPaymentsBody"><tr><td colspan="7" class="loading-row">Inapakia...</td></tr></tbody></table></div>
+                </div>
+                <div class="section-card" style="margin-top:16px"><div class="section-head"><h3>Supplier Payments</h3></div><p style="color:var(--gray);font-size:13px">Malipo ya supplier yanaendelea kurekodiwa kupitia Suppliers → Pay. Hapa utaona muhtasari wa supplier balances.</p><div class="table-wrap"><table class="products-table"><thead><tr><th>Supplier</th><th>Total Purchases</th><th>Total Paid</th><th>Outstanding</th></tr></thead><tbody id="supplierPaymentsBody"><tr><td colspan="4" class="loading-row">Inapakia...</td></tr></tbody></table></div></div>
+            </section>
+
+            <!-- REPORTS PAGE -->
+            <section class="page-view" id="reportsPage">
+                <div class="welcome"><h2>Reports 📈</h2><p>Muhtasari wa mauzo, expenses, stock na faida ya biashara.</p></div>
+                <div class="stock-summary" id="reportSummaryCards"></div>
+                <div class="grid-two">
+                    <div class="section-card"><div class="section-head"><h3>Expenses by Category</h3></div><div class="table-wrap"><table class="products-table"><thead><tr><th>Category</th><th>Transactions</th><th>Total</th></tr></thead><tbody id="reportExpenseBody"></tbody></table></div></div>
+                    <div class="section-card"><div class="section-head"><h3>Stock Status</h3></div><div class="table-wrap"><table class="products-table"><thead><tr><th>Product</th><th>Variant</th><th>Stock</th><th>Status</th></tr></thead><tbody id="reportStockBody"></tbody></table></div></div>
+                </div>
+            </section>
+
+            <!-- USERS PAGE -->
+            <section class="page-view" id="usersPage">
+                <div class="welcome"><h2>Users 👤</h2><p>Angalia watumiaji na roles za mfumo.</p></div>
+                <div class="section-card">
+                    <div class="section-head"><h3>System Users</h3><button class="secondary-btn" id="refreshUsersBtn">↻ Refresh</button></div>
+                    <div class="table-wrap"><table class="products-table"><thead><tr><th>Name</th><th>Username</th><th>Email</th><th>Phone</th><th>Role</th><th>Status</th></tr></thead><tbody id="usersBody"><tr><td colspan="6" class="loading-row">Inapakia...</td></tr></tbody></table></div>
+                    <div style="margin-top:14px;padding:12px;border-radius:10px;background:#f7f7f7;font-size:12px;color:#666">Salesman account creation will use the secure Owner/Edge Function flow; hakuna password au Auth Admin key itakayowekwa kwenye browser.</div>
+                </div>
+            </section>
+
+            <!-- SETTINGS PAGE -->
+            <section class="page-view" id="settingsPage">
+                <div class="welcome"><h2>Settings ⚙️</h2><p>Mipangilio ya biashara na receipt.</p></div>
+                <div class="section-card">
+                    <div class="section-head"><h3>Business Settings</h3></div>
+                    <div id="settingsMessage" class="stock-message"></div>
+                    <form id="settingsForm"><div class="form-grid">
+                        <div class="form-group"><label>Business Name</label><input id="setBusinessName" required></div>
+                        <div class="form-group"><label>System Name</label><input id="setSystemName" required></div>
+                        <div class="form-group"><label>Default Language</label><select id="setLanguage"><option value="sw">Kiswahili</option><option value="en">English</option></select></div>
+                        <div class="form-group"><label>Receipt Prefix</label><input id="setReceiptPrefix" required></div>
+                        <div class="form-group"><label>Receipt Number Digits</label><input id="setReceiptDigits" type="number" min="1" max="12" required></div>
+                    </div><div class="modal-actions"><button type="submit" class="primary-btn" id="saveSettingsBtn">💾 Hifadhi Settings</button></div></form>
+                </div>
+            </section>
+
         </section>
 
     </main>
@@ -1781,6 +1852,27 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
+window.__openSGCSection = function(section){
+    try{
+        document.querySelectorAll('.page-view').forEach(function(p){p.classList.remove('active');});
+        document.querySelectorAll('.nav button').forEach(function(b){b.classList.remove('active');});
+        var welcome=document.querySelector('.content > .welcome'); if(welcome) welcome.style.display='none';
+        var cards=document.querySelector('.content > .cards'); if(cards) cards.style.display='none';
+        var grid=document.querySelector('.content > .grid-two'); if(grid) grid.style.display='none';
+        var page=document.getElementById(section+'Page');
+        var btn=document.getElementById(section+'NavBtn');
+        if(!page || !btn) return false;
+        page.classList.add('active'); btn.classList.add('active');
+        if(window.innerWidth<=800 && typeof sidebar!=='undefined' && sidebar) sidebar.classList.remove('open');
+        if(section==='customers' && typeof loadCustomers==='function') loadCustomers();
+        else if(section==='expenses' && typeof loadExpenses==='function') loadExpenses();
+        else if(section==='payments' && typeof loadPayments==='function') loadPayments();
+        else if(section==='reports' && typeof loadReports==='function') loadReports();
+        else if(section==='users' && typeof loadUsers==='function') loadUsers();
+        else if(section==='settings' && typeof loadSettings==='function') loadSettings();
+        return false;
+    }catch(error){ console.error('SGC section navigation error:',error); return false; }
+};
 
     /* ==========================================
        SGC SOFT DRINKS MANAGEMENT
@@ -2949,16 +3041,22 @@
     }
 
     function showProductsPage() {
-        document.querySelector(".content > .welcome").style.display = "none";
-        document.querySelector(".content > .cards").style.display = "none";
-        document.querySelector(".content > .grid-two").style.display = "none";
+        /*
+         * Use the central page-hiding routine so Products cannot remain
+         * underneath/behind another active business page (Stock, Received
+         * Stock, Receipts, Sales, Suppliers, etc.).
+         */
+        if (typeof hideAllBusinessPages === "function") {
+            hideAllBusinessPages();
+        } else {
+            document.querySelectorAll(".page-view").forEach(page => page.classList.remove("active"));
+            document.querySelector(".content > .welcome").style.display = "none";
+            document.querySelector(".content > .cards").style.display = "none";
+            document.querySelector(".content > .grid-two").style.display = "none";
+            document.querySelectorAll(".nav button").forEach(btn => btn.classList.remove("active"));
+        }
 
         productsPage.classList.add("active");
-        stockPage.classList.remove("active");
-        salesPage.classList.remove("active");
-        suppliersPage.classList.remove("active");
-
-        document.querySelectorAll(".nav button").forEach(btn => btn.classList.remove("active"));
         productsNavBtn.classList.add("active");
 
         loadProducts();
@@ -2988,35 +3086,22 @@
         return data;
     }
 
-    let productsLoadRequest = 0;
     async function loadProducts() {
-        const requestId = ++productsLoadRequest;
         productsTableBody.innerHTML = `<tr><td colspan="11" class="loading-row">${t("loading")}</td></tr>`;
         try {
-            // Product list is the primary data. Stock summary is supplementary and
-            // must not prevent Products from opening when its RPC is slow/expired.
-            const productResult = await supabaseRPC("get_products_for_owner");
-            if (requestId !== productsLoadRequest) return;
-            const base = Array.isArray(productResult) ? productResult : [];
-            products = base.map(p => ({...p}));
+            const [data, variants] = await Promise.all([
+                supabaseRPC("get_products_for_owner"),
+                supabaseRPC("get_variant_stock_summary")
+            ]);
+            const base = Array.isArray(data) ? data : [];
+            const byProduct = new Map();
+            (Array.isArray(variants) ? variants : []).forEach(v => {
+                const id = v.product_id;
+                if (!byProduct.has(id)) byProduct.set(id, v);
+            });
+            products = base.map(p => ({...p, ...(byProduct.get(p.id) || {})}));
             renderProducts();
-
-            // Load stock information separately so the Product page remains usable.
-            try {
-                const variants = await supabaseRPC("get_variant_stock_summary");
-                if (requestId !== productsLoadRequest) return;
-                const byProduct = new Map();
-                (Array.isArray(variants) ? variants : []).forEach(v => {
-                    if (!byProduct.has(v.product_id)) byProduct.set(v.product_id, v);
-                });
-                products = base.map(p => ({...p, ...(byProduct.get(p.id) || {})}));
-                renderProducts();
-            } catch (stockError) {
-                console.warn("Product stock summary unavailable:", stockError);
-                // Keep the product list visible even if stock summary fails.
-            }
         } catch (error) {
-            if (requestId !== productsLoadRequest) return;
             console.error("Products loading error:", error);
             productsTableBody.innerHTML = `<tr><td colspan="11" class="empty-row">${escapeHtml(error.message || t("product_error"))}</td></tr>`;
         }
@@ -3079,25 +3164,11 @@
         productVolumeUnit.value = "ml";
         productSellingPrice.value = product?.selling_price ?? "";
         productLowStock.value = product?.low_stock_level ?? 0;
-
         if (product) {
             productModalTitle.textContent = t("edit_product_title");
             productId.value = product.id;
-            productName.value = product.name || "";
-        } else {
-            productModalTitle.textContent = t("add_product_title");
-            productId.value = "";
-            productName.value = "";
-        }
-
-        // Open immediately; variant loading must never block the modal.
-        productModal.classList.add("show");
-        setTimeout(() => productName.focus(), 50);
-
-        if (product) {
             try {
                 const variants = await supabaseRPC("get_product_variants", {p_product_id: product.id});
-                if (editingProduct?.id !== product.id) return;
                 const v = Array.isArray(variants) ? variants[0] : null;
                 if (v) {
                     productUnit.value = v.unit || "crates";
@@ -3106,11 +3177,15 @@
                     productSellingPrice.value = v.selling_price ?? product.selling_price ?? 0;
                     productLowStock.value = v.low_stock_level ?? product.low_stock_level ?? 0;
                 }
-            } catch (e) {
-                console.warn("Could not load product variant:", e);
-            }
+            } catch (e) { console.warn("Could not load product variant:", e); }
+        } else {
+            productModalTitle.textContent = t("add_product_title");
+            productId.value = "";
         }
+        productModal.classList.add("show");
+        setTimeout(() => productName.focus(), 50);
     }
+
     function closeProductModal() {
         productModal.classList.remove("show");
         editingProduct = null;
@@ -3690,8 +3765,53 @@
 
 
 
-    document.getElementById("quickProductsBtn").addEventListener("click", showProductsPage);
+    document.getElementById("quickProductsBtn").addEventListener("click", showReceivedStockPage);
 
+
+
+
+    /* ==========================================
+       SGC-SDM — CUSTOMER / EXPENSE / PAYMENT / REPORT / USER / SETTINGS
+       ========================================== */
+    const customersPage=document.getElementById('customersPage'), expensesPage=document.getElementById('expensesPage'), paymentsPage=document.getElementById('paymentsPage'), reportsPage=document.getElementById('reportsPage'), usersPage=document.getElementById('usersPage'), settingsPage=document.getElementById('settingsPage');
+    const customersNavBtn=document.getElementById('customersNavBtn'), expensesNavBtn=document.getElementById('expensesNavBtn'), paymentsNavBtn=document.getElementById('paymentsNavBtn'), reportsNavBtn=document.getElementById('reportsNavBtn'), usersNavBtn=document.getElementById('usersNavBtn'), settingsNavBtn=document.getElementById('settingsNavBtn');
+    let customersRows=[], expensesRows=[];
+    async function supabaseREST(path, options={}){
+        const res=await fetch(`${SUPABASE_URL}/rest/v1/${path}`,{...options,headers:{'Content-Type':'application/json','apikey':SUPABASE_PUBLISHABLE_KEY,'Authorization':`Bearer ${accessToken}`,...(options.headers||{})}});
+        const text=await res.text(); let data=null; try{data=text?JSON.parse(text):null}catch(_){data=text}
+        if(!res.ok) throw new Error(data?.message||data?.hint||data?.details||data?.error||`Request failed (${res.status})`);
+        return data;
+    }
+    function openFunctionalPage(page,btn,loader){hideAllBusinessPages();page.classList.add('active');btn.classList.add('active');if(window.innerWidth<=800)sidebar.classList.remove('open');if(loader)loader();}
+    function renderCustomers(){const q=(document.getElementById('customerSearch').value||'').trim().toLowerCase();const rows=customersRows.filter(r=>`${r.name||''} ${r.phone||''} ${r.address||''}`.toLowerCase().includes(q));document.getElementById('customersBody').innerHTML=rows.length?rows.map(r=>`<tr><td><strong>${esc(r.name||'-')}</strong></td><td>${esc(r.phone||'-')}</td><td>${esc(r.address||'-')}</td><td>${r.is_active?'Active':'Inactive'}</td><td><button class="small-btn edit" data-customer-edit="${r.id}">Edit</button><button class="small-btn" data-customer-toggle="${r.id}">${r.is_active?'Deactivate':'Activate'}</button></td></tr>`).join(''):'<tr><td colspan="5" class="empty-row">Hakuna wateja.</td></tr>'}
+    async function loadCustomers(){const body=document.getElementById('customersBody');body.innerHTML='<tr><td colspan="5" class="loading-row">Inapakia...</td></tr>';try{customersRows=await supabaseREST('customers?select=id,name,phone,address,is_active,created_at&order=created_at.desc')||[];renderCustomers()}catch(e){body.innerHTML=`<tr><td colspan="5" class="empty-row">${esc(e.message||'Failed')}</td></tr>`}}
+    async function customerForm(existing=null){const name=prompt('Jina la mteja:',existing?.name||'');if(name===null)return;const n=name.trim();if(!n)return alert('Weka jina la mteja.');const phone=prompt('Simu (hiari):',existing?.phone||'');const address=prompt('Anwani (hiari):',existing?.address||'');try{if(existing){await supabaseREST(`customers?id=eq.${encodeURIComponent(existing.id)}`,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({name:n,phone:phone?.trim()||null,address:address?.trim()||null})});}else{await supabaseREST('customers',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify({name:n,phone:phone?.trim()||null,address:address?.trim()||null,is_active:true})});}await loadCustomers()}catch(e){alert(e.message||'Customer save failed')}}
+    async function toggleCustomer(id){const r=customersRows.find(x=>x.id===id);if(!r)return;try{await supabaseREST(`customers?id=eq.${encodeURIComponent(id)}`,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({is_active:!r.is_active})});await loadCustomers()}catch(e){alert(e.message||'Failed')}}
+    document.getElementById('addCustomerBtn').addEventListener('click',()=>customerForm());document.getElementById('customerSearch').addEventListener('input',renderCustomers);document.getElementById('customersBody').addEventListener('click',e=>{const edit=e.target.closest('[data-customer-edit]'),tog=e.target.closest('[data-customer-toggle]');if(edit)return customerForm(customersRows.find(x=>x.id===edit.dataset.customerEdit));if(tog)return toggleCustomer(tog.dataset.customerToggle)});
+
+    function renderExpenseSummary(s){const cards=[['Leo',s?.today_total],['Wiki',s?.week_total],['Mwezi',s?.month_total],['Mwaka',s?.year_total]];document.getElementById('expenseSummaryCards').innerHTML=cards.map(x=>`<div class="stock-mini-card"><span>${x[0]}</span><strong>${money(x[1])}</strong></div>`).join('')}
+    function renderExpenses(){const q=(document.getElementById('expenseSearch').value||'').trim().toLowerCase();const rows=expensesRows.filter(r=>`${r.description||''} ${r.category||''} ${r.payment_reference||''}`.toLowerCase().includes(q));document.getElementById('expensesBody').innerHTML=rows.length?rows.map(r=>`<tr><td>${esc(r.expense_date||'-')}</td><td>${esc(r.category||'-')}</td><td>${esc(r.description||'-')}</td><td>${money(r.amount)}</td><td>${esc(r.payment_method||'-')}</td><td>${esc(r.payment_reference||'-')}</td><td><button class="small-btn edit" data-exp-edit="${r.id}">Edit</button><button class="small-btn" data-exp-del="${r.id}">Delete</button></td></tr>`).join(''):'<tr><td colspan="7" class="empty-row">Hakuna expenses.</td></tr>'}
+    async function loadExpenses(){try{const [rows,sum]=await Promise.all([supabaseRPC('get_expenses_for_current_user',{p_search:null}),supabaseRPC('get_expense_summary')]);expensesRows=Array.isArray(rows)?rows:[];renderExpenseSummary(Array.isArray(sum)?sum[0]:sum);renderExpenses()}catch(e){document.getElementById('expensesBody').innerHTML=`<tr><td colspan="7" class="empty-row">${esc(e.message||'Failed')}</td></tr>`}}
+    async function expenseForm(existing=null){const category=prompt('Category (food, rent, transport, tra, municipality, electricity, water, fuel, internet, salary, maintenance, other):',existing?.category||'other');if(category===null)return;const description=prompt('Description:',existing?.description||'');if(description===null)return;const amount=Number(prompt('Amount:',existing?.amount||''));if(!Number.isFinite(amount)||amount<=0)return alert('Amount si sahihi.');const date=prompt('Date YYYY-MM-DD:',existing?.expense_date||new Date().toISOString().slice(0,10));if(date===null)return;const method=prompt('Payment method (cash/mobile_money/bank/credit):',existing?.payment_method||'cash');if(method===null)return;const ref=prompt('Payment reference (optional):',existing?.payment_reference||'');try{if(existing)await supabaseRPC('update_expense',{p_expense_id:existing.id,p_category:category,p_description:description,p_amount:amount,p_expense_date:date,p_payment_method:method,p_payment_reference:ref?.trim()||null});else await supabaseRPC('create_expense',{p_category:category,p_description:description,p_amount:amount,p_expense_date:date,p_payment_method:method,p_payment_reference:ref?.trim()||null});await loadExpenses()}catch(e){alert(e.message||'Expense save failed')}}
+    document.getElementById('addExpenseBtn').addEventListener('click',()=>expenseForm());document.getElementById('expenseSearch').addEventListener('input',renderExpenses);document.getElementById('expensesBody').addEventListener('click',async e=>{const ed=e.target.closest('[data-exp-edit]'),dl=e.target.closest('[data-exp-del]');if(ed)return expenseForm(expensesRows.find(x=>x.id===ed.dataset.expEdit));if(dl&&confirm('Delete this expense?')){try{await supabaseRPC('delete_expense',{p_expense_id:dl.dataset.expDel});await loadExpenses()}catch(err){alert(err.message||'Delete failed')}}});
+
+    async function loadPayments(){const b=document.getElementById('customerPaymentsBody'),s=document.getElementById('supplierPaymentsBody');b.innerHTML='<tr><td colspan="7" class="loading-row">Inapakia...</td></tr>';s.innerHTML='<tr><td colspan="4" class="loading-row">Inapakia...</td></tr>';try{const sales=await supabaseRPC('get_sales_for_current_user',{p_search:null,p_limit:100,p_offset:0});b.innerHTML=(sales||[]).filter(r=>Number(r.paid_amount||0)>0||Number(r.balance||0)>0).map(r=>`<tr><td>${esc(r.receipt_no||'-')}</td><td>${esc(r.customer_name||'Walk-in')}</td><td>${money(r.total_amount)}</td><td>${money(r.paid_amount)}</td><td>${money(r.balance)}</td><td>${esc(r.payment_method||'-')}</td><td>${esc(r.created_at?new Date(r.created_at).toLocaleString():'-')}</td></tr>`).join('')||'<tr><td colspan="7" class="empty-row">Hakuna customer payments.</td></tr>';const sups=await supabaseRPC('get_suppliers_for_current_user',{p_search:null});const balances=await Promise.all((sups||[]).slice(0,100).map(async x=>{try{const r=await supabaseRPC('get_supplier_balance',{p_supplier_id:x.id});return Array.isArray(r)?r[0]:r}catch(_){return null}}));s.innerHTML=balances.filter(Boolean).map(r=>`<tr><td>${esc(r.supplier_name||'-')}</td><td>${money(r.total_purchases)}</td><td>${money(r.total_paid)}</td><td>${money(r.outstanding_balance)}</td></tr>`).join('')||'<tr><td colspan="4" class="empty-row">Hakuna supplier balances.</td></tr>'}catch(e){b.innerHTML=`<tr><td colspan="7" class="empty-row">${esc(e.message||'Failed')}</td></tr>`}}
+    document.getElementById('refreshPaymentsBtn').addEventListener('click',loadPayments);
+
+    async function loadReports(){const cards=document.getElementById('reportSummaryCards');try{const [sales,exp,stock,cat]=await Promise.all([supabaseRPC('get_sales_for_current_user',{p_search:null,p_limit:500,p_offset:0}),supabaseRPC('get_expense_summary'),supabaseRPC('get_variant_stock_summary',{p_product_id:null}),supabaseRPC('get_expense_summary_by_category')]);const today=new Date().toISOString().slice(0,10);const sr=(sales||[]).filter(x=>(x.created_at||'').slice(0,10)===today);const revenue=sr.reduce((a,x)=>a+Number(x.total_amount||0),0);const paid=sr.reduce((a,x)=>a+Number(x.paid_amount||0),0);const expenses=Array.isArray(exp)?exp[0]:exp;cards.innerHTML=[['Sales Today',revenue],['Paid Today',paid],['Expenses Today',expenses?.today_total||0],['Transactions',sr.length]].map(x=>`<div class="stock-mini-card"><span>${x[0]}</span><strong>${typeof x[1]==='number'&&x[0]!=='Transactions'?money(x[1]):x[1]}</strong></div>`).join('');document.getElementById('reportExpenseBody').innerHTML=(cat||[]).map(r=>`<tr><td>${esc(r.category)}</td><td>${r.transaction_count||0}</td><td>${money(r.total_amount)}</td></tr>`).join('')||'<tr><td colspan="3" class="empty-row">Hakuna data.</td></tr>';document.getElementById('reportStockBody').innerHTML=(stock||[]).slice(0,100).map(r=>`<tr><td>${esc(r.product_name)}</td><td>${esc(r.volume_value)} ${esc(r.volume_unit)} ${esc(r.unit||'')}</td><td>${r.current_stock||0}</td><td>${esc(r.stock_status||'-')}</td></tr>`).join('')||'<tr><td colspan="4" class="empty-row">Hakuna stock.</td></tr>'}catch(e){cards.innerHTML=`<div class="stock-mini-card"><span>Error</span><strong style="font-size:12px">${esc(e.message||'Failed')}</strong></div>`}}
+
+    async function loadUsers(){const b=document.getElementById('usersBody');b.innerHTML='<tr><td colspan="6" class="loading-row">Inapakia...</td></tr>';try{const rows=await supabaseREST('profiles?select=id,full_name,username,email,phone,role,is_active,created_at&order=created_at.desc');b.innerHTML=(rows||[]).map(r=>`<tr><td>${esc(r.full_name||'-')}</td><td>${esc(r.username||'-')}</td><td>${esc(r.email||'-')}</td><td>${esc(r.phone||'-')}</td><td>${esc(r.role||'-')}</td><td>${r.is_active?'Active':'Inactive'}</td></tr>`).join('')||'<tr><td colspan="6" class="empty-row">Hakuna users.</td></tr>'}catch(e){b.innerHTML=`<tr><td colspan="6" class="empty-row">${esc(e.message||'Failed')}</td></tr>`}}
+    document.getElementById('refreshUsersBtn').addEventListener('click',loadUsers);
+
+    async function loadSettings(){try{const rows=await supabaseREST('settings?select=id,business_name,system_name,default_language,receipt_prefix,receipt_number_digits&limit=1');const r=rows?.[0]||{};document.getElementById('setBusinessName').value=r.business_name||'';document.getElementById('setSystemName').value=r.system_name||'';document.getElementById('setLanguage').value=r.default_language||'sw';document.getElementById('setReceiptPrefix').value=r.receipt_prefix||'SGC';document.getElementById('setReceiptDigits').value=r.receipt_number_digits||6}catch(e){document.getElementById('settingsMessage').textContent=e.message||'Failed to load settings';document.getElementById('settingsMessage').className='stock-message show error'}}
+    document.getElementById('settingsForm').addEventListener('submit',async e=>{e.preventDefault();const msg=document.getElementById('settingsMessage'),btn=document.getElementById('saveSettingsBtn');btn.disabled=true;try{const rows=await supabaseREST('settings?select=id&limit=1');const id=rows?.[0]?.id;if(!id)throw new Error('Settings row haijapatikana.');await supabaseREST(`settings?id=eq.${encodeURIComponent(id)}`,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({business_name:document.getElementById('setBusinessName').value.trim(),system_name:document.getElementById('setSystemName').value.trim(),default_language:document.getElementById('setLanguage').value,receipt_prefix:document.getElementById('setReceiptPrefix').value.trim(),receipt_number_digits:Number(document.getElementById('setReceiptDigits').value)})});msg.textContent='Settings zimehifadhiwa.';msg.className='stock-message show success'}catch(e){msg.textContent=e.message||'Save failed';msg.className='stock-message show error'}finally{btn.disabled=false}});
+
+    customersNavBtn.addEventListener('click',()=>openFunctionalPage(customersPage,customersNavBtn,loadCustomers));
+    expensesNavBtn.addEventListener('click',()=>openFunctionalPage(expensesPage,expensesNavBtn,loadExpenses));
+    paymentsNavBtn.addEventListener('click',()=>openFunctionalPage(paymentsPage,paymentsNavBtn,loadPayments));
+    reportsNavBtn.addEventListener('click',()=>openFunctionalPage(reportsPage,reportsNavBtn,loadReports));
+    usersNavBtn.addEventListener('click',()=>openFunctionalPage(usersPage,usersNavBtn,loadUsers));
+    settingsNavBtn.addEventListener('click',()=>openFunctionalPage(settingsPage,settingsNavBtn,loadSettings));
 
     /* ==========================================
        INITIALIZE
