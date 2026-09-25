@@ -1446,7 +1446,7 @@
                     <div class="table-card">
                         <div class="section-head">
                             <h3 data-i18n="stock_receipts">Stock Receipts</h3>
-                            <button class="small-btn" id="refreshReceiptsBtn">↻ <span data-i18n="refresh">Refresh</span></button>
+                            <button class="small-btn" id="refreshStockReceiptsBtn">↻ <span data-i18n="refresh">Refresh</span></button>
                         </div>
 
                         <div class="table-wrap">
@@ -1914,30 +1914,8 @@
 
 
 <script>
-window.__openSGCSection = function(section){
-    try{
-        var pageIds=['dashboardPage','currentStockPage','productsPage','receivedStockPage','salesPage','receiptsPage','customersPage','suppliersPage','expensesPage','paymentsPage','reportsPage','usersPage','settingsPage'];
-        pageIds.forEach(function(id){ var p=document.getElementById(id); if(p){ p.classList.remove('active','sgc-force-active'); p.style.removeProperty('display'); }});
-        document.querySelectorAll('.nav button').forEach(function(b){ b.classList.remove('active'); });
-        var welcome=document.querySelector('.content > .welcome'); if(welcome) welcome.style.display='none';
-        var cards=document.querySelector('.content > .cards'); if(cards) cards.style.display='none';
-        var grid=document.querySelector('.content > .grid-two'); if(grid) grid.style.display='none';
-        var page=document.getElementById(section+'Page');
-        var btn=document.getElementById(section+'NavBtn');
-        if(!page || !btn){ console.error('SGC navigation target not found:',section); return false; }
-        page.classList.add('active','sgc-force-active');
-        page.style.display='block';
-        btn.classList.add('active');
-        if(section==='customers' && typeof loadCustomers==='function') loadCustomers();
-        if(section==='expenses' && typeof loadExpenses==='function') loadExpenses();
-        if(section==='payments' && typeof loadPayments==='function') loadPayments();
-        if(section==='reports' && typeof loadReports==='function') loadReports();
-        if(section==='users' && typeof loadUsers==='function') loadUsers();
-        if(section==='settings' && typeof loadSettings==='function') loadSettings();
-        if(window.innerWidth<=800 && typeof sidebar!=='undefined' && sidebar) sidebar.classList.remove('open');
-        return false;
-    }catch(error){ console.error('SGC section navigation error:',error); return false; }
-};
+/* Phase 1: legacy navigation function removed. SGCAppRouter is the single navigation owner. */
+
 
     /* ==========================================
        SGC SOFT DRINKS MANAGEMENT
@@ -2504,7 +2482,7 @@ window.__openSGCSection = function(section){
         document.getElementById("receiptNumber").focus();
     });
 
-    document.getElementById("refreshReceiptsBtn").addEventListener("click", loadStockReceipts);
+    document.getElementById("refreshStockReceiptsBtn").addEventListener("click", loadStockReceipts);
 
     document.getElementById("addStockLineBtn").addEventListener("click", () => {
         addReceiptItemRow();
@@ -3054,10 +3032,10 @@ window.__openSGCSection = function(section){
     async function openSaleReceipt(id){try{const result=await supabaseRPC("get_sale_details",{p_sale_id:id});const rows=Array.isArray(result)?result:[];if(!rows.length)throw new Error(t("sale_error"));const h=rows[0];const d={...h,items:rows.map(r=>({product_name:r.product_name,variant_id:r.variant_id,unit:r.unit,volume_value:r.volume_value,volume_unit:r.volume_unit,quantity:r.quantity,selling_price:r.selling_price,line_total:r.line_total}))};renderSaleReceipt(d);document.getElementById("saleReceiptModal").classList.add("show")}catch(e){alert(e.message||t("sale_error"))}}
     function renderSaleReceipt(d){const items=Array.isArray(d.items)?d.items:[],customer=d.customer_name||(currentLanguage==="sw"?"Mteja wa kawaida":"Walk-in Customer");document.getElementById("saleReceiptBody").innerHTML=`<div class="receipt-paper"><div class="receipt-brand"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgRsGllLOBF63Unp0kzICif6C1tapkNBLRntsN7FJJPLlytEa9m1uBi_CdMVtnA7HmE1niKAeRc7FaKka9HamTfaSy4Mp5V8jnfl0DJt12zb4S4WhtI3PSJH9mHkxhu65YXSVA7sD5b8sOfw8jakPYp3H8Um8qvyjlDzxWgNcdsH2qVTmnMbjsZF4TN/s1280/244759.png" alt="SGC"><h2>SGC SOFT DRINKS</h2><p>SGC SOFT DRINKS MANAGEMENT</p></div><div class="receipt-meta"><div><span>${t("receipt_no")}</span><strong>${escapeHtml(d.receipt_no||"-")}</strong></div><div><span>${t("date")}</span><strong>${escapeHtml(d.created_at?new Date(d.created_at).toLocaleString():"-")}</strong></div><div><span>${t("customer")}</span><strong>${escapeHtml(customer)}</strong></div><div><span>${t("salesman")}</span><strong>${escapeHtml(d.salesman_name||"-")}</strong></div></div><table><thead><tr><th>${t("product")}</th><th>Qty</th><th>${t("selling_price")}</th><th>${t("total")}</th></tr></thead><tbody>${items.map(i=>`<tr><td>${escapeHtml(i.product_name||"-")} ${i.volume_value?`(${escapeHtml(String(i.volume_value))} ${escapeHtml(i.volume_unit||"")})`:""}</td><td>${Number(i.quantity||0).toLocaleString()}</td><td>TZS ${Number(i.selling_price||0).toLocaleString()}</td><td>TZS ${Number(i.line_total||0).toLocaleString()}</td></tr>`).join("")}</tbody></table><div class="receipt-grand"><div><span>${t("grand_total")}</span><strong>TZS ${Number(d.total_amount||0).toLocaleString()}</strong></div><div><span>${t("paid_amount")}</span><strong>TZS ${Number(d.paid_amount||0).toLocaleString()}</strong></div><div class="grand"><span>${t("balance")}</span><strong>TZS ${Number(d.balance||0).toLocaleString()}</strong></div></div><div class="receipt-footer">Asante kwa kufanya biashara na SGC SOFT DRINKS.</div></div>`}
     document.body.insertAdjacentHTML("beforeend",`<div class="modal-backdrop sale-receipt-modal" id="saleReceiptModal"><div class="modal"><div class="modal-head"><h3>${t("receipt_no")}</h3><button class="modal-close" id="closeSaleReceipt">×</button></div><div id="saleReceiptBody"></div><div class="modal-actions" style="padding:0 22px 20px"><button class="secondary-btn" id="closeSaleReceipt2">${t("cancel")}</button><button class="primary-btn" id="printSaleReceipt">🖨️ ${t("print")}</button></div></div></div>`);
-    document.getElementById("closeSaleReceipt").addEventListener("click",()=>document.getElementById("saleReceiptModal").classList.remove("show"));document.getElementById("closeSaleReceipt2").addEventListener("click",()=>document.getElementById("saleReceiptModal").classList.remove("show"));document.getElementById("printSaleReceipt").addEventListener("click",()=>window.print());salesNavBtn.addEventListener("click",()=>showSalesPage(false));
+    document.getElementById("closeSaleReceipt").addEventListener("click",()=>document.getElementById("saleReceiptModal").classList.remove("show"));document.getElementById("closeSaleReceipt2").addEventListener("click",()=>document.getElementById("saleReceiptModal").classList.remove("show"));document.getElementById("printSaleReceipt").addEventListener("click",()=>window.print());
 
 
-    document.getElementById("productsNavBtn")?.addEventListener("click",showProductsPage);
+    
 
     /* ==========================================
        PRODUCTS MANAGEMENT
@@ -3811,26 +3789,7 @@ window.__openSGCSection = function(section){
 
     const dashboardNavBtn = document.querySelector(".nav button:first-of-type");
 
-    dashboardNavBtn.addEventListener("click", () => {
-        showDashboardPage();
-    });
-
-    // Replace old navigation handlers with the separated architecture.
-    [stockNavBtn, receivedStockNavBtn, receiptsNavBtn].forEach(btn=>{ const clone=btn.cloneNode(true); btn.parentNode.replaceChild(clone,btn); });
-    window.stockNavBtn = document.getElementById("stockNavBtn");
-    window.receivedStockNavBtn = document.getElementById("receivedStockNavBtn");
-    window.receiptsNavBtn = document.getElementById("receiptsNavBtn");
-    window.stockNavBtn.addEventListener("click", showCurrentStockPage);
-    window.receivedStockNavBtn.addEventListener("click", showReceivedStockPage);
-    window.receiptsNavBtn.addEventListener("click", showReceiptsPage);
-
-    suppliersNavBtn.addEventListener("click", () => {
-        showSuppliersPage();
-    });
-
-
-
-    document.getElementById("quickProductsBtn").addEventListener("click", showReceivedStockPage);
+    
 
 
 
@@ -3894,15 +3853,13 @@ window.__openSGCSection = function(section){
         currentLanguage
     );
 
-    showDashboardPage();
-
-    loadDashboardSummary();
+    // Phase 1: initial navigation is owned by SGCAppRouter.
 
 </script>
 
 <script>
 /* =========================================================
-   SGC-SDM PHASE 1 — SINGLE NAVIGATION ARCHITECTURE
+   SGC-SDM PHASE 1 — SINGLE NAVIGATION ARCHITECTURE (CLEANED)
    One router owns page visibility, active nav state and page loading.
    ========================================================= */
 (function(){
@@ -4013,7 +3970,7 @@ window.__openSGCSection = function(section){
             button.type = 'button';
         });
 
-        // Capture phase is intentional: it prevents legacy per-button handlers from fighting the central router.
+        // Single delegated navigation handler. Legacy nav listeners were removed in Phase 1.
         document.addEventListener('click', function(event){
             const navButton = event.target.closest('.nav button');
             if(navButton){
@@ -4032,7 +3989,7 @@ window.__openSGCSection = function(section){
                 event.stopImmediatePropagation();
                 open(quickRoutes[quickButton.id], {force:true});
             }
-        }, true);
+        });
     }
 
     if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', install, {once:true});
