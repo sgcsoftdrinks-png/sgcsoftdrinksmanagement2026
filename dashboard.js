@@ -1,249 +1,3 @@
-/* SGC EMERGENCY NAVIGATION — independent of database/auth/loading code.
-   RLS: USIBADILISHE — this is frontend navigation only. */
-(function(){
-  const routes={
-    dashboard:['dashboardNavBtn',null],
-    stock:['stockNavBtn','currentStockPage'],
-    products:['productsNavBtn','productsPage'],
-    receivedStock:['receivedStockNavBtn','receivedStockPage'],
-    sales:['salesNavBtn','salesPage'],
-    receipts:['receiptsNavBtn','receiptsPage'],
-    customers:['customersNavBtn','customersPage'],
-    suppliers:['suppliersNavBtn','suppliersPage'],
-    expenses:['expensesNavBtn','expensesPage'],
-    payments:['paymentsNavBtn','paymentsPage'],
-    reports:['reportsNavBtn','reportsPage'],
-    users:['usersNavBtn','usersPage'],
-    settings:['settingsNavBtn','settingsPage']
-  };
-
-  function openRoute(name){
-    const r=routes[name];
-    if(!r) return;
-
-    const all=document.querySelectorAll('.page-view');
-
-    all.forEach(p=>{
-      p.classList.remove('active','sgc-force-active');
-      p.style.display='none';
-      p.style.visibility='hidden';
-    });
-
-    document.querySelectorAll('.nav button')
-      .forEach(b=>b.classList.remove('active'));
-
-    const welcome=document.querySelector('.content > .welcome');
-    const cards=document.querySelector('.content > .cards');
-    const grid=document.querySelector('.content > .grid-two');
-
-    const dashboard=name==='dashboard';
-
-    if(welcome) welcome.style.display=dashboard?'':'none';
-    if(cards) cards.style.display=dashboard?'':'none';
-    if(grid) grid.style.display=dashboard?'':'none';
-
-    const btn=document.getElementById(r[0]);
-
-    if(btn) btn.classList.add('active');
-
-    if(r[1]){
-      const page=document.getElementById(r[1]);
-
-      if(page){
-        page.classList.add('active','sgc-force-active');
-        page.style.display='block';
-        page.style.visibility='visible';
-      }
-    }
-
-    window.__SGC_EMERGENCY_ROUTE=name;
-  }
-
-  function install(){
-
-    document.addEventListener('click',function(e){
-
-      const btn=e.target.closest('.nav button');
-
-      if(!btn) return;
-
-      const name=Object.keys(routes)
-        .find(k=>routes[k][0]===btn.id);
-
-      if(!name) return;
-
-      e.preventDefault();
-      e.stopImmediatePropagation();
-
-      openRoute(name);
-
-      setTimeout(()=>{
-        openRoute(name);
-      },0);
-
-    },true);
-
-    window.__SGCEmergencyOpen=openRoute;
-    window.__SGC_NAV_READY=true;
-  }
-
-  if(document.readyState==='loading'){
-    document.addEventListener(
-      'DOMContentLoaded',
-      install,
-      {once:true}
-    );
-  }else{
-    install();
-  }
-
-})();
-
-
-/* ===== Extracted inline module ===== */
-
-window.__openSGCSection = function(section){
-
-  try{
-
-    var pageIds=[
-      'dashboardPage',
-      'currentStockPage',
-      'productsPage',
-      'receivedStockPage',
-      'salesPage',
-      'receiptsPage',
-      'customersPage',
-      'suppliersPage',
-      'expensesPage',
-      'paymentsPage',
-      'reportsPage',
-      'usersPage',
-      'settingsPage'
-    ];
-
-    pageIds.forEach(function(id){
-
-      var p=document.getElementById(id);
-
-      if(p){
-        p.classList.remove(
-          'active',
-          'sgc-force-active'
-        );
-
-        p.style.removeProperty('display');
-      }
-
-    });
-
-    document
-      .querySelectorAll('.nav button')
-      .forEach(function(b){
-        b.classList.remove('active');
-      });
-
-    var welcome=
-      document.querySelector('.content > .welcome');
-
-    if(welcome)
-      welcome.style.display='none';
-
-    var cards=
-      document.querySelector('.content > .cards');
-
-    if(cards)
-      cards.style.display='none';
-
-    var grid=
-      document.querySelector('.content > .grid-two');
-
-    if(grid)
-      grid.style.display='none';
-
-    var page=
-      document.getElementById(section+'Page');
-
-    var btn=
-      document.getElementById(section+'NavBtn');
-
-    if(!page || !btn){
-
-      console.error(
-        'SGC navigation target not found:',
-        section
-      );
-
-      return false;
-    }
-
-    page.classList.add(
-      'active',
-      'sgc-force-active'
-    );
-
-    page.style.display='block';
-
-    btn.classList.add('active');
-
-    if(
-      section==='customers' &&
-      typeof loadCustomers==='function'
-    )
-      loadCustomers();
-
-    if(
-      section==='expenses' &&
-      typeof loadExpenses==='function'
-    )
-      loadExpenses();
-
-    if(
-      section==='payments' &&
-      typeof loadPayments==='function'
-    )
-      loadPayments();
-
-    if(
-      section==='reports' &&
-      typeof loadReports==='function'
-    )
-      loadReports();
-
-    if(
-      section==='users' &&
-      typeof loadUsers==='function'
-    )
-      loadUsers();
-
-    if(
-      section==='settings' &&
-      typeof loadSettings==='function'
-    )
-      loadSettings();
-
-    if(
-      window.innerWidth<=800 &&
-      typeof sidebar!=='undefined' &&
-      sidebar
-    )
-      sidebar.classList.remove('open');
-
-    return false;
-
-  }catch(error){
-
-    console.error(
-      'SGC section navigation error:',
-      error
-    );
-
-    return false;
-  }
-
-};
-
-
 /* ==========================================
    SGC SOFT DRINKS MANAGEMENT
    DASHBOARD
@@ -1767,6 +1521,9 @@ async function openSection(
 
           case 'receivedStock':
 
+            if(typeof loadReceivedDependencies==='function')
+              loadReceivedDependencies();
+
             if(typeof loadReceivedStock==='function')
               loadReceivedStock();
 
@@ -2034,52 +1791,30 @@ function installNavigation(){
 
 }
 
-   ========================================== */
 
 function installSidebar(){
 
-  const sidebar=
-    byId('sidebar');
+  const sidebar = byId('sidebar');
+  const toggle = byId('menuBtn') || byId('sidebarToggle');
 
-  const toggle=
-    byId('sidebarToggle');
+  if(!sidebar || !toggle) return;
 
-  if(!sidebar || !toggle)
-    return;
+  const cleanToggle = toggle.cloneNode(true);
+  toggle.replaceWith(cleanToggle);
+  cleanToggle.type = 'button';
 
+  cleanToggle.addEventListener('click', function(event){
+    event.preventDefault();
+    event.stopPropagation();
+    sidebar.classList.toggle('open');
+  });
 
-  toggle.addEventListener(
-    'click',
-    function(){
-
-      sidebar.classList.toggle(
-        'open'
-      );
-
+  document.addEventListener('click', function(event){
+    if(window.innerWidth > 800) return;
+    if(!sidebar.contains(event.target) && !cleanToggle.contains(event.target)){
+      sidebar.classList.remove('open');
     }
-  );
-
-
-  document.addEventListener(
-    'click',
-    function(event){
-
-      if(window.innerWidth>800)
-        return;
-
-      if(
-        !sidebar.contains(event.target) &&
-        !toggle.contains(event.target)
-      ){
-
-        sidebar.classList.remove(
-          'open'
-        );
-
-      }
-
-    }
-  );
+  });
 
 }
 
@@ -2090,27 +1825,48 @@ function installSidebar(){
 
 function installLanguageSelector(){
 
-  const selector=
-    byId('languageSelector');
+  const sw = byId('swBtn');
+  const en = byId('enBtn');
+  const selector = byId('languageSelector');
 
-  if(!selector)
-    return;
+  function setLanguage(language){
+    applyLanguage(language);
+    if(selector) selector.value = language;
+    if(sw) sw.classList.toggle('active', language === 'sw');
+    if(en) en.classList.toggle('active', language === 'en');
 
-
-  selector.value=
-    currentLanguage;
-
-
-  selector.addEventListener(
-    'change',
-    function(){
-
-      applyLanguage(
-        selector.value
-      );
-
+    const section = window.__SGC_CURRENT_SECTION || 'dashboard';
+    const route = SGC_ROUTES[section];
+    if(route && typeof window.openSection === 'function'){
+      const page = byId(route.page);
+      if(page){
+        page.classList.add('active','sgc-force-active');
+        page.style.display = 'block';
+      }
     }
-  );
+  }
+
+  if(sw){
+    const clean = sw.cloneNode(true);
+    sw.replaceWith(clean);
+    clean.type = 'button';
+    clean.addEventListener('click', e => { e.preventDefault(); setLanguage('sw'); });
+  }
+
+  if(en){
+    const clean = en.cloneNode(true);
+    en.replaceWith(clean);
+    clean.type = 'button';
+    clean.addEventListener('click', e => { e.preventDefault(); setLanguage('en'); });
+  }
+
+  if(selector){
+    const clean = selector.cloneNode(true);
+    selector.replaceWith(clean);
+    clean.addEventListener('change', () => setLanguage(clean.value === 'en' ? 'en' : 'sw'));
+  }
+
+  setLanguage(currentLanguage === 'en' ? 'en' : 'sw');
 
 }
 
@@ -4860,7 +4616,8 @@ async function saveSetting(
     const {
       error
     } =
-      await supabaseAuthClient
+      awa
+      it supabaseAuthClient
         .from('settings')
         .update({
 
@@ -6232,8 +5989,6 @@ async function initializeDashboard(){
 
   installQuickActions();
 
-  installSaleEvents();
-
 
   /*
    * Search
@@ -6368,7 +6123,6 @@ async function initializeDashboard(){
     true;
 
 }
-   ========================================== */
 
 window.addEventListener(
   'error',
@@ -7243,81 +6997,298 @@ window.reinitializeSGCNavigation=
 
 
 /* ==========================================
-   INITIALIZATION PATCH
+   FINAL INITIALIZATION HELPERS
+   RLS: HAKUNA MABADILIKO
+   Frontend event wiring only.
    ========================================== */
 
-(function(){
+function installFinalUiHandlers(){
+  try{
+    installModalCloseHandlers();
+    installAuthListener();
+    installResizeHandler();
+    installVisibilitySafety();
+    installAccessibility();
+    installFunctionalForms();
+    applyLanguage(currentLanguage);
+  }catch(error){
+    console.error('SGC final UI initialization error:', error);
+  }
+}
 
-  function patch(){
-
-    try{
-
-      installDirectCompatibility();
-
-      installNavigationWatchdog();
-
-      installModalCloseHandlers();
-
-      installFormProtection();
-
-      installSafeErrorDisplay();
-
-      installAuthListener();
-
-      installResizeHandler();
-
-      installVisibilitySafety();
-
-      installAccessibility();
+if(document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded', installFinalUiHandlers, {once:true});
+}else{
+  installFinalUiHandlers();
+}
 
 
-      /*
-       * Apply language again after all HTML
-       * elements have loaded.
-       */
 
-      applyLanguage(
-        currentLanguage
-      );
+/* ==========================================
+   FUNCTIONAL FORMS / MOBILE WORKFLOWS
+   ========================================== */
 
+let receivedVariants = [];
+let receivedSuppliers = [];
+let saleVariants = [];
 
-      console.log(
-        'SGC Dashboard Version 24 initialized successfully.'
-      );
+function messageElement(id, message, type='info'){
+  const el = byId(id);
+  if(!el) return;
+  el.textContent = message || '';
+  el.style.color = type === 'error' ? '#b91c1c' : type === 'success' ? '#166534' : '#334155';
+}
 
+function variantLabel(v){
+  return `${v.product_name || 'Product'} — ${v.volume_value ?? ''} ${v.volume_unit || ''} (${v.unit || ''})`;
+}
 
-    }catch(error){
+async function loadReceivedDependencies(){
+  try{
+    const variants = await callRpc('get_active_product_variants');
+    receivedVariants = Array.isArray(variants) ? variants : [];
+    saleVariants = receivedVariants.slice();
 
-      console.error(
-        'SGC Version 24 initialization patch error:',
-        error
-      );
+    const suppliers = await callRpc('get_suppliers_for_current_user');
+    receivedSuppliers = Array.isArray(suppliers) ? suppliers : [];
 
+    const supplierSelect = byId('rsSupplier');
+    if(supplierSelect){
+      supplierSelect.innerHTML = '<option value="">Chagua Supplier</option>' +
+        receivedSuppliers.map(s => `<option value="${escapeHtml(s.id)}">${escapeHtml(s.name || '')}</option>`).join('');
     }
-
+  }catch(error){
+    console.error('Received dependencies error:', error);
+    messageElement('receivedMessage', error.message || translations[currentLanguage].load_error, 'error');
   }
+}
 
+function addReceivedLine(){
+  const wrap = byId('receivedLines');
+  if(!wrap) return;
 
-  if(
-    document.readyState==='loading'
-  ){
+  const row = document.createElement('div');
+  row.className = 'rs-line';
+  row.innerHTML = `
+    <div class="form-group">
+      <label>Product / Variant</label>
+      <select class="rs-variant" required>
+        <option value="">Chagua Product / Variant</option>
+        ${receivedVariants.map(v => `<option value="${escapeHtml(v.variant_id || v.id)}">${escapeHtml(variantLabel(v))}</option>`).join('')}
+      </select>
+    </div>
+    <div class="form-group"><label>Quantity</label><input class="rs-qty" type="number" min="0.01" step="0.01" required></div>
+    <div class="form-group"><label>Buying Price</label><input class="rs-price" type="number" min="0" step="0.01" required></div>
+    <div class="form-group"><label>Total</label><input class="rs-total" type="text" readonly value="0"></div>
+    <button type="button" class="danger-line" aria-label="Remove">×</button>`;
+  wrap.appendChild(row);
 
-    document.addEventListener(
-      'DOMContentLoaded',
-      patch,
-      {
-        once:true
-      }
-    );
+  const select = row.querySelector('.rs-variant');
+  const qty = row.querySelector('.rs-qty');
+  const price = row.querySelector('.rs-price');
 
-  }else{
+  select.addEventListener('change', () => {
+    const v = receivedVariants.find(x => String(x.variant_id || x.id) === String(select.value));
+    if(v && Number(v.buying_price) > 0 && !price.value) price.value = Number(v.buying_price);
+    updateReceivedTotal();
+  });
+  qty.addEventListener('input', updateReceivedTotal);
+  price.addEventListener('input', updateReceivedTotal);
+  row.querySelector('.danger-line').addEventListener('click', () => { row.remove(); updateReceivedTotal(); });
+  updateReceivedTotal();
+}
 
-    patch();
+function updateReceivedTotal(){
+  let total = 0;
+  document.querySelectorAll('#receivedLines .rs-line').forEach(row => {
+    const p = Number(row.querySelector('.rs-price')?.value || 0);
+    const q = Number(row.querySelector('.rs-qty')?.value || 0);
+    const line = Number.isFinite(p) && Number.isFinite(q) ? p*q : 0;
+    const totalField = row.querySelector('.rs-total');
+    if(totalField) totalField.value = line.toLocaleString('en-TZ', {maximumFractionDigits:2});
+    total += line;
+  });
+  const totalEl = byId('receivedTotal');
+  if(totalEl) totalEl.textContent = formatMoney(total);
+}
 
+async function saveReceivedStock(event){
+  event.preventDefault();
+  const invoice = byId('rsInvoice')?.value.trim();
+  const supplier = byId('rsSupplier')?.value;
+  const rows = [...document.querySelectorAll('#receivedLines .rs-line')];
+  const items = [];
+  let invalid = false;
+
+  rows.forEach(row => {
+    const variant_id = row.querySelector('.rs-variant')?.value;
+    const quantity = Number(row.querySelector('.rs-qty')?.value);
+    const buying_price = Number(row.querySelector('.rs-price')?.value);
+    if(!variant_id || !Number.isFinite(quantity) || quantity <= 0 || !Number.isFinite(buying_price) || buying_price < 0){ invalid = true; return; }
+    const v = receivedVariants.find(x => String(x.variant_id || x.id) === String(variant_id));
+    items.push({variant_id, product_id: v?.product_id || null, quantity, buying_price});
+  });
+
+  if(!invoice){ messageElement('receivedMessage', currentLanguage==='sw' ? 'Weka Invoice / Receipt No.' : 'Enter Invoice / Receipt No.', 'error'); return; }
+  if(!supplier){ messageElement('receivedMessage', currentLanguage==='sw' ? 'Chagua Supplier.' : 'Select a supplier.', 'error'); return; }
+  if(!items.length || invalid){ messageElement('receivedMessage', currentLanguage==='sw' ? 'Jaza Product/Variant, Quantity na Buying Price kwa kila mstari.' : 'Complete Product/Variant, Quantity and Buying Price for every line.', 'error'); return; }
+
+  const button = byId('saveReceivedBtn');
+  if(button) button.disabled = true;
+  try{
+    await callRpc('create_stock_receipt', {
+      p_invoice_receipt_no: invoice,
+      p_supplier_id: supplier,
+      p_payment_reference: byId('rsPaymentRef')?.value.trim() || null,
+      p_notes: byId('rsNotes')?.value.trim() || null,
+      p_items: items
+    });
+    messageElement('receivedMessage', translations[currentLanguage].receipt_saved, 'success');
+    byId('receivedStockForm')?.reset();
+    const wrap = byId('receivedLines'); if(wrap) wrap.innerHTML = '';
+    addReceivedLine();
+    updateReceivedTotal();
+    await loadReceivedStock();
+  }catch(error){
+    console.error('create_stock_receipt error:', error);
+    messageElement('receivedMessage', error.message || translations[currentLanguage].load_error, 'error');
+  }finally{
+    if(button) button.disabled = false;
   }
+}
 
-})();
+function clearReceivedForm(){
+  byId('receivedStockForm')?.reset();
+  const wrap = byId('receivedLines'); if(wrap) wrap.innerHTML = '';
+  addReceivedLine();
+  updateReceivedTotal();
+  messageElement('receivedMessage', '');
+}
 
+function createSalePicker(){
+  if(byId('sgcSalePicker')) return byId('sgcSalePicker');
+  const formCard = byId('salesFormCard');
+  if(!formCard) return null;
+  const box = document.createElement('div');
+  box.id = 'sgcSalePicker';
+  box.style.cssText = 'display:none;margin:10px 0;padding:12px;border:1px solid #dbe3ef;border-radius:12px;background:#f8fafc;';
+  box.innerHTML = `<div style="display:grid;grid-template-columns:minmax(0,1fr)120px auto;gap:8px;align-items:end"><div class="form-group"><label>Product / Variant</label><select id="sgcSaleVariant"><option value="">Chagua Product / Variant</option></select></div><div class="form-group"><label>Quantity</label><input id="sgcSaleQty" type="number" min="1" step="1" value="1"></div><button type="button" class="primary-btn" id="sgcConfirmSaleItem">Ongeza</button></div>`;
+  const itemsHead = formCard.querySelector('.items-head');
+  if(itemsHead) itemsHead.insertAdjacentElement('afterend', box); else formCard.appendChild(box);
+  return box;
+}
+
+function refreshSaleVariantOptions(){
+  const select = byId('sgcSaleVariant');
+  if(!select) return;
+  select.innerHTML = '<option value="">Chagua Product / Variant</option>' + saleVariants.map(v => `<option value="${escapeHtml(v.variant_id || v.id)}">${escapeHtml(variantLabel(v))} — ${escapeHtml(formatMoney(v.selling_price || 0))}</option>`).join('');
+}
+
+function openNewSale(){
+  const card = byId('salesFormCard');
+  if(card) card.style.display = 'block';
+  clearSaleItems();
+  const paid = byId('salePaidAmount'); if(paid) paid.value = 0;
+  const customerId = byId('saleCustomerId'); if(customerId) customerId.value = '';
+  const message = byId('saleFormMessage'); if(message) message.textContent = '';
+  const picker = createSalePicker();
+  if(picker) picker.style.display = 'block';
+  refreshSaleVariantOptions();
+}
+
+function closeNewSale(){
+  const card = byId('salesFormCard'); if(card) card.style.display = 'none';
+}
+
+async function saveSale(){
+  if(!saleItems.length){ showError(translations[currentLanguage].no_sale_items || 'Ongeza angalau bidhaa moja.'); return; }
+  const total = calculateSaleTotal();
+  const paid = numberValue(byId('salePaidAmount')?.value);
+  if(paid < 0 || paid > total){ showError(currentLanguage==='sw' ? 'Kiasi kilicholipwa si sahihi.' : 'Paid amount is invalid.'); return; }
+
+  const paymentMethod = byId('salePaymentMethod')?.value || 'cash';
+  const customerName = byId('saleCustomerName')?.value.trim() || null;
+  const customerId = byId('saleCustomerId')?.value || null;
+  const notes = byId('saleNotes')?.value.trim() || null;
+  const items = saleItems.map(item => ({product_id:item.product_id, variant_id:item.variant_id, quantity:item.quantity}));
+  const button = byId('saveSaleBtn'); if(button) button.disabled = true;
+  try{
+    let args = {p_customer_name: customerName, p_paid_amount: paid, p_payment_method: paymentMethod, p_notes: notes, p_items: items};
+    try{
+      await callRpc('create_sale', args);
+    }catch(firstError){
+      if(customerId){
+        await callRpc('create_sale', {p_customer_id: customerId, p_paid_amount: paid, p_payment_method: paymentMethod, p_notes: notes, p_items: items});
+      }else throw firstError;
+    }
+    showSuccess(translations[currentLanguage].sale_saved);
+    closeNewSale();
+    clearSaleItems();
+    await loadSales();
+    await loadCurrentStock();
+  }catch(error){
+    console.error('Save sale error:', error);
+    showError(error.message || translations[currentLanguage].sale_error);
+  }finally{ if(button) button.disabled = false; }
+}
+
+function installFunctionalForms(){
+  const productForm = byId('productForm');
+  if(productForm){ productForm.addEventListener('submit', e => { e.preventDefault(); saveProduct(); }); }
+  const customerForm = byId('customerForm');
+  if(customerForm){ customerForm.addEventListener('submit', e => { e.preventDefault(); saveCustomer(); }); }
+  const expenseForm = byId('expenseForm');
+  if(expenseForm){ expenseForm.addEventListener('submit', e => { e.preventDefault(); saveExpense(); }); }
+  const receivedForm = byId('receivedStockForm');
+  if(receivedForm){ receivedForm.addEventListener('submit', saveReceivedStock); }
+
+  const addReceived = byId('addReceivedLineBtn'); if(addReceived) addReceived.addEventListener('click', addReceivedLine);
+  const clearReceived = byId('clearReceivedBtn'); if(clearReceived) clearReceived.addEventListener('click', clearReceivedForm);
+  const refreshReceived = byId('refreshReceivedBtn'); if(refreshReceived) refreshReceived.addEventListener('click', loadReceivedStock);
+
+  const newSale = byId('newSaleBtn'); if(newSale) newSale.addEventListener('click', e => { e.preventDefault(); openNewSale(); });
+  const closeSale = byId('closeSaleFormBtn'); if(closeSale) closeSale.addEventListener('click', e => { e.preventDefault(); closeNewSale(); });
+  const clearSale = byId('clearSaleBtn'); if(clearSale) clearSale.addEventListener('click', clearSaleItems);
+  const saveSaleButton = byId('saveSaleBtn'); if(saveSaleButton) saveSaleButton.addEventListener('click', saveSale);
+
+  const addSale = byId('addSaleItemBtn');
+  if(addSale) addSale.addEventListener('click', async e => {
+    e.preventDefault();
+    const picker = createSalePicker();
+    if(picker) picker.style.display = 'block';
+    if(!saleVariants.length){ try { saleVariants = await callRpc('get_active_product_variants') || []; } catch(error){ showError(error.message); return; } }
+    refreshSaleVariantOptions();
+    byId('sgcSaleVariant')?.focus();
+  });
+
+  document.addEventListener('click', e => {
+    if(e.target.closest('#sgcConfirmSaleItem')){
+      const id = byId('sgcSaleVariant')?.value;
+      const qty = numberValue(byId('sgcSaleQty')?.value) || 1;
+      const v = saleVariants.find(x => String(x.variant_id || x.id) === String(id));
+      if(!v){ showError(currentLanguage==='sw' ? 'Chagua Product / Variant.' : 'Select a Product / Variant.'); return; }
+      addSaleItem({id:v.product_id, variant_id:v.variant_id || v.id, name:v.product_name, selling_price:v.selling_price, buying_price:v.buying_price}, qty);
+    }
+  });
+
+  const paid = byId('salePaidAmount'); if(paid) paid.addEventListener('input', updateSaleTotals);
+
+  const saveProduct = byId('saveProductBtn');
+  if(saveProduct) saveProduct.addEventListener('click', e => { /* submit handler owns this action */ });
+
+  const closeProduct = byId('closeProductModal'); if(closeProduct) closeProduct.addEventListener('click', closeProductEditor);
+  const cancelProduct = byId('cancelProductBtn'); if(cancelProduct) cancelProduct.addEventListener('click', closeProductEditor);
+  const closeCustomer = byId('closeCustomerModal'); if(closeCustomer) closeCustomer.addEventListener('click', closeCustomerEditor);
+  const cancelCustomer = byId('cancelCustomerBtn'); if(cancelCustomer) cancelCustomer.addEventListener('click', closeCustomerEditor);
+  const closeExpense = byId('closeExpenseModal'); if(closeExpense) closeExpense.addEventListener('click', closeExpenseEditor);
+  const cancelExpense = byId('cancelExpenseBtn'); if(cancelExpense) cancelExpense.addEventListener('click', closeExpenseEditor);
+
+  if(byId('addReceivedLineBtn') && !document.querySelector('#receivedLines .rs-line')) addReceivedLine();
+
+  loadReceivedDependencies().then(() => {
+    if(byId('receivedStockPage') && !document.querySelector('#receivedLines .rs-line')) addReceivedLine();
+  });
+}
 
 /* ==========================================
    FINAL PUBLIC DEBUG API
