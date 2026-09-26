@@ -6528,87 +6528,114 @@ window.goToSection=function(section){
    DIRECT BUTTON COMPATIBILITY
    ========================================== */
 
+/* ==========================================
+   DIRECT NAVIGATION COMPATIBILITY — FIX
+   RLS: HAKUNA MABADILIKO
+   Frontend navigation only.
+   ========================================== */
+
 function installDirectCompatibility(){
 
   const mappings={
 
-    customersNavBtn:
-      'customers',
+    customersNavBtn:'customers',
+    suppliersNavBtn:'suppliers',
 
-    suppliersNavBtn:
-      'suppliers',
+    expensesNavBtn:'expenses',
+    paymentsNavBtn:'payments',
 
-    expensesNavBtn:
-      'expenses',
+    reportsNavBtn:'reports',
 
-    paymentsNavBtn:
-      'payments',
+    usersNavBtn:'users',
+    settingsNavBtn:'settings',
 
-    reportsNavBtn:
-      'reports',
+    productsNavBtn:'products',
+    salesNavBtn:'sales',
 
-    usersNavBtn:
-      'users',
+    stockNavBtn:'stock',
+    receivedStockNavBtn:'receivedStock',
 
-    settingsNavBtn:
-      'settings',
+    receiptsNavBtn:'receipts',
 
-    productsNavBtn:
-      'products',
-
-    salesNavBtn:
-      'sales',
-
-    stockNavBtn:
-      'stock',
-
-    receivedStockNavBtn:
-      'receivedStock',
-
-    receiptsNavBtn:
-      'receipts',
-
-    dashboardNavBtn:
-      'dashboard'
+    dashboardNavBtn:'dashboard'
 
   };
 
 
-  Object.entries(
-    mappings
-  ).forEach(
+  Object.entries(mappings).forEach(
     ([buttonId,section])=>{
 
       const button=
-        document.getElementById(
-          buttonId
-        );
-
+        document.getElementById(buttonId);
 
       if(!button)
         return;
 
 
       /*
-       * Use capture phase so this handler
-       * can survive older event handlers.
+       * Remove possible old listeners by
+       * replacing the button with a clean copy.
        */
 
-      button.addEventListener(
+      const cleanButton=
+        button.cloneNode(true);
+
+      button.replaceWith(cleanButton);
+
+
+      cleanButton.type='button';
+
+
+      /*
+       * Direct capture listener.
+       * Database/auth errors cannot stop
+       * the navigation from opening.
+       */
+
+      cleanButton.addEventListener(
         'click',
         function(event){
 
           event.preventDefault();
-          event.stopImmediatePropagation();
+          event.stopPropagation();
 
+          try{
 
-          if(
-            typeof window.openSection===
-            'function'
-          ){
+            if(
+              typeof window.openSection===
+              'function'
+            ){
 
-            window.openSection(
-              section
+              window.openSection(
+                section
+              );
+
+            }else if(
+              typeof window.__openSGCSection===
+              'function'
+            ){
+
+              window.__openSGCSection(
+                section
+              );
+
+            }else if(
+              typeof window.__SGCEmergencyOpen===
+              'function'
+            ){
+
+              window.__SGCEmergencyOpen(
+                section
+              );
+
+            }
+
+          }catch(error){
+
+            console.error(
+              'SGC direct navigation error:',
+              section,
+              error
             );
 
           }
@@ -6621,8 +6648,6 @@ function installDirectCompatibility(){
   );
 
 }
-
-
 /* ==========================================
    FORCE NAVIGATION AFTER LEGACY CODE
    ========================================== */
