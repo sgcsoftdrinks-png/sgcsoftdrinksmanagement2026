@@ -6192,19 +6192,37 @@ function installSaleEvents(){
    INIT
    ========================================== */
 
+/* ==========================================
+   DASHBOARD INITIALIZATION — FIXED
+   RLS: HAKUNA MABADILIKO
+   Frontend initialization only.
+   ========================================== */
+
 async function initializeDashboard(){
 
   if(dashboardInitialized)
     return;
 
 
-  dashboardInitialized=true;
+  dashboardInitialized = true;
 
+
+  /*
+   * Language
+   */
 
   applyLanguage(
     currentLanguage
   );
 
+
+  /*
+   * Install UI navigation FIRST.
+   *
+   * This must happen before authentication
+   * and database loading so that navigation
+   * cannot be blocked by Supabase errors.
+   */
 
   installNavigation();
 
@@ -6217,23 +6235,24 @@ async function initializeDashboard(){
   installSaleEvents();
 
 
+  /*
+   * Search
+   */
+
   installSearch(
     'customerSearch',
     searchCustomers
   );
-
 
   installSearch(
     'supplierSearch',
     searchSuppliers
   );
 
-
   installSearch(
     'productSearch',
     searchProducts
   );
-
 
   installSearch(
     'salesSearch',
@@ -6241,80 +6260,114 @@ async function initializeDashboard(){
   );
 
 
-  const authenticated=
-    await ensureAuthenticated();
+  /*
+   * Authentication
+   *
+   * Navigation must NOT depend on this.
+   */
+
+  try{
+
+    const authenticated =
+      await ensureAuthenticated();
 
 
-  if(authenticated){
+    if(authenticated){
 
-    await loadCurrentProfile();
+      await loadCurrentProfile();
+
+    }
+
+  }catch(error){
+
+    console.error(
+      'SGC authentication initialization error:',
+      error
+    );
 
   }
 
 
   /*
-   * Always open Dashboard first.
-   * Database failures must not prevent
-   * the user from navigating.
+   * Always open Dashboard after
+   * navigation has been installed.
+   *
+   * Database errors must never stop
+   * the navigation system.
    */
 
-  await openSection(
-    'dashboard'
-  );
+  try{
+
+    await openSection(
+      'dashboard'
+    );
+
+  }catch(error){
+
+    console.error(
+      'SGC dashboard opening error:',
+      error
+    );
+
+  }
 
 
   /*
-   * Expose functions for existing HTML
-   * onclick attributes and future modules.
+   * Public functions
    */
 
-  window.openSection=
+  window.openSection =
     openSection;
 
-  window.openSGCSection=
+  window.openSGCSection =
     openSection;
 
-  window.loadCustomers=
+
+  window.loadCustomers =
     loadCustomers;
 
-  window.loadSuppliers=
+  window.loadSuppliers =
     loadSuppliers;
 
-  window.loadProducts=
+  window.loadProducts =
     loadProducts;
 
-  window.loadExpenses=
+  window.loadExpenses =
     loadExpenses;
 
-  window.loadPayments=
+  window.loadPayments =
     loadPayments;
 
-  window.loadReports=
+  window.loadReports =
     loadReports;
 
-  window.loadUsers=
+  window.loadUsers =
     loadUsers;
 
-  window.loadSettings=
+  window.loadSettings =
     loadSettings;
 
-  window.loadSales=
+  window.loadSales =
     loadSales;
 
-  window.loadReceipts=
+  window.loadReceipts =
     loadReceipts;
 
-  window.loadCurrentStock=
+  window.loadCurrentStock =
     loadCurrentStock;
 
-  window.loadReceivedStock=
+  window.loadReceivedStock =
     loadReceivedStock;
 
+
+  /*
+   * Confirm navigation is ready.
+   */
+
+  window.__SGC_NAV_READY =
+    true;
+
 }
-
-
-/* ==========================================
-   GLOBAL EVENT SAFETY
    ========================================== */
 
 window.addEventListener(
