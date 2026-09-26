@@ -1876,31 +1876,40 @@ async function openSection(
    NAVIGATION EVENTS
    ========================================== */
 
+/* ==========================================
+   NAVIGATION EVENTS — FIXED
+   RLS: HAKUNA MABADILIKO
+   Frontend navigation only.
+   ========================================== */
+
 function installNavigation(){
 
-  Object.entries(
-    SGC_ROUTES
-  ).forEach(
-    ([section,route])=>{
+  const routes = Object.entries(SGC_ROUTES);
 
-      const button=
+  routes.forEach(
+    ([section, route])=>{
+
+      const button =
         byId(route.button);
 
       if(!button)
         return;
 
-
       /*
-       * Clone button to remove old event
-       * listeners from previous versions.
+       * Remove old listeners safely by
+       * replacing the button.
        */
 
-      const cleanButton=
+      const cleanButton =
         button.cloneNode(true);
 
       button.replaceWith(
         cleanButton
       );
+
+
+      cleanButton.type =
+        'button';
 
 
       cleanButton.addEventListener(
@@ -1910,7 +1919,9 @@ function installNavigation(){
           event.preventDefault();
           event.stopPropagation();
 
-          openSection(section);
+          openSection(
+            section
+          );
 
         }
       );
@@ -1920,22 +1931,27 @@ function installNavigation(){
 
 
   /*
-   * Quick action buttons
+   * Quick Products
    */
 
-  const quickProducts=
+  const quickProducts =
     byId('quickProductsBtn');
 
   if(quickProducts){
 
-    const clean=
+    const clean =
       quickProducts.cloneNode(true);
 
-    quickProducts.replaceWith(clean);
+    quickProducts.replaceWith(
+      clean
+    );
+
+    clean.type =
+      'button';
 
     clean.addEventListener(
       'click',
-      event=>{
+      function(event){
 
         event.preventDefault();
 
@@ -1945,22 +1961,32 @@ function installNavigation(){
 
       }
     );
+
   }
 
 
-  const quickSale=
+  /*
+   * Quick Sale
+   */
+
+  const quickSale =
     byId('quickSaleBtn');
 
   if(quickSale){
 
-    const clean=
+    const clean =
       quickSale.cloneNode(true);
 
-    quickSale.replaceWith(clean);
+    quickSale.replaceWith(
+      clean
+    );
+
+    clean.type =
+      'button';
 
     clean.addEventListener(
       'click',
-      event=>{
+      function(event){
 
         event.preventDefault();
 
@@ -1970,22 +1996,32 @@ function installNavigation(){
 
       }
     );
+
   }
 
 
-  const logout=
+  /*
+   * Logout
+   */
+
+  const logout =
     byId('logoutBtn');
 
   if(logout){
 
-    const clean=
+    const clean =
       logout.cloneNode(true);
 
-    logout.replaceWith(clean);
+    logout.replaceWith(
+      clean
+    );
+
+    clean.type =
+      'button';
 
     clean.addEventListener(
       'click',
-      event=>{
+      function(event){
 
         event.preventDefault();
 
@@ -1998,9 +2034,6 @@ function installNavigation(){
 
 }
 
-
-/* ==========================================
-   MOBILE SIDEBAR
    ========================================== */
 
 function installSidebar(){
