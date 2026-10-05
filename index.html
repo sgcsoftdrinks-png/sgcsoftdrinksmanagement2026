@@ -1,814 +1,2458 @@
 <!DOCTYPE html>
-<html lang="sw">
+<html lang="sw" dir="ltr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0f172a">
+  <meta name="description" content="SGC SOFT DRINKS MANAGEMENT - mfumo wa usimamizi wa biashara wa SGC COOPERATION.">
+  <title>SGC SOFT DRINKS MANAGEMENT</title>
 
-    <meta
-        name="description"
-        content="SGC SOFT DRINKS MANAGEMENT - Mfumo wa kisasa wa usimamizi wa biashara."
-    >
+  <!--
+    SGC SOFT DRINKS MANAGEMENT
+    Frontend rebuild: index.html
+    Companion files: style.css + app.js
 
-    <title>SGC SOFT DRINKS MANAGEMENT</title>
+    SECURITY:
+    - Never place server-only Supabase secret keys in this file.
+    - Browser-safe Supabase publishable key belongs in app.js/config.
+    - Database RLS remains ENABLED.
+  -->
 
-    <link rel="stylesheet" href="style.css">
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
-        rel="stylesheet"
-    >
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
+  <!-- =========================================================
+       GLOBAL APP ROOT
+       ========================================================= -->
+  <div id="app" class="app-shell">
 
-    <!-- =====================================================
-         APP
-    ====================================================== -->
+    <!-- =======================================================
+         GLOBAL LOADING SCREEN
+         ======================================================= -->
+    <div id="global-loader" class="global-loader" hidden aria-live="polite">
+      <div class="loader-card">
+        <div class="loader-spinner" aria-hidden="true"></div>
+        <p id="global-loader-text" data-i18n="common.loading">Inapakia...</p>
+      </div>
+    </div>
 
-    <div class="app-shell">
+    <!-- =======================================================
+         GLOBAL TOAST / ALERT AREA
+         ======================================================= -->
+    <div id="toast-container"
+         class="toast-container"
+         aria-live="polite"
+         aria-atomic="true"></div>
+
+    <div id="message-container"
+         class="message-container"
+         aria-live="assertive"
+         aria-atomic="true"></div>
+
+    <!-- =======================================================
+         PUBLIC / AUTH NAVBAR
+         ======================================================= -->
+    <header id="site-header" class="site-header">
+      <nav class="main-navbar" aria-label="Main navigation">
+
+        <a href="#home"
+           class="brand-link"
+           data-route="home"
+           aria-label="SGC SOFT DRINKS MANAGEMENT">
+          <img
+    src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgRsGllLOBF63Unp0kzICif6C1tapkNBLRntsN7FJJPLlytEa9m1uBi_CdMVtnA7HmE1niKAeRc7FaKka9HamTfaSy4Mp5V8jnfl0DJt12zb4S4WhtI3PSJH9mHkxhu65YXSVA7sD5b8sOfw8jakPYp3H8Um8qvyjlDzxWgNcdsH2qVTmnMbjsZF4TN/s1280/244759.png"
+    alt="SGC SOFT DRINKS"
+    class="brand-logo"
+             loading="eager">
+          <span class="brand-text">
+            <strong>SGC SOFT DRINKS</strong>
+            <small>MANAGEMENT</small>
+          </span>
+        </a>
+
+        <button id="mobile-menu-toggle"
+                class="icon-button mobile-menu-toggle"
+                type="button"
+                aria-label="Open menu"
+                aria-expanded="false"
+                aria-controls="main-navigation">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+        <div id="main-navigation" class="navbar-navigation">
+
+          <!-- Guest navigation -->
+          <div id="guest-nav" class="nav-group nav-group-guest">
+            <a href="#home" class="nav-link" data-route="home" data-i18n="nav.home">Home</a>
+            <a href="#about" class="nav-link" data-route="about" data-i18n="nav.about">Kuhusu</a>
+            <a href="#features" class="nav-link" data-route="features" data-i18n="nav.features">Vipengele</a>
+            <a href="#contact" class="nav-link" data-route="contact" data-i18n="nav.contact">Mawasiliano</a>
+            <button type="button" class="nav-link nav-button" data-action="open-login" data-i18n="nav.login">Ingia</button>
+            <button type="button" class="nav-link nav-button nav-signup" data-action="open-signup" data-i18n="nav.signup">Jisajili</button>
+          </div>
+
+          <!-- Authenticated navigation -->
+          <div id="auth-nav" class="nav-group nav-group-auth" hidden>
+            <a href="#home" class="nav-link" data-route="home" data-i18n="nav.home">Home</a>
+            <a href="#about" class="nav-link" data-route="about" data-i18n="nav.about">Kuhusu</a>
+            <a href="#features" class="nav-link" data-route="features" data-i18n="nav.features">Vipengele</a>
+            <a href="#contact" class="nav-link" data-route="contact" data-i18n="nav.contact">Mawasiliano</a>
+
+            <button type="button"
+                    class="nav-link nav-button"
+                    data-action="open-profile"
+                    data-i18n="nav.profile">
+              Wasifu
+            </button>
+
+          </div>
+
+          <!-- Language selector -->
+          <div class="language-control">
+            <label for="language-select" class="sr-only" data-i18n="language.label">Lugha</label>
+            <select id="language-select" name="language" autocomplete="language">
+              <option value="sw">Kiswahili</option>
+              <option value="en">English</option>
+            </select>
+          </div>
+
+          <!-- Authenticated user summary -->
+          <button id="navbar-profile"
+                  class="navbar-profile"
+                  type="button"
+                  data-action="open-profile"
+                  hidden
+                  aria-label="Open profile">
+            <span class="navbar-avatar-wrap">
+              <img id="navbar-avatar"
+                   class="navbar-avatar"
+                   src=""
+                   alt="Profile picture"
+                   hidden>
+              <span id="navbar-avatar-placeholder" class="avatar-placeholder" aria-hidden="true">U</span>
+            </span>
+            <span class="navbar-user-text">
+              <strong id="navbar-username">User</strong>
+              <small id="navbar-role">Role</small>
+            </span>
+          </button>
+        </div>
+      </nav>
+    </header>
+
+    <!-- =======================================================
+         PUBLIC CONTENT
+         ======================================================= -->
+    <main id="public-content" class="public-content">
+
+      <!-- HOME -->
+      <section id="page-home" class="page-section public-page active-page" data-page="home">
+        <div class="hero-section home-background-hero">
+          <div class="hero-content">
+            <div class="hero-kicker" aria-hidden="true">
+              <span class="hero-kicker-line"></span>
+              <span>BUSINESS MANAGEMENT SYSTEM</span>
+              <span class="hero-kicker-line"></span>
+            </div>
+
+            <h1 data-i18n="home.title">SGC SOFT DRINKS MANAGEMENT</h1>
+
+            <p class="hero-description" data-i18n="home.description">
+              Suluhisho la kisasa la kidijitali linalokusaidia kusimamia biashara yako kwa ufanisi,
+              kufuatilia stock na mauzo, kudhibiti malipo na gharama, na kupata taarifa muhimu za biashara
+              kwa usahihi — katika mfumo mmoja salama na rahisi kutumia.
+            </p>
+
+            <div class="hero-actions">
+              <button type="button"
+                      class="btn btn-primary"
+                      data-action="open-login"
+                      data-i18n="home.login">
+                Ingia kwenye mfumo
+              </button>
+              <button type="button"
+                      class="btn btn-secondary"
+                      data-action="open-signup"
+                      data-i18n="home.signup">
+                Fungua akaunti
+              </button>
+            </div>
+
+            <div class="hero-meta">
+              <span><i class="status-dot"></i><span data-i18n="home.secure">Supabase Authentication & Security</span></span>
+              <span><i class="status-dot"></i><span data-i18n="home.roles">Developer • Owner • Salesman</span></span>
+            </div>
+          </div>
+
+        </div>
+
+        <section class="section-container home-features-section" aria-labelledby="home-features-heading">
+          <div class="section-heading">
+            <span class="eyebrow" data-i18n="home.quickTitle">Mfumo mmoja, usimamizi mzima</span>
+            <h2 id="home-features-heading" data-i18n="home.quickHeading">Dhibiti biashara yako kwa urahisi</h2>
+          </div>
+
+          <div class="feature-grid compact-feature-grid">
+            <article class="feature-card">
+              <div class="feature-icon icon-products">P</div>
+              <h3 data-i18n="features.products.title">Products</h3>
+              <p data-i18n="features.products.text">Simamia bidhaa, variants, bei na low-stock levels.</p>
+            </article>
+
+            <article class="feature-card">
+              <div class="feature-icon icon-stock">S</div>
+              <h3 data-i18n="features.stock.title">Stock</h3>
+              <p data-i18n="features.stock.text">Fuatilia stock receipts, movements na adjustments.</p>
+            </article>
+
+            <article class="feature-card">
+              <div class="feature-icon icon-sales">M</div>
+              <h3 data-i18n="features.sales.title">Mauzo</h3>
+              <p data-i18n="features.sales.text">Rekodi sales, payments, credit na returns.</p>
+            </article>
+
+            <article class="feature-card">
+              <div class="feature-icon icon-reports">R</div>
+              <h3 data-i18n="features.reports.title">Reports</h3>
+              <p data-i18n="features.reports.text">Pata taarifa za biashara kulingana na data halisi.</p>
+            </article>
+          </div>
+        </section>
+      </section>
+
+      <!-- ABOUT -->
+      <section id="page-about" class="page-section public-page" data-page="about" hidden>
+        <div class="section-container">
+          <div class="section-heading centered">
+            <span class="eyebrow" data-i18n="about.eyebrow">Kuhusu mfumo</span>
+            <h1 data-i18n="about.title">SGC SOFT DRINKS MANAGEMENT</h1>
+            <p data-i18n="about.description">
+              Mfumo wa usimamizi wa biashara wa SGC COOPERATION ulioundwa kusaidia
+              usimamizi wa operations za kila siku kwa njia iliyo salama na yenye data sahihi.
+            </p>
+          </div>
+
+          <div class="about-grid">
+            <article class="info-card">
+              <h2 data-i18n="about.businessTitle">Biashara</h2>
+              <p data-i18n="about.businessText">
+                Usimamizi wa bidhaa, stock, sales, customers, suppliers, payments na expenses.
+              </p>
+            </article>
+
+            <article class="info-card">
+              <h2 data-i18n="about.securityTitle">Usalama</h2>
+              <p data-i18n="about.securityText">
+                Authentication, roles, permissions, RPCs, RLS, device sessions na audit records.
+              </p>
+            </article>
+
+            <article class="info-card">
+              <h2 data-i18n="about.rolesTitle">Roles</h2>
+              <p data-i18n="about.rolesText">
+                Developer, Owner na Salesman hutumia sehemu za mfumo kulingana na ruhusa zao.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- FEATURES -->
+      <section id="page-features" class="page-section public-page" data-page="features" hidden>
+        <div class="section-container">
+          <div class="section-heading centered">
+            <span class="eyebrow" data-i18n="features.eyebrow">Vipengele</span>
+            <h1 data-i18n="features.title">Mfumo uliounganishwa</h1>
+            <p data-i18n="features.description">
+              Kila module itaunganishwa na backend kulingana na schema, RPCs, permissions na RLS zilizopo.
+            </p>
+          </div>
+
+          <div class="feature-grid full-feature-grid">
+            <article class="feature-card">
+              <div class="feature-icon icon-products">P</div>
+              <h3 data-i18n="features.products.title">Products</h3>
+              <p data-i18n="features.products.text">Bidhaa na product variants.</p>
+            </article>
+            <article class="feature-card">
+              <div class="feature-icon icon-stock">R</div>
+              <h3 data-i18n="features.received.title">Received Stock</h3>
+              <p data-i18n="features.received.text">Stock receipts, suppliers na verification.</p>
+            </article>
+            <article class="feature-card">
+              <div class="feature-icon icon-sales">S</div>
+              <h3 data-i18n="features.sales.title">Sales</h3>
+              <p data-i18n="features.sales.text">Mauzo na sale items.</p>
+            </article>
+            <article class="feature-card">
+              <div class="feature-icon icon-stock">T</div>
+              <h3 data-i18n="features.stock.title">Stock</h3>
+              <p data-i18n="features.stock.text">Current stock na movements.</p>
+            </article>
+            <article class="feature-card">
+              <div class="feature-icon icon-customers">C</div>
+              <h3 data-i18n="features.customers.title">Customers</h3>
+              <p data-i18n="features.customers.text">Wateja, credit na payment history.</p>
+            </article>
+            <article class="feature-card">
+              <div class="feature-icon icon-suppliers">U</div>
+              <h3 data-i18n="features.suppliers.title">Suppliers</h3>
+              <p data-i18n="features.suppliers.text">Suppliers, purchases na balances.</p>
+            </article>
+            <article class="feature-card">
+              <div class="feature-icon icon-payments">₵</div>
+              <h3 data-i18n="features.payments.title">Payments</h3>
+              <p data-i18n="features.payments.text">Customer na supplier payments.</p>
+            </article>
+            <article class="feature-card">
+              <div class="feature-icon icon-expenses">E</div>
+              <h3 data-i18n="features.expenses.title">Expenses</h3>
+              <p data-i18n="features.expenses.text">Expenses na summaries.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- CONTACT -->
+      <section id="page-contact" class="page-section public-page" data-page="contact" hidden>
+        <div class="section-container">
+          <div class="section-heading centered">
+            <span class="eyebrow" data-i18n="contact.eyebrow">Mawasiliano</span>
+            <h1 data-i18n="contact.title">Wasiliana na SGC SOFT DRINKS</h1>
+            <p data-i18n="contact.description">
+              Tumia njia yoyote hapa chini kuwasiliana nasi.
+            </p>
+          </div>
+
+          <div class="contact-grid">
+            <a class="contact-card whatsapp-card"
+               href="https://wa.me/255658542607?text=Habari%20SGC%20SOFT%20DRINKS%2C%20nahitaji%20msaada."
+               target="_blank"
+               rel="noopener noreferrer">
+              <span class="contact-icon">WA</span>
+              <span>
+                <strong data-i18n="contact.whatsapp1">WhatsApp 1</strong>
+                <small>+255 658 542 607</small>
+              </span>
+            </a>
+
+            <a class="contact-card whatsapp-card"
+               href="https://wa.me/255638127127?text=Habari%20SGC%20SOFT%20DRINKS%2C%20nahitaji%20msaada."
+               target="_blank"
+               rel="noopener noreferrer">
+              <span class="contact-icon">WA</span>
+              <span>
+                <strong data-i18n="contact.whatsapp2">WhatsApp 2</strong>
+                <small>+255 638 127 127</small>
+              </span>
+            </a>
+
+            <a class="contact-card"
+               href="tel:+255638127127">
+              <span class="contact-icon">☎</span>
+              <span>
+                <strong data-i18n="contact.call1">Piga Simu 1</strong>
+                <small>+255 638 127 127</small>
+              </span>
+            </a>
+
+            <a class="contact-card"
+               href="tel:+255658542607">
+              <span class="contact-icon">☎</span>
+              <span>
+                <strong data-i18n="contact.call2">Piga Simu 2</strong>
+                <small>+255 658 542 607</small>
+              </span>
+            </a>
+
+            <a class="contact-card"
+               href="mailto:sgcsoftdrinks@gmail.com">
+              <span class="contact-icon">✉</span>
+              <span>
+                <strong data-i18n="contact.email">Email</strong>
+                <small>sgcsoftdrinks@gmail.com</small>
+              </span>
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- =======================================================
+         AUTHENTICATED APPLICATION
+         ======================================================= -->
+    <main id="authenticated-app" class="authenticated-app" hidden>
+
+      <!-- APP SIDEBAR -->
+      <aside id="app-sidebar" class="app-sidebar" aria-label="Application navigation">
+        <div class="sidebar-brand">
+          <img
+            src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgRsGllLOBF63Unp0kzICif6C1tapkNBLRntsN7FJJPLlytEa9m1uBi_CdMVtnA7HmE1niKAeRc7FaKka9HamTfaSy4Mp5V8jnfl0DJt12zb4S4WhtI3PSJH9mHkxhu65YXSVA7sD5b8sOfw8jakPYp3H8Um8qvyjlDzxWgNcdsH2qVTmnMbjsZF4TN/s1280/244759.png"
+            alt="SG COOPERATION logo"
+            class="sidebar-logo logo-transparent"
+            data-brand-logo="sgc">
+          <div>
+            <strong>SGC SOFT DRINKS</strong>
+            <small>MANAGEMENT</small>
+          </div>
+        </div>
+
+        <div class="sidebar-user">
+          <div class="sidebar-avatar-wrap">
+            <img id="sidebar-avatar" src="" alt="Profile picture" hidden>
+            <span id="sidebar-avatar-placeholder" class="avatar-placeholder">U</span>
+          </div>
+          <div>
+            <strong id="sidebar-full-name">User</strong>
+            <small id="sidebar-user-role">Role</small>
+          </div>
+        </div>
+
+        <div class="sidebar-nav-scroll">
+          <nav id="dashboard-navigation" class="dashboard-navigation">
+
+            <button class="sidebar-link active"
+                    type="button"
+                    data-dashboard-page="dashboard">
+              <span class="sidebar-icon">⌂</span>
+              <span data-i18n="sidebar.dashboard">Dashboard</span>
+            </button>
+
+            <div class="sidebar-section-label" data-i18n="sidebar.business">Biashara</div>
+
+            <button class="sidebar-link"
+                    type="button"
+                    data-dashboard-page="products">
+              <span class="sidebar-icon">P</span>
+              <span data-i18n="sidebar.products">Products</span>
+            </button>
+
+            <button class="sidebar-link"
+                    type="button"
+                    data-dashboard-page="received-stock"
+                    data-role="owner">
+              <span class="sidebar-icon">R</span>
+              <span data-i18n="sidebar.receivedStock">Received Stock</span>
+            </button>
+
+            <button class="sidebar-link"
+                    type="button"
+                    data-dashboard-page="stock">
+              <span class="sidebar-icon">S</span>
+              <span data-i18n="sidebar.stock">Stock</span>
+            </button>
+
+            <button class="sidebar-link"
+                    type="button"
+                    data-dashboard-page="sales"
+                    data-permission="sales.view">
+              <span class="sidebar-icon">M</span>
+              <span data-i18n="sidebar.sales">Sales</span>
+            </button>
+
+<button class="sidebar-link"
+        type="button"
+        data-dashboard-page="receipts"
+        data-permission="sales.view">
+  <span class="sidebar-icon">R</span>
+  <span data-i18n="sidebar.receipts">Receipts</span>
+</button>
+
+            <button class="sidebar-link"
+                    type="button"
+                    data-dashboard-page="customers"
+                    data-permission="customers.view">
+              <span class="sidebar-icon">C</span>
+              <span data-i18n="sidebar.customers">Customers</span>
+            </button>
+
+            <button class="sidebar-link"
+                    type="button"
+                    data-dashboard-page="suppliers"
+                    data-role="owner">
+              <span class="sidebar-icon">U</span>
+              <span data-i18n="sidebar.suppliers">Suppliers</span>
+            </button>
+
+            <div class="sidebar-section-label" data-i18n="sidebar.finance">Fedha</div>
+
+            <button class="sidebar-link"
+                    type="button"
+                    data-dashboard-page="customer-payments"
+                    data-permission="customer_payments.view">
+              <span class="sidebar-icon">CP</span>
+              <span data-i18n="sidebar.customerPayments">Customer Payments</span>
+            </button>
+
+            <button class="sidebar-link"
+                    type="button"
+                    data-dashboard-page="supplier-payments"
+                    data-role="owner">
+              <span class="sidebar-icon">SP</span>
+              <span data-i18n="sidebar.supplierPayments">Supplier Payments</span>
+            </button>
+
+            <button class="sidebar-link"
+                    type="button"
+                    data-dashboard-page="expenses"
+                    data-role="owner">
+              <span class="sidebar-icon">E</span>
+              <span data-i18n="sidebar.expenses">Expenses</span>
+            </button>
+
+            <div class="sidebar-section-label" data-i18n="sidebar.control">Udhibiti</div>
+
+            <button class="sidebar-link"
+                    type="button"
+                    data-dashboard-page="stock-adjustments"
+                    data-permission="stock.adjust">
+              <span class="sidebar-icon">A</span>
+              <span data-i18n="sidebar.stockAdjustments">Stock Adjustments</span>
+            </button>
+
+            <button class="sidebar-link"
+                    type="button"
+                    data-dashboard-page="sales-returns"
+                    data-permission="sales.return">
+              <span class="sidebar-icon">↩</span>
+              <span data-i18n="sidebar.salesReturns">Sales Returns</span>
+            </button>
+
+            <button class="sidebar-link"
+                    type="button"
+                    data-dashboard-page="reports">
+              <span class="sidebar-icon">R</span>
+              <span data-i18n="sidebar.reports">Reports</span>
+            </button>
+
+            <button class="sidebar-link"
+                    type="button"
+                    data-dashboard-page="audit-logs"
+                    data-role="owner">
+              <span class="sidebar-icon">AL</span>
+              <span data-i18n="sidebar.auditLogs">Audit Logs</span>
+            </button>
+
+            <!-- Developer-only -->
+            <div id="developer-sidebar-section" hidden>
+              <div class="sidebar-section-label" data-i18n="sidebar.developer">Developer</div>
+
+              <button class="sidebar-link"
+                      type="button"
+                      data-dashboard-page="user-management"
+                      data-role="developer">
+                <span class="sidebar-icon">UM</span>
+                <span data-i18n="sidebar.userManagement">User Management</span>
+              </button>
+
+              <button class="sidebar-link"
+                      type="button"
+                      data-dashboard-page="devices-sessions"
+                      data-role="developer">
+                <span class="sidebar-icon">DS</span>
+                <span data-i18n="sidebar.devicesSessions">Devices & Sessions</span>
+              </button>
+
+              <button class="sidebar-link"
+                      type="button"
+                      data-dashboard-page="developer-settings"
+                      data-role="developer">
+                <span class="sidebar-icon">⚙</span>
+                <span data-i18n="sidebar.developerSettings">Developer Settings</span>
+              </button>
+            </div>
+
+            <div class="sidebar-section-label" data-i18n="sidebar.account">Akaunti</div>
+
+            <button class="sidebar-link"
+                    type="button"
+                    data-dashboard-page="profile">
+              <span class="sidebar-icon">P</span>
+              <span data-i18n="sidebar.profile">My Profile</span>
+            </button>
+
+            <button class="sidebar-link"
+                    type="button"
+                    data-dashboard-page="settings"
+                    data-role="owner">
+              <span class="sidebar-icon">⚙</span>
+              <span data-i18n="sidebar.settings">Settings</span>
+            </button>
+
+            <button class="sidebar-link sidebar-logout"
+                    type="button"
+                    data-action="logout">
+              <span class="sidebar-icon">↪</span>
+              <span data-i18n="sidebar.logout">Logout</span>
+            </button>
+          </nav>
+        </div>
+      </aside>
+
+      <!-- APP MAIN -->
+      <section class="app-main">
+
+        <div class="app-topbar">
+          <button id="sidebar-toggle"
+                  class="icon-button"
+                  type="button"
+                  aria-label="Toggle sidebar"
+                  aria-expanded="true">
+            ☰
+          </button>
+
+          <div class="breadcrumb">
+            <span id="breadcrumb-root">SGC SOFT DRINKS</span>
+            <span aria-hidden="true">/</span>
+            <strong id="breadcrumb-current" data-i18n="sidebar.dashboard">Dashboard</strong>
+          </div>
+
+          <div class="topbar-actions">
+            <button id="topbar-language"
+                    class="topbar-language"
+                    type="button"
+                    data-action="toggle-language">
+              SW / EN
+            </button>
+
+           <!-- RLS: ENABLED (KEEP ENABLED) -->
+
+<button class="topbar-profile"
+        type="button"
+        data-action="open-profile"
+        aria-label="Open profile">
+
+  <span class="topbar-avatar-wrap">
+    <img
+      id="topbar-avatar"
+      src=""
+      alt="Profile picture"
+      hidden
+    >
+
+    <span
+      id="topbar-avatar-placeholder"
+      class="avatar-placeholder">
+      U
+    </span>
+  </span>
+
+  <span class="topbar-profile-info">
+
+    <strong id="topbar-username">
+      User
+    </strong>
+
+    <small id="topbar-role">
+      Role
+    </small>
+
+    <span
+      id="topbar-status"
+      class="topbar-status">
+      <span class="topbar-status-dot"></span>
+      <span id="topbar-status-text">
+        Active
+      </span>
+    </span>
+
+  </span>
+
+  <span class="topbar-profile-arrow"
+        aria-hidden="true">
+    ▾
+  </span>
+
+</button>
+
+          </div>
+        </div>
+
+        <!-- DASHBOARD PAGE -->
+        <div id="dashboard-page-dashboard"
+             class="dashboard-page active-dashboard-page"
+             data-dashboard-view="dashboard">
+
+          <div class="dashboard-page-header">
+            <div>
+              <span class="eyebrow" data-i18n="dashboard.eyebrow">SGC SOFT DRINKS</span>
+              <h1 id="dashboard-welcome-title" data-i18n="dashboard.title">Dashboard</h1>
+              <p id="dashboard-welcome-subtitle" data-i18n="dashboard.subtitle">
+                Muhtasari wa shughuli za biashara.
+              </p>
+            </div>
+            <div class="dashboard-date">
+              <span data-i18n="dashboard.today">Leo</span>
+              <strong id="dashboard-current-date">—</strong>
+            </div>
+          </div>
+
+          <div id="dashboard-error" class="inline-error" hidden></div>
+
+          <div id="dashboard-stat-grid" class="stats-grid">
+
+            <article class="stat-card stat-sales">
+              <div class="stat-card-top">
+                <span class="stat-label" data-i18n="dashboard.todaySales">Mauzo ya Leo</span>
+                <span class="stat-icon">S</span>
+              </div>
+              <strong id="stat-today-sales" class="stat-value">0</strong>
+              <small id="stat-today-transactions">0 <span data-i18n="dashboard.transactions">transactions</span></small>
+            </article>
+
+            <article class="stat-card stat-customers">
+              <div class="stat-card-top">
+                <span class="stat-label" data-i18n="dashboard.customers">Wateja</span>
+                <span class="stat-icon">C</span>
+              </div>
+              <strong id="stat-customers" class="stat-value">0</strong>
+              <small data-i18n="dashboard.activeCustomers">Wateja wanaotumika</small>
+            </article>
+
+            <article class="stat-card stat-stock">
+              <div class="stat-card-top">
+                <span class="stat-label" data-i18n="dashboard.stockValue">Stock Value</span>
+                <span class="stat-icon">ST</span>
+              </div>
+              <strong id="stat-stock-value" class="stat-value">0</strong>
+              <small data-i18n="dashboard.currentStockValue">Thamani ya stock</small>
+            </article>
+
+            <article class="stat-card stat-warning">
+              <div class="stat-card-top">
+                <span class="stat-label" data-i18n="dashboard.lowStock">Low Stock</span>
+                <span class="stat-icon">!</span>
+              </div>
+              <strong id="stat-low-stock" class="stat-value">0</strong>
+              <small data-i18n="dashboard.itemsNeedAttention">Bidhaa zinazohitaji attention</small>
+            </article>
+          </div>
+
+          <!-- =================================================
+               MODULE CARDS
+               Same card family, distinct module identities.
+               Visibility is enforced by app.js + backend RLS.
+               Devices & Sessions is Developer-only.
+               ================================================= -->
+          <section class="dashboard-module-section" aria-labelledby="dashboard-module-heading">
+            <div class="panel-header dashboard-module-heading">
+              <div>
+                <span class="eyebrow" data-i18n="dashboard.modulesEyebrow">MODULES</span>
+                <h2 id="dashboard-module-heading" data-i18n="dashboard.modulesTitle">Modules</h2>
+                <p data-i18n="dashboard.modulesText">Chagua sehemu ya mfumo unayotaka kutumia.</p>
+              </div>
+            </div>
+<div id="dashboard-module-cards" class="module-card-grid">
+
+  <!-- PRODUCTS -->
+  <button type="button"
+          class="module-card module-card-products"
+          data-dashboard-page="products"
+          data-module-card="products">
+
+<span class="module-card-icon">
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M3.5 7.5 12 3l8.5 4.5L12 12 3.5 7.5Z"></path>
+    <path d="M3.5 7.5V17L12 21.5 20.5 17V7.5"></path>
+    <path d="M12 12v9.5"></path>
+    <path d="M7.75 5.25 16.25 9.75"></path>
+  </svg>
+</span>
+
+    <span class="module-card-copy">
+      <strong data-i18n="sidebar.products">Products</strong>
+      <small data-i18n="moduleCards.products">Bidhaa na variants</small>
+    </span>
+
+    <span class="module-card-arrow">→</span>
+  </button>
+
+
+  <!-- RECEIVED STOCK -->
+  <button type="button"
+          class="module-card module-card-received"
+          data-dashboard-page="received-stock"
+          data-module-card="received-stock"
+          data-role="owner">
+
+    <span class="module-card-icon">
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M4 8.5 12 4l8 4.5"></path>
+    <path d="M4 8.5V18l8 4 8-4V8.5"></path>
+    <path d="M12 12.5 20 8.5"></path>
+    <path d="M12 12.5 4 8.5"></path>
+    <path d="M12 12.5V22"></path>
+    <path d="M12 3v7"></path>
+    <path d="m8.5 6.5 3.5 3.5 3.5-3.5"></path>
+  </svg>
+</span>
+    <span class="module-card-copy">
+      <strong data-i18n="sidebar.receivedStock">Received Stock</strong>
+      <small data-i18n="moduleCards.receivedStock">Mapokezi ya stock</small>
+    </span>
+
+    <span class="module-card-arrow">→</span>
+  </button>
+
+
+  <!-- SALES -->
+  <button type="button"
+          class="module-card module-card-sales"
+          data-dashboard-page="sales"
+          data-module-card="sales">
+
+    <span class="module-card-icon">
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M3 4h2l2.2 10.2a2 2 0 0 0 2 1.6h7.9a2 2 0 0 0 1.9-1.4L21 8H6"></path>
+    <circle cx="10" cy="19" r="1.4"></circle>
+    <circle cx="18" cy="19" r="1.4"></circle>
+    <path d="M13 5v5"></path>
+    <path d="m10.5 7.5 2.5 2.5 2.5-2.5"></path>
+  </svg>
+</span>
+
+    <span class="module-card-copy">
+      <strong data-i18n="sidebar.sales">Sales</strong>
+      <small data-i18n="moduleCards.sales">Mauzo</small>
+    </span>
+
+    <span class="module-card-arrow">→</span>
+  </button>
+
+<!-- CUSTOMER SALES RECEIPTS -->
+<button type="button"
+        class="module-card module-card-receipts"
+        data-dashboard-page="receipts"
+        data-module-card="receipts">
+
+  <span class="module-card-icon">
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M6 3.5h12v17l-2-1.5-2 1.5-2-1.5-2 1.5-2-1.5-2 1.5v-17Z"></path>
+    <path d="M9 8h6"></path>
+    <path d="M9 11.5h6"></path>
+    <path d="M9 15h3.5"></path>
+  </svg>
+</span>
+
+  <span class="module-card-copy">
+    <strong>Receipts</strong>
+    <small>Risiti za mauzo</small>
+  </span>
+
+  <span class="module-card-arrow">→</span>
+</button>
+
+  <!-- STOCK -->
+  <button type="button"
+          class="module-card module-card-stock"
+          data-dashboard-page="stock"
+          data-module-card="stock">
+
+    <span class="module-card-icon">
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="m3.5 7 8.5-4 8.5 4-8.5 4-8.5-4Z"></path>
+    <path d="M3.5 7v10l8.5 4 8.5-4V7"></path>
+    <path d="M12 11v10"></path>
+    <path d="m7 9.5 8.5-4"></path>
+  </svg>
+</span>
+
+    <span class="module-card-copy">
+      <strong data-i18n="sidebar.stock">Stock</strong>
+      <small data-i18n="moduleCards.stock">Hali ya stock</small>
+    </span>
+
+    <span class="module-card-arrow">→</span>
+  </button>
+
+
+  <!-- CUSTOMERS -->
+  <button type="button"
+          class="module-card module-card-customers"
+          data-dashboard-page="customers"
+          data-module-card="customers">
+
+   <span class="module-card-icon">
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <circle cx="9" cy="8" r="3"></circle>
+    <path d="M3.5 19c.7-3.2 2.6-5 5.5-5s4.8 1.8 5.5 5"></path>
+    <path d="M16 5.5a3 3 0 0 1 0 5.8"></path>
+    <path d="M17 14c2 .5 3.2 2.1 3.5 4"></path>
+  </svg>
+</span>
+
+    <span class="module-card-copy">
+      <strong data-i18n="sidebar.customers">Customers</strong>
+      <small data-i18n="moduleCards.customers">Wateja na credit</small>
+    </span>
+
+    <span class="module-card-arrow">→</span>
+  </button>
+
+
+  <!-- CUSTOMER PAYMENTS -->
+  <button type="button"
+          class="module-card module-card-customer-payments"
+          data-dashboard-page="customer-payments"
+          data-module-card="customer-payments">
+
+    <span class="module-card-icon">
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+    <path d="M3 9h18"></path>
+    <path d="M7 14h4"></path>
+    <path d="M16 14h1"></path>
+  </svg>
+</span>
+
+    <span class="module-card-copy">
+      <strong data-i18n="sidebar.customerPayments">Customer Payments</strong>
+      <small data-i18n="moduleCards.customerPayments">Malipo ya wateja</small>
+    </span>
+
+    <span class="module-card-arrow">→</span>
+  </button>
+
+
+  <!-- SUPPLIERS -->
+  <button type="button"
+          class="module-card module-card-suppliers"
+          data-dashboard-page="suppliers"
+          data-module-card="suppliers"
+          data-role="owner">
+
+    <span class="module-card-icon">
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M3 6h11v11H3z"></path>
+    <path d="M14 10h4l3 3v4h-7z"></path>
+    <circle cx="7" cy="19" r="1.8"></circle>
+    <circle cx="18" cy="19" r="1.8"></circle>
+    <path d="M5 10h5"></path>
+    <path d="M7.5 7.5v5"></path>
+  </svg>
+</span>
+
+    <span class="module-card-copy">
+      <strong data-i18n="sidebar.suppliers">Suppliers</strong>
+      <small data-i18n="moduleCards.suppliers">Suppliers</small>
+    </span>
+
+    <span class="module-card-arrow">→</span>
+  </button>
+
+
+  <!-- SUPPLIER PAYMENTS -->
+  <button type="button"
+          class="module-card module-card-supplier-payments"
+          data-dashboard-page="supplier-payments"
+          data-module-card="supplier-payments"
+          data-role="owner">
+
+    <span class="module-card-icon">
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+    <path d="M3 9h18"></path>
+    <path d="M8 14h8"></path>
+    <path d="M10 12v4"></path>
+    <path d="M14 12v4"></path>
+  </svg>
+</span>
+
+    <span class="module-card-copy">
+      <strong data-i18n="sidebar.supplierPayments">Supplier Payments</strong>
+      <small data-i18n="moduleCards.supplierPayments">Malipo ya suppliers</small>
+    </span>
+
+    <span class="module-card-arrow">→</span>
+  </button>
+
+
+  <!-- EXPENSES -->
+  <button type="button"
+          class="module-card module-card-expenses"
+          data-dashboard-page="expenses"
+          data-module-card="expenses"
+          data-role="owner">
+
+    <span class="module-card-icon">
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M4 7.5h14a2 2 0 0 1 2 2V18H4a2 2 0 0 1-2-2V7.5a2 2 0 0 1 2-2h12"></path>
+    <path d="M4 5.5h12"></path>
+    <circle cx="16.5" cy="13.5" r="1"></circle>
+    <path d="M9 11v5"></path>
+    <path d="M6.5 13.5h5"></path>
+  </svg>
+</span>
+
+    <span class="module-card-copy">
+      <strong data-i18n="sidebar.expenses">Expenses</strong>
+      <small data-i18n="moduleCards.expenses">Gharama za biashara</small>
+    </span>
+
+    <span class="module-card-arrow">→</span>
+  </button>
+
+
+  <!-- SALES RETURNS -->
+  <button type="button"
+          class="module-card module-card-returns"
+          data-dashboard-page="sales-returns"
+          data-module-card="sales-returns">
+
+   <span class="module-card-icon">
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M9 7H4l3.5-3.5"></path>
+    <path d="M4 7a8 8 0 1 1-1 6"></path>
+    <path d="M8 11h8"></path>
+    <path d="M8 15h5"></path>
+  </svg>
+</span>
+
+    <span class="module-card-copy">
+      <strong data-i18n="sidebar.salesReturns">Sales Returns</strong>
+      <small data-i18n="moduleCards.salesReturns">Returns</small>
+    </span>
+
+    <span class="module-card-arrow">→</span>
+  </button>
+
+
+  <!-- STOCK ADJUSTMENTS -->
+  <button type="button"
+          class="module-card module-card-adjustments"
+          data-dashboard-page="stock-adjustments"
+          data-module-card="stock-adjustments">
+
+    <span class="module-card-icon">
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M4 6h16"></path>
+    <path d="M4 12h16"></path>
+    <path d="M4 18h16"></path>
+    <circle cx="9" cy="6" r="2"></circle>
+    <circle cx="15" cy="12" r="2"></circle>
+    <circle cx="11" cy="18" r="2"></circle>
+  </svg>
+</span>
+
+    <span class="module-card-copy">
+      <strong data-i18n="sidebar.stockAdjustments">Stock Adjustments</strong>
+      <small data-i18n="moduleCards.stockAdjustments">Marekebisho ya stock</small>
+    </span>
+
+    <span class="module-card-arrow">→</span>
+  </button>
+
+
+  <!-- REPORTS -->
+  <button type="button"
+          class="module-card module-card-reports"
+          data-dashboard-page="reports"
+          data-module-card="reports">
+
+    <span class="module-card-icon">
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M4 20V10"></path>
+    <path d="M10 20V4"></path>
+    <path d="M16 20v-7"></path>
+    <path d="M22 20V7"></path>
+    <path d="M2 20h21"></path>
+  </svg>
+</span>
+
+    <span class="module-card-copy">
+      <strong data-i18n="sidebar.reports">Reports</strong>
+      <small data-i18n="moduleCards.reports">Reports na summaries</small>
+    </span>
+
+    <span class="module-card-arrow">→</span>
+  </button>
+
+
+  <!-- USER MANAGEMENT -->
+  <button type="button"
+          class="module-card module-card-users"
+          data-dashboard-page="user-management"
+          data-module-card="user-management"
+          data-role="developer">
+
+    <span class="module-card-icon">
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <circle cx="9" cy="8" r="3"></circle>
+    <path d="M3.5 19c.7-3.2 2.6-5 5.5-5 2.9 0 4.8 1.8 5.5 5"></path>
+    <circle cx="18" cy="9" r="2"></circle>
+    <path d="M15.5 15.5a5 5 0 0 1 4.5 3.5"></path>
+    <path d="M18 14v4"></path>
+    <path d="M16 16h4"></path>
+  </svg>
+</span>
+
+    <span class="module-card-copy">
+      <strong data-i18n="sidebar.userManagement">User Management</strong>
+      <small data-i18n="moduleCards.userManagement">Profiles na approvals</small>
+    </span>
+
+    <span class="module-card-arrow">→</span>
+  </button>
+
+
+  <!-- DEVICES & SESSIONS -->
+  <button type="button"
+          class="module-card module-card-devices"
+          data-dashboard-page="devices-sessions"
+          data-module-card="devices-sessions"
+          data-role="developer"
+          data-developer-only="true">
+
+    <span class="module-card-icon">
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <rect x="3" y="4" width="18" height="13" rx="2"></rect>
+    <path d="M8 21h8"></path>
+    <path d="M12 17v4"></path>
+    <path d="M8 8h8"></path>
+    <path d="M8 11h5"></path>
+  </svg>
+</span>
+
+    <span class="module-card-copy">
+      <strong data-i18n="sidebar.devicesSessions">Devices & Sessions</strong>
+      <small data-i18n="moduleCards.devicesSessions">Developer only</small>
+    </span>
+
+    <span class="module-card-arrow">→</span>
+  </button>
+
+
+  <!-- AUDIT LOGS -->
+  <button type="button"
+          class="module-card module-card-audit"
+          data-dashboard-page="audit-logs"
+          data-module-card="audit-logs"
+          data-role="owner">
+
+    <span class="module-card-icon">
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M5 3h10l4 4v14H5z"></path>
+    <path d="M15 3v5h5"></path>
+    <path d="M8 12h8"></path>
+    <path d="M8 16h5"></path>
+    <path d="m8 8 1.5 1.5L12 7"></path>
+  </svg>
+</span>
+
+    <span class="module-card-copy">
+      <strong data-i18n="sidebar.auditLogs">Audit Logs</strong>
+      <small data-i18n="moduleCards.auditLogs">System audit</small>
+    </span>
+
+    <span class="module-card-arrow">→</span>
+  </button>
+
+
+  <!-- SETTINGS -->
+  <button type="button"
+          class="module-card module-card-settings"
+          data-dashboard-page="settings"
+          data-module-card="settings"
+          data-role="owner">
+
+    <span class="module-card-icon">
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <circle cx="12" cy="12" r="3"></circle>
+    <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-1.8 1.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V22h-2.6v-.2a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1-1.8-1.8.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.6-1H4v-2.6h.2a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1 1.8-1.8.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.6V4h2.6v.2a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1 1.8 1.8-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.2v2.6h-.2a1.7 1.7 0 0 0-1.6 1Z"></path>
+  </svg>
+</span>
+
+    <span class="module-card-copy">
+      <strong data-i18n="sidebar.settings">Settings</strong>
+      <small data-i18n="moduleCards.settings">Business settings</small>
+    </span>
+
+    <span class="module-card-arrow">→</span>
+  </button>
+
+
+  <!-- DEVELOPER SETTINGS -->
+  <button type="button"
+          class="module-card module-card-developer"
+          data-dashboard-page="developer-settings"
+          data-module-card="developer-settings"
+          data-role="developer">
+
+    <span class="module-card-icon">
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="m8 8-4 4 4 4"></path>
+    <path d="m16 8 4 4-4 4"></path>
+    <path d="m14 4-4 16"></path>
+    <circle cx="19" cy="5" r="2"></circle>
+    <path d="M19 3v4"></path>
+    <path d="M17 5h4"></path>
+  </svg>
+</span>
+
+    <span class="module-card-copy">
+      <strong data-i18n="sidebar.developerSettings">Developer Settings</strong>
+      <small data-i18n="moduleCards.developerSettings">Developer controls</small>
+    </span>
+
+    <span class="module-card-arrow">→</span>
+  </button>
+
+</div>
+            
+          </section>
+
+          <div class="dashboard-grid">
+            <section class="dashboard-panel">
+              <div class="panel-header">
+                <div>
+                  <h2 data-i18n="dashboard.quickActions">Quick Actions</h2>
+                  <p data-i18n="dashboard.quickActionsText">Fungua shughuli unayotaka kufanya.</p>
+                </div>
+              </div>
+
+              <div class="quick-action-grid">
+                <button type="button" class="quick-action action-products" data-dashboard-page="products">
+                  <span>+</span>
+                  <strong data-i18n="actions.products">Products</strong>
+                </button>
+                <button type="button" class="quick-action action-sales" data-dashboard-page="sales">
+                  <span>+</span>
+                  <strong data-i18n="actions.sale">New Sale</strong>
+                </button>
+                <button type="button" class="quick-action action-customers" data-dashboard-page="customers">
+                  <span>+</span>
+                  <strong data-i18n="actions.customer">Customer</strong>
+                </button>
+                <button type="button" class="quick-action action-stock" data-dashboard-page="received-stock">
+                  <span>+</span>
+                  <strong data-i18n="actions.receivedStock">Received Stock</strong>
+                </button>
+              </div>
+            </section>
+
+            <section class="dashboard-panel">
+              <div class="panel-header">
+                <div>
+                  <h2 data-i18n="dashboard.systemStatus">System Status</h2>
+                  <p data-i18n="dashboard.systemStatusText">Hali ya connection na account.</p>
+                </div>
+              </div>
+
+              <div class="status-list">
+                <div class="status-row">
+                  <span data-i18n="dashboard.authStatus">Authentication</span>
+                  <strong id="system-auth-status" class="status-badge">—</strong>
+                </div>
+                <div class="status-row">
+                  <span data-i18n="dashboard.roleStatus">Role</span>
+                  <strong id="system-role-status" class="status-badge">—</strong>
+                </div>
+                <div class="status-row">
+                  <span data-i18n="dashboard.accountStatus">Account</span>
+                  <strong id="system-account-status" class="status-badge">—</strong>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
 
         <!-- =================================================
-             LEFT BRAND PANEL
-        ================================================== -->
+             GENERIC MODULE PAGE CONTAINERS
+             JS will render module-specific content into
+             these stable roots.
+             ================================================= -->
 
-        <section class="brand-panel">
+        <div id="module-pages" class="module-pages">
 
-            <div class="brand-overlay"></div>
+          <!-- PRODUCTS -->
+          <section id="dashboard-page-products"
+                   class="dashboard-page module-page"
+                   data-dashboard-view="products"
+                   hidden>
+            <div class="module-header">
+              <div>
+                <span class="eyebrow" data-i18n="products">Business</span>
+                <h1 data-i18n="products">Products</h1>
+                <p data-i18n="products">Manage products and variants.</p>
+              </div>
+              <button type="button" class="btn btn-primary" data-action="open-product-form">
+                + <span data-i18n="actions.addProduct">Add Product</span>
+              </button>
+            </div>
+            <div id="products-module-content" class="module-content"></div>
+          </section>
 
-            <div class="brand-content">
+          <!-- RECEIVED STOCK -->
+          <section id="dashboard-page-received-stock"
+                   class="dashboard-page module-page"
+                   data-dashboard-view="received-stock"
+                   hidden>
+            <div class="module-header">
+              <div>
+                <span class="eyebrow" data-i18n="modules.receivedStock.eyebrow">Inventory</span>
+                <h1 data-i18n="modules.receivedStock.title">Received Stock</h1>
+                <p data-i18n="modules.receivedStock.description">Record and verify incoming stock.</p>
+              </div>
+              <button type="button" class="btn btn-primary" data-action="open-stock-receipt-form">
+                + <span data-i18n="actions.receiveStock">Receive Stock</span>
+              </button>
+            </div>
+            <div id="received-stock-module-content" class="module-content"></div>
+          </section>
 
-                <div class="logo-wrap">
-                    <img
-                        src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgRsGllLOBF63Unp0kzICif6C1tapkNBLRntsN7FJJPLlytEa9m1uBi_CdMVtnA7HmE1niKAeRc7FaKka9HamTfaSy4Mp5V8jnfl0DJt12zb4S4WhtI3PSJH9mHkxhu65YXSVA7sD5b8sOfw8jakPYp3H8Um8qvyjlDzxWgNcdsH2qVTmnMbjsZF4TN/s1280/244759.png"
-                        alt="SGC Logo"
-                    >
-                </div>
+          <!-- STOCK -->
+          <section id="dashboard-page-stock"
+                   class="dashboard-page module-page"
+                   data-dashboard-view="stock"
+                   hidden>
+            <div class="module-header">
+              <div>
+                <span class="eyebrow" data-i18n="modules.stock.eyebrow">Inventory</span>
+                <h1 data-i18n="modules.stock.title">Stock</h1>
+                <p data-i18n="modules.stock.description">View current stock and stock status.</p>
+              </div>
+            </div>
+            <div id="stock-module-content" class="module-content"></div>
+          </section>
 
-                <div class="brand-title">
-                    <span>SGC</span>
-                    <strong>SOFT DRINKS</strong>
-                </div>
+          <!-- SALES -->
+          <section id="dashboard-page-sales"
+                   class="dashboard-page module-page"
+                   data-dashboard-view="sales"
+                   hidden>
+            <div class="module-header">
+              <div>
+                <span class="eyebrow" data-i18n="modules.sales.eyebrow">Business</span>
+                <h1 data-i18n="modules.sales.title">Sales</h1>
+                <p data-i18n="modules.sales.description">Create and manage sales.</p>
+              </div>
+              <button type="button" class="btn btn-primary" data-action="open-sale-form">
+                + <span data-i18n="actions.newSale">New Sale</span>
+              </button>
+            </div>
+            <div id="sales-module-content" class="module-content"></div>
+          </section>
 
-                <p class="brand-tagline" data-i18n="brandTagline">
-                    Driven By Quality, Built On Trust
+<!-- CUSTOMER SALES RECEIPTS -->
+<section
+  id="dashboard-page-receipts"
+  class="dashboard-page module-page"
+  data-dashboard-view="receipts"
+  hidden>
+
+  <div class="module-header">
+    <div>
+      <span class="eyebrow">Sales Records</span>
+      <h1>Receipts</h1>
+      <p>View, print and manage customer sales receipts.</p>
+    </div>
+  </div>
+
+  <div
+    id="receipts-module-content"
+    class="module-content">
+  </div>
+
+</section>
+
+          <!-- CUSTOMERS -->
+          <section id="dashboard-page-customers"
+                   class="dashboard-page module-page"
+                   data-dashboard-view="customers"
+                   hidden>
+            <div class="module-header">
+              <div>
+                <span class="eyebrow" data-i18n="modules.customers.eyebrow">Business</span>
+                <h1 data-i18n="modules.customers.title">Customers</h1>
+                <p data-i18n="modules.customers.description">Manage customers and credit history.</p>
+              </div>
+              <button type="button" class="btn btn-primary" data-action="open-customer-form">
+                + <span data-i18n="actions.addCustomer">Add Customer</span>
+              </button>
+            </div>
+            <div id="customers-module-content" class="module-content"></div>
+          </section>
+
+          <!-- SUPPLIERS -->
+          <section id="dashboard-page-suppliers"
+                   class="dashboard-page module-page"
+                   data-dashboard-view="suppliers"
+                   hidden>
+            <div class="module-header">
+              <div>
+                <span class="eyebrow" data-i18n="modules.suppliers.eyebrow">Business</span>
+                <h1 data-i18n="modules.suppliers.title">Suppliers</h1>
+                <p data-i18n="modules.suppliers.description">Manage suppliers and balances.</p>
+              </div>
+              <button type="button" class="btn btn-primary" data-action="open-supplier-form">
+                + <span data-i18n="actions.addSupplier">Add Supplier</span>
+              </button>
+            </div>
+            <div id="suppliers-module-content" class="module-content"></div>
+          </section>
+
+          <!-- CUSTOMER PAYMENTS -->
+          <section id="dashboard-page-customer-payments"
+                   class="dashboard-page module-page"
+                   data-dashboard-view="customer-payments"
+                   hidden>
+            <div class="module-header">
+              <div>
+                <span class="eyebrow" data-i18n="modules.customerPayments.eyebrow">Finance</span>
+                <h1 data-i18n="modules.customerPayments.title">Customer Payments</h1>
+                <p data-i18n="modules.customerPayments.description">Record and review customer payments.</p>
+              </div>
+            </div>
+            <div id="customer-payments-module-content" class="module-content"></div>
+          </section>
+
+          <!-- SUPPLIER PAYMENTS -->
+          <section id="dashboard-page-supplier-payments"
+                   class="dashboard-page module-page"
+                   data-dashboard-view="supplier-payments"
+                   hidden>
+            <div class="module-header">
+              <div>
+                <span class="eyebrow" data-i18n="modules.supplierPayments.eyebrow">Finance</span>
+                <h1 data-i18n="modules.supplierPayments.title">Supplier Payments</h1>
+                <p data-i18n="modules.supplierPayments.description">Record payments to suppliers.</p>
+              </div>
+            </div>
+            <div id="supplier-payments-module-content" class="module-content"></div>
+          </section>
+
+          <!-- EXPENSES -->
+          <section id="dashboard-page-expenses"
+                   class="dashboard-page module-page"
+                   data-dashboard-view="expenses"
+                   hidden>
+            <div class="module-header">
+              <div>
+                <span class="eyebrow" data-i18n="modules.expenses.eyebrow">Finance</span>
+                <h1 data-i18n="modules.expenses.title">Expenses</h1>
+                <p data-i18n="modules.expenses.description">Manage business expenses.</p>
+              </div>
+              <button type="button" class="btn btn-primary" data-action="open-expense-form">
+                + <span data-i18n="actions.addExpense">Add Expense</span>
+              </button>
+            </div>
+            <div id="expenses-module-content" class="module-content"></div>
+          </section>
+
+          <!-- STOCK ADJUSTMENTS -->
+          <section id="dashboard-page-stock-adjustments"
+                   class="dashboard-page module-page"
+                   data-dashboard-view="stock-adjustments"
+                   hidden>
+            <div class="module-header">
+              <div>
+                <span class="eyebrow" data-i18n="modules.stockAdjustments.eyebrow">Control</span>
+                <h1 data-i18n="modules.stockAdjustments.title">Stock Adjustments</h1>
+                <p data-i18n="modules.stockAdjustments.description">Record approved stock adjustments.</p>
+              </div>
+            </div>
+            <div id="stock-adjustments-module-content" class="module-content"></div>
+          </section>
+
+          <!-- SALES RETURNS -->
+          <section id="dashboard-page-sales-returns"
+                   class="dashboard-page module-page"
+                   data-dashboard-view="sales-returns"
+                   hidden>
+            <div class="module-header">
+              <div>
+                <span class="eyebrow" data-i18n="modules.salesReturns.eyebrow">Control</span>
+                <h1 data-i18n="modules.salesReturns.title">Sales Returns</h1>
+                <p data-i18n="modules.salesReturns.description">Record valid sales returns.</p>
+              </div>
+            </div>
+            <div id="sales-returns-module-content" class="module-content"></div>
+          </section>
+
+          <!-- REPORTS -->
+          <section id="dashboard-page-reports"
+                   class="dashboard-page module-page"
+                   data-dashboard-view="reports"
+                   hidden>
+            <div class="module-header">
+              <div>
+                <span class="eyebrow" data-i18n="modules.reports.eyebrow">Analytics</span>
+                <h1 data-i18n="modules.reports.title">Reports</h1>
+                <p data-i18n="modules.reports.description">View reports based on actual system data.</p>
+              </div>
+            </div>
+            <div id="reports-module-content" class="module-content"></div>
+          </section>
+
+          <!-- AUDIT LOGS -->
+          <section id="dashboard-page-audit-logs"
+                   class="dashboard-page module-page"
+                   data-dashboard-view="audit-logs"
+                   hidden>
+            <div class="module-header">
+              <div>
+                <span class="eyebrow" data-i18n="modules.auditLogs.eyebrow">Security</span>
+                <h1 data-i18n="modules.auditLogs.title">Audit Logs</h1>
+                <p data-i18n="modules.auditLogs.description">Review system audit activity.</p>
+              </div>
+            </div>
+            <div id="audit-logs-module-content" class="module-content"></div>
+          </section>
+
+          <!-- USER MANAGEMENT -->
+          <section id="dashboard-page-user-management"
+                   class="dashboard-page module-page"
+                   data-dashboard-view="user-management"
+                   data-role-only="developer"
+                   hidden>
+            <div class="module-header">
+              <div>
+                <span class="eyebrow" data-i18n="modules.userManagement.eyebrow">Developer</span>
+                <h1 data-i18n="modules.userManagement.title">User Management</h1>
+                <p data-i18n="modules.userManagement.description">Manage user approval and roles.</p>
+              </div>
+            </div>
+            <div id="user-management-module-content" class="module-content"></div>
+          </section>
+
+          <!-- DEVICES & SESSIONS -->
+          <section id="dashboard-page-devices-sessions"
+                   class="dashboard-page module-page"
+                   data-dashboard-view="devices-sessions"
+                   data-role-only="developer"
+                   hidden>
+            <div class="module-header">
+              <div>
+                <span class="eyebrow" data-i18n="modules.devicesSessions.eyebrow">Developer</span>
+                <h1 data-i18n="modules.devicesSessions.title">Devices & Sessions</h1>
+                <p data-i18n="modules.devicesSessions.description">
+                  View, block, unblock and revoke registered devices and sessions.
                 </p>
-
-                <div class="gold-line"></div>
-
-                <p class="brand-description" data-i18n="brandDescription">
-                    Mfumo wa kisasa wa kusimamia mauzo, stock,
-                    wateja, suppliers na taarifa za biashara.
-                </p>
-
-
-                <!-- BUSINESS FEATURES -->
-
-                <div class="feature-grid">
-
-                    <div class="feature-card">
-                        <span class="feature-icon">📊</span>
-                        <span data-i18n="featureReports">
-                            Ripoti
-                        </span>
-                    </div>
-
-                    <div class="feature-card">
-                        <span class="feature-icon">📦</span>
-                        <span data-i18n="featureStock">
-                            Stock
-                        </span>
-                    </div>
-
-                    <div class="feature-card">
-                        <span class="feature-icon">🛒</span>
-                        <span data-i18n="featureSales">
-                            Mauzo
-                        </span>
-                    </div>
-
-                    <div class="feature-card">
-                        <span class="feature-icon">💰</span>
-                        <span data-i18n="featureFinance">
-                            Fedha
-                        </span>
-                    </div>
-
-                </div>
-
+              </div>
             </div>
+            <div id="devices-sessions-module-content" class="module-content"></div>
+          </section>
 
-            <div class="brand-bottom">
-                <span data-i18n="brandBottom">
-                    SGC SOFT DRINKS MANAGEMENT
-                </span>
+          <!-- DEVELOPER SETTINGS -->
+          <section id="dashboard-page-developer-settings"
+                   class="dashboard-page module-page"
+                   data-dashboard-view="developer-settings"
+                   data-role-only="developer"
+                   hidden>
+            <div class="module-header">
+              <div>
+                <span class="eyebrow" data-i18n="modules.developerSettings.eyebrow">Developer</span>
+                <h1 data-i18n="modules.developerSettings.title">Developer Settings</h1>
+                <p data-i18n="modules.developerSettings.description">Developer-level system controls.</p>
+              </div>
             </div>
+            <div id="developer-settings-module-content" class="module-content"></div>
+          </section>
 
-        </section>
+<!-- RLS: ENABLED (KEEP ENABLED) -->
 
+<!-- PROFILE -->
+<section id="dashboard-page-profile"
+         class="dashboard-page module-page"
+         data-dashboard-view="profile"
+         hidden>
 
-        <!-- =================================================
-             RIGHT AUTH PANEL
-        ================================================== -->
+  <div class="module-header">
+    <div>
+      <span class="eyebrow" data-i18n="modules.profile.eyebrow">
+        Account
+      </span>
 
-        <section class="auth-panel">
+      <h1 data-i18n="modules.profile.title">
+        My Profile
+      </h1>
 
-            <!-- LANGUAGE -->
+      <p data-i18n="modules.profile.description">
+        Manage your profile information and profile picture.
+      </p>
+    </div>
+  </div>
 
-            <div class="top-actions">
+  <div id="profile-module-content" class="module-content">
 
-                <div class="language-selector">
+    <div class="profile-new-layout">
 
-                    <button
-                        type="button"
-                        class="language-button active"
-                        data-language="sw"
-                    >
-                        SW
-                    </button>
+      <!-- PROFILE SUMMARY -->
+      <section class="profile-summary-card">
 
-                    <button
-                        type="button"
-                        class="language-button"
-                        data-language="en"
-                    >
-                        EN
-                    </button>
+        <div class="profile-summary-avatar">
+          <img id="profile-avatar-preview"
+               src=""
+               alt="Profile picture"
+               hidden>
 
-                </div>
+          <span id="profile-avatar-placeholder"
+                class="avatar-placeholder avatar-xl">
+            U
+          </span>
+        </div>
 
-            </div>
+        <h2 id="profile-summary-username">
+          User
+        </h2>
 
+        <div class="profile-summary-item">
+          <span data-i18n="profile.role">
+            Role
+          </span>
 
-            <!-- =================================================
-                 LOGIN VIEW
-            ================================================== -->
+          <strong id="profile-summary-role">
+            —
+          </strong>
+        </div>
 
-            <div
-                id="loginView"
-                class="auth-view active-view"
-            >
+        <div class="profile-summary-item">
+          <span data-i18n="profile.status">
+            Account Status
+          </span>
 
-                <div class="auth-header">
+          <strong id="profile-summary-status">
+            —
+          </strong>
+        </div>
 
-                    <span class="auth-label" data-i18n="loginLabel">
-                        KARIBU
-                    </span>
+        <div class="profile-photo-actions">
 
-                    <h1 data-i18n="loginTitle">
-                        Ingia kwenye Mfumo
-                    </h1>
+          <input id="profile-avatar-input"
+                 type="file"
+                 accept="image/*"
+                 hidden>
 
-                    <p data-i18n="loginSubtitle">
-                        Ingia ili kusimamia biashara yako kwa urahisi.
-                    </p>
+          <button type="button"
+                  class="btn btn-secondary"
+                  data-action="select-profile-picture"
+                  data-i18n="profile.changePhoto">
+            Change Photo
+          </button>
 
-                </div>
+          <button type="button"
+                  class="btn btn-ghost"
+                  data-action="open-profile-camera"
+                  data-i18n="profile.takePhoto">
+            Take Photo
+          </button>
 
+          <button type="button"
+                  class="btn btn-ghost"
+                  data-action="remove-profile-picture"
+                  data-i18n="profile.removePhoto">
+            Remove Photo
+          </button>
 
-                <form id="loginForm">
+        </div>
 
-                    <!-- EMAIL -->
+        <button type="button"
+                class="profile-more-info-button"
+                data-action="open-more-profile-info">
 
-                    <div class="form-group">
+          <span data-i18n="profile.moreInfo">
+            More Profile Info
+          </span>
 
-                        <label
-                            for="loginEmail"
-                            data-i18n="email"
-                        >
-                            Email
-                        </label>
+          <span aria-hidden="true">
+            →
+          </span>
 
-                        <div class="input-box">
+        </button>
 
-                            <span class="input-icon">✉</span>
-
-                            <input
-                                type="email"
-                                id="loginEmail"
-                                placeholder="you@example.com"
-                                autocomplete="email"
-                                required
-                            >
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- PASSWORD -->
-
-                    <div class="form-group">
-
-                        <div class="label-row">
-
-                            <label
-                                for="loginPassword"
-                                data-i18n="password"
-                            >
-                                Password
-                            </label>
-
-                            <button
-                                type="button"
-                                class="text-button"
-                                id="forgotPasswordButton"
-                                data-i18n="forgotPassword"
-                            >
-                                Umesahau password?
-                            </button>
-
-                        </div>
-
-                        <div class="input-box">
-
-                            <span class="input-icon">🔒</span>
-
-                            <input
-                                type="password"
-                                id="loginPassword"
-                                placeholder="••••••••"
-                                autocomplete="current-password"
-                                required
-                            >
-
-                            <button
-                                type="button"
-                                class="eye-button"
-                                data-target="loginPassword"
-                            >
-                                👁
-                            </button>
-
-                        </div>
-
-                    </div>
+      </section>
 
 
-                    <!-- MESSAGE -->
+      <!-- MORE PROFILE INFORMATION -->
+      <section id="profile-more-info"
+               class="profile-more-info-card"
+               hidden>
 
-                    <div
-                        id="loginMessage"
-                        class="message"
-                        hidden
-                    ></div>
+        <div class="profile-more-info-header">
+
+          <div>
+            <span class="eyebrow"
+                  data-i18n="profile.detailsEyebrow">
+              Profile
+            </span>
+
+            <h2 data-i18n="profile.detailsTitle">
+              More Profile Information
+            </h2>
+
+            <p data-i18n="profile.detailsDescription">
+              Additional information available to you.
+            </p>
+          </div>
+
+          <button type="button"
+                  class="btn btn-ghost"
+                  data-action="close-more-profile-info"
+                  aria-label="Close">
+            ×
+          </button>
+
+        </div>
 
 
-                    <!-- LOGIN BUTTON -->
+        <form id="profile-form"
+              novalidate
+              autocomplete="on">
 
-                    <button
-                        type="submit"
-                        class="primary-button"
-                        id="loginButton"
-                    >
+          <div class="form-grid two-columns">
 
-                        <span data-i18n="loginButton">
-                            Ingia
-                        </span>
+            <div class="form-field">
+              <label for="profile-full-name"
+                     data-i18n="profile.fullName">
+                Full Name
+              </label>
 
-                        <span class="button-arrow">→</span>
-
-                    </button>
-
-                </form>
-
-
-                <!-- OWNER SIGNUP -->
-
-                <div class="switch-auth">
-
-                    <span data-i18n="noAccount">
-                        Huna akaunti ya Owner?
-                    </span>
-
-                    <button
-                        type="button"
-                        class="link-button"
-                        id="showSignupButton"
-                        data-i18n="createOwner"
-                    >
-                        Tengeneza Owner Account
-                    </button>
-
-                </div>
-
+              <input id="profile-full-name"
+                     name="full_name"
+                     type="text"
+                     autocomplete="name"
+                     required>
             </div>
 
 
-            <!-- =================================================
-                 OWNER SIGNUP VIEW
-            ================================================== -->
-
-            <div
-                id="signupView"
-                class="auth-view"
-            >
-
-                <div class="auth-header">
-
-                    <span class="auth-label owner-label">
-                        OWNER
-                    </span>
-
-                    <h1 data-i18n="signupTitle">
-                        Tengeneza Owner Account
-                    </h1>
-
-                    <p data-i18n="signupSubtitle">
-                        Ingiza taarifa zako na Owner Signup Code.
-                    </p>
-
-                </div>
-
-
-                <form id="signupForm">
-
-                    <!-- FULL NAME -->
-
-                    <div class="form-group">
-
-                        <label
-                            for="fullName"
-                            data-i18n="fullName"
-                        >
-                            Jina Kamili
-                        </label>
-
-                        <div class="input-box">
-
-                            <span class="input-icon">👤</span>
-
-                            <input
-                                type="text"
-                                id="fullName"
-                                placeholder="Mfano: John Sam"
-                                autocomplete="name"
-                                required
-                            >
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- USERNAME -->
-
-                    <div class="form-group">
-
-                        <label
-                            for="username"
-                            data-i18n="username"
-                        >
-                            Username
-                        </label>
-
-                        <div class="input-box">
-
-                            <span class="input-icon">@</span>
-
-                            <input
-                                type="text"
-                                id="username"
-                                placeholder="Mfano: johnsam"
-                                autocomplete="username"
-                                required
-                            >
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- EMAIL -->
-
-                    <div class="form-group">
-
-                        <label
-                            for="signupEmail"
-                            data-i18n="email"
-                        >
-                            Email
-                        </label>
-
-                        <div class="input-box">
-
-                            <span class="input-icon">✉</span>
-
-                            <input
-                                type="email"
-                                id="signupEmail"
-                                placeholder="you@example.com"
-                                autocomplete="email"
-                                required
-                            >
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- PASSWORD -->
-
-                    <div class="form-group">
-
-                        <label
-                            for="signupPassword"
-                            data-i18n="password"
-                        >
-                            Password
-                        </label>
-
-                        <div class="input-box">
-
-                            <span class="input-icon">🔒</span>
-
-                            <input
-                                type="password"
-                                id="signupPassword"
-                                placeholder="••••••••"
-                                autocomplete="new-password"
-                                required
-                            >
-
-                            <button
-                                type="button"
-                                class="eye-button"
-                                data-target="signupPassword"
-                            >
-                                👁
-                            </button>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- CONFIRM PASSWORD -->
-
-                    <div class="form-group">
-
-                        <label
-                            for="confirmPassword"
-                            data-i18n="confirmPassword"
-                        >
-                            Thibitisha Password
-                        </label>
-
-                        <div class="input-box">
-
-                            <span class="input-icon">🔒</span>
-
-                            <input
-                                type="password"
-                                id="confirmPassword"
-                                placeholder="••••••••"
-                                autocomplete="new-password"
-                                required
-                            >
-
-                            <button
-                                type="button"
-                                class="eye-button"
-                                data-target="confirmPassword"
-                            >
-                                👁
-                            </button>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- OWNER CODE -->
-
-                    <div class="form-group">
-
-                        <label
-                            for="ownerCode"
-                            data-i18n="ownerCode"
-                        >
-                            Owner Signup Code
-                        </label>
-
-                        <div class="input-box">
-
-                            <span class="input-icon">🔑</span>
-
-                            <input
-                                type="password"
-                                id="ownerCode"
-                                placeholder="Owner Signup Code"
-                                autocomplete="off"
-                                required
-                            >
-
-                            <button
-                                type="button"
-                                class="eye-button"
-                                data-target="ownerCode"
-                            >
-                                👁
-                            </button>
-
-                        </div>
-
-                        <small data-i18n="ownerCodeHint">
-                            Code hii ni ya siri na inahitajika kuunda Owner.
-                        </small>
-
-                    </div>
-
-
-                    <!-- SIGNUP MESSAGE -->
-
-                    <div
-                        id="signupMessage"
-                        class="message"
-                        hidden
-                    ></div>
-
-
-                    <!-- CREATE BUTTON -->
-
-                    <button
-                        type="submit"
-                        class="primary-button"
-                        id="signupButton"
-                    >
-
-                        <span data-i18n="createOwnerButton">
-                            Tengeneza Account
-                        </span>
-
-                        <span class="button-arrow">→</span>
-
-                    </button>
-
-                </form>
-
-
-                <!-- BACK LOGIN -->
-
-                <div class="switch-auth">
-
-                    <span data-i18n="alreadyAccount">
-                        Tayari una akaunti?
-                    </span>
-
-                    <button
-                        type="button"
-                        class="link-button"
-                        id="showLoginButton"
-                        data-i18n="loginHere"
-                    >
-                        Ingia hapa
-                    </button>
-
-                </div>
-
+            <div class="form-field">
+              <label for="profile-username"
+                     data-i18n="profile.username">
+                Username
+              </label>
+
+              <input id="profile-username"
+                     name="username"
+                     type="text"
+                     autocomplete="username"
+                     required>
             </div>
 
 
-            <!-- =================================================
-                 FORGOT PASSWORD VIEW
-            ================================================== -->
+            <div class="form-field">
+              <label for="profile-email"
+                     data-i18n="profile.email">
+                Email
+              </label>
 
-            <div
-                id="forgotView"
-                class="auth-view"
-            >
-
-                <div class="auth-header">
-
-                    <span class="auth-label">
-                        SECURITY
-                    </span>
-
-                    <h1 data-i18n="forgotTitle">
-                        Umesahau Password?
-                    </h1>
-
-                    <p data-i18n="forgotSubtitle">
-                        Weka email yako na tutakutumia link ya kubadilisha password.
-                    </p>
-
-                </div>
-
-
-                <form id="forgotForm">
-
-                    <div class="form-group">
-
-                        <label
-                            for="forgotEmail"
-                            data-i18n="email"
-                        >
-                            Email
-                        </label>
-
-                        <div class="input-box">
-
-                            <span class="input-icon">✉</span>
-
-                            <input
-                                type="email"
-                                id="forgotEmail"
-                                placeholder="you@example.com"
-                                autocomplete="email"
-                                required
-                            >
-
-                        </div>
-
-                    </div>
-
-
-                    <div
-                        id="forgotMessage"
-                        class="message"
-                        hidden
-                    ></div>
-
-
-                    <button
-                        type="submit"
-                        class="primary-button"
-                        id="forgotButton"
-                    >
-
-                        <span data-i18n="sendReset">
-                            Tuma Reset Link
-                        </span>
-
-                        <span class="button-arrow">→</span>
-
-                    </button>
-
-                </form>
-
-
-                <div class="switch-auth">
-
-                    <button
-                        type="button"
-                        class="link-button"
-                        id="backToLoginButton"
-                        data-i18n="backLogin"
-                    >
-                        ← Rudi kwenye Login
-                    </button>
-
-                </div>
-
+              <input id="profile-email"
+                     name="email"
+                     type="email"
+                     autocomplete="email"
+                     readonly>
             </div>
 
 
-            <!-- =================================================
-                 PASSWORD RESET VIEW
-            ================================================== -->
+            <div class="form-field">
+              <label for="profile-phone"
+                     data-i18n="profile.phone">
+                Phone
+              </label>
 
-            <div
-                id="resetView"
-                class="auth-view"
-            >
-
-                <div class="auth-header">
-
-                    <span class="auth-label">
-                        SECURITY
-                    </span>
-
-                    <h1 data-i18n="resetTitle">
-                        Weka Password Mpya
-                    </h1>
-
-                    <p data-i18n="resetSubtitle">
-                        Weka password mpya ya akaunti yako.
-                    </p>
-
-                </div>
-
-
-                <form id="resetForm">
-
-                    <div class="form-group">
-
-                        <label
-                            for="newPassword"
-                            data-i18n="newPassword"
-                        >
-                            Password Mpya
-                        </label>
-
-                        <div class="input-box">
-
-                            <span class="input-icon">🔒</span>
-
-                            <input
-                                type="password"
-                                id="newPassword"
-                                placeholder="••••••••"
-                                autocomplete="new-password"
-                                required
-                            >
-
-                            <button
-                                type="button"
-                                class="eye-button"
-                                data-target="newPassword"
-                            >
-                                👁
-                            </button>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="form-group">
-
-                        <label
-                            for="confirmNewPassword"
-                            data-i18n="confirmPassword"
-                        >
-                            Thibitisha Password
-                        </label>
-
-                        <div class="input-box">
-
-                            <span class="input-icon">🔒</span>
-
-                            <input
-                                type="password"
-                                id="confirmNewPassword"
-                                placeholder="••••••••"
-                                autocomplete="new-password"
-                                required
-                            >
-
-                            <button
-                                type="button"
-                                class="eye-button"
-                                data-target="confirmNewPassword"
-                            >
-                                👁
-                            </button>
-
-                        </div>
-
-                    </div>
-
-
-                    <div
-                        id="resetMessage"
-                        class="message"
-                        hidden
-                    ></div>
-
-
-                    <button
-                        type="submit"
-                        class="primary-button"
-                        id="resetButton"
-                    >
-
-                        <span data-i18n="savePassword">
-                            Hifadhi Password
-                        </span>
-
-                        <span class="button-arrow">→</span>
-
-                    </button>
-
-                </form>
-
+              <input id="profile-phone"
+                     name="phone"
+                     type="tel"
+                     autocomplete="tel">
             </div>
 
 
-            <!-- =================================================
-                 FOOTER
-            ================================================== -->
+            <div class="form-field">
+              <label for="profile-role"
+                     data-i18n="profile.role">
+                Role
+              </label>
 
-            <div class="auth-footer">
-
-                <span data-i18n="copyright">
-                    © 2026 SGC SOFT DRINKS MANAGEMENT. Haki zote zimehifadhiwa.
-                </span>
-
+              <input id="profile-role"
+                     name="role"
+                     type="text"
+                     readonly>
             </div>
 
-        </section>
+
+            <div class="form-field">
+              <label for="profile-status"
+                     data-i18n="profile.status">
+                Account Status
+              </label>
+
+              <input id="profile-status"
+                     name="account_status"
+                     type="text"
+                     readonly>
+            </div>
+
+
+            <div class="form-field">
+              <label for="profile-created-at"
+                     data-i18n="profile.createdAt">
+                Created At
+              </label>
+
+              <input id="profile-created-at"
+                     name="created_at"
+                     type="text"
+                     readonly>
+            </div>
+
+
+            <div class="form-field">
+              <label for="profile-active"
+                     data-i18n="profile.active">
+                Active
+              </label>
+
+              <input id="profile-active"
+                     name="is_active"
+                     type="text"
+                     readonly>
+            </div>
+
+          </div>
+
+
+          <div id="profile-form-message"
+               class="form-message"
+               hidden>
+          </div>
+
+
+          <div class="form-actions">
+
+            <button type="button"
+                    class="btn btn-ghost"
+                    data-action="reload-profile"
+                    data-i18n="actions.reload">
+              Reload
+            </button>
+
+            <button type="submit"
+                    class="btn btn-primary"
+                    data-action="save-profile"
+                    data-i18n="actions.saveChanges">
+              Save Changes
+            </button>
+
+          </div>
+
+        </form>
+
+      </section>
 
     </div>
 
+  </div>
+</section>
 
-    <!-- =====================================================
-         JAVASCRIPT
-    ====================================================== -->
+<!-- SETTINGS -->
 
-    <script src="app.js"></script>
+          <section id="dashboard-page-settings"
+                   class="dashboard-page module-page"
+                   data-dashboard-view="settings"
+                   data-role-only="owner"
+                   hidden>
+            <div class="module-header">
+              <div>
+                <span class="eyebrow" data-i18n="settings">Account</span>
+                <h1 data-i18n="Settings"></h1>
+                <h3 data-i18n="Business settings available to the owner">.</h3>
+              </div>
+            </div>
+            <div id="settings-module-content" class="module-content"></div>
+          </section>
 
+        </div>
+      </section>
+    </main>
+
+    <!-- =======================================================
+         AUTH MODALS
+         ======================================================= -->
+
+    <!-- LOGIN -->
+    <div id="login-modal"
+         class="modal"
+         role="dialog"
+         aria-modal="true"
+         aria-labelledby="login-modal-title"
+         hidden>
+      <div class="modal-backdrop" data-action="close-login"></div>
+      <div class="modal-dialog auth-modal-dialog">
+        <button type="button" class="modal-close" data-action="close-login" aria-label="Close">×</button>
+
+        <div class="modal-header">
+          <span class="eyebrow" data-i18n="auth.loginEyebrow">Account</span>
+          <h2 id="login-modal-title" data-i18n="auth.loginTitle">Ingia</h2>
+          <p data-i18n="auth.loginDescription">Ingia kwenye SGC SOFT DRINKS MANAGEMENT.</p>
+        </div>
+
+        <form id="login-form" novalidate autocomplete="on">
+          <div class="form-field">
+            <label for="login-email" data-i18n="auth.email">Email</label>
+            <input id="login-email"
+                   name="email"
+                   type="email"
+                   autocomplete="email"
+                   required>
+            <small class="field-error" id="login-email-error"></small>
+          </div>
+
+          <div class="form-field">
+            <label for="login-password" data-i18n="auth.password">Password</label>
+            <div class="password-input-wrap">
+              <input id="login-password"
+                     name="password"
+                     type="password"
+                     autocomplete="current-password"
+                     required>
+              <button type="button"
+                      class="password-toggle"
+                      data-action="toggle-password"
+                      data-target="login-password"
+                      aria-label="Show password">
+                ◉
+              </button>
+            </div>
+            <small class="field-error" id="login-password-error"></small>
+          </div>
+
+          <div id="login-form-message" class="form-message" hidden></div>
+
+          <button type="submit"
+                  class="btn btn-primary btn-block"
+                  data-action="login"
+                  data-i18n="auth.loginButton">
+            Ingia
+          </button>
+
+          <div class="auth-links">
+            <button type="button"
+                    class="text-button"
+                    data-action="open-forgot-password"
+                    data-i18n="auth.forgotPassword">
+              Umesahau password?
+            </button>
+            <button type="button"
+                    class="text-button"
+                    data-action="open-signup"
+                    data-i18n="auth.createAccount">
+              Fungua akaunti
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- SIGNUP -->
+    <div id="signup-modal"
+         class="modal"
+         role="dialog"
+         aria-modal="true"
+         aria-labelledby="signup-modal-title"
+         hidden>
+      <div class="modal-backdrop" data-action="close-signup"></div>
+      <div class="modal-dialog auth-modal-dialog wide-dialog">
+        <button type="button" class="modal-close" data-action="close-signup" aria-label="Close">×</button>
+
+        <div class="modal-header">
+          <span class="eyebrow" data-i18n="auth.signupEyebrow">New Account</span>
+          <h2 id="signup-modal-title" data-i18n="auth.signupTitle">Jisajili</h2>
+          <p data-i18n="auth.signupDescription">
+            Jaza taarifa sahihi za akaunti yako.
+          </p>
+        </div>
+
+        <form id="signup-form" novalidate autocomplete="on">
+
+          <div class="account-type-selector">
+            <span class="form-label" data-i18n="auth.accountType">Account Type</span>
+            <div class="segmented-control">
+              <label class="segment-option">
+                <input type="radio"
+                       name="account_type"
+                       value="normal"
+                       checked>
+                <span data-i18n="auth.normalAccount">Normal Account</span>
+              </label>
+
+              <label class="segment-option">
+                <input type="radio"
+                       name="account_type"
+                       value="developer">
+                <span data-i18n="auth.developerAccount">Developer Account</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-grid two-columns">
+
+            <div class="form-field">
+              <label for="signup-full-name" data-i18n="auth.fullName">Full Name</label>
+              <input id="signup-full-name"
+                     name="full_name"
+                     type="text"
+                     autocomplete="name"
+                     minlength="2"
+                     maxlength="100"
+                     required>
+              <small class="field-error" id="signup-full-name-error"></small>
+            </div>
+
+            <div class="form-field">
+              <label for="signup-username" data-i18n="auth.username">Username</label>
+              <input id="signup-username"
+                     name="username"
+                     type="text"
+                     autocomplete="username"
+                     minlength="3"
+                     maxlength="50"
+                     pattern="[a-z0-9._-]+"
+                     required>
+              <small class="field-help" data-i18n="auth.usernameHelp">Herufi ndogo, namba, . _ -</small>
+              <small class="field-error" id="signup-username-error"></small>
+            </div>
+
+            <div class="form-field">
+              <label for="signup-email" data-i18n="auth.email">Email</label>
+              <input id="signup-email"
+                     name="email"
+                     type="email"
+                     autocomplete="email"
+                     required>
+              <small class="field-error" id="signup-email-error"></small>
+            </div>
+
+            <div class="form-field">
+              <label for="signup-phone" data-i18n="auth.phone">Phone</label>
+              <input id="signup-phone"
+                     name="phone"
+                     type="tel"
+                     autocomplete="tel">
+              <small class="field-error" id="signup-phone-error"></small>
+            </div>
+
+            <div class="form-field">
+              <label for="signup-password" data-i18n="auth.password">Password</label>
+              <div class="password-input-wrap">
+                <input id="signup-password"
+                       name="password"
+                       type="password"
+                       autocomplete="new-password"
+                       minlength="8"
+                       required>
+                <button type="button"
+                        class="password-toggle"
+                        data-action="toggle-password"
+                        data-target="signup-password"
+                        aria-label="Show password">
+                  ◉
+                </button>
+              </div>
+              <small class="field-help" data-i18n="auth.passwordHelp">Angalau characters 8.</small>
+              <small class="field-error" id="signup-password-error"></small>
+            </div>
+
+            <div class="form-field">
+              <label for="signup-confirm-password" data-i18n="auth.confirmPassword">Confirm Password</label>
+              <div class="password-input-wrap">
+                <input id="signup-confirm-password"
+                       name="confirm_password"
+                       type="password"
+                       autocomplete="new-password"
+                       minlength="8"
+                       required>
+                <button type="button"
+                        class="password-toggle"
+                        data-action="toggle-password"
+                        data-target="signup-confirm-password"
+                        aria-label="Show password">
+                  ◉
+                </button>
+              </div>
+              <small class="field-error" id="signup-confirm-password-error"></small>
+            </div>
+
+            <!-- Developer-only -->
+            <div id="developer-signup-fields"
+                 class="developer-signup-fields form-field full-width"
+                 hidden>
+              <label for="developer-signup-code" data-i18n="auth.developerSignupCode">Developer Signup Code</label>
+              <input id="developer-signup-code"
+                     name="signup_code"
+                     type="password"
+                     autocomplete="off">
+              <small class="field-help" data-i18n="auth.developerSignupCodeHelp">
+                Required only for Developer Account.
+              </small>
+              <small class="field-error" id="developer-signup-code-error"></small>
+            </div>
+
+          </div>
+
+          <div id="signup-form-message" class="form-message" hidden></div>
+
+          <button type="submit"
+                  class="btn btn-primary btn-block"
+                  data-action="signup"
+                  data-i18n="auth.signupButton">
+            Jisajili
+          </button>
+
+          <div class="auth-links">
+            <button type="button"
+                    class="text-button"
+                    data-action="open-login"
+                    data-i18n="auth.haveAccount">
+              Tayari nina akaunti
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- FORGOT PASSWORD -->
+    <div id="forgot-password-modal"
+         class="modal"
+         role="dialog"
+         aria-modal="true"
+         aria-labelledby="forgot-password-title"
+         hidden>
+      <div class="modal-backdrop" data-action="close-forgot-password"></div>
+      <div class="modal-dialog auth-modal-dialog">
+        <button type="button" class="modal-close" data-action="close-forgot-password" aria-label="Close">×</button>
+
+        <div class="modal-header">
+          <span class="eyebrow" data-i18n="auth.resetEyebrow">Password Recovery</span>
+          <h2 id="forgot-password-title" data-i18n="auth.forgotTitle">Forgot Password</h2>
+          <p data-i18n="auth.forgotDescription">
+            Wasiliana na Developer/administrator kwa reset code kulingana na mfumo wako.
+          </p>
+        </div>
+
+        <form id="forgot-password-form" novalidate>
+          <div class="form-field">
+            <label for="forgot-email" data-i18n="auth.email">Email</label>
+            <input id="forgot-email"
+                   name="email"
+                   type="email"
+                   autocomplete="email"
+                   required>
+          </div>
+
+          <div id="forgot-password-message" class="form-message" hidden></div>
+
+          <button type="button"
+                  class="btn btn-primary btn-block"
+                  data-action="request-password-reset"
+                  data-i18n="auth.continue">
+            Endelea
+          </button>
+
+          <div class="auth-links">
+            <button type="button"
+                    class="text-button"
+                    data-action="open-login"
+                    data-i18n="auth.backToLogin">
+              Rudi Ingia
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- RESET PASSWORD -->
+    <div id="reset-password-modal"
+         class="modal"
+         role="dialog"
+         aria-modal="true"
+         aria-labelledby="reset-password-title"
+         hidden>
+      <div class="modal-backdrop" data-action="close-reset-password"></div>
+      <div class="modal-dialog auth-modal-dialog">
+        <button type="button" class="modal-close" data-action="close-reset-password" aria-label="Close">×</button>
+
+        <div class="modal-header">
+          <span class="eyebrow" data-i18n="auth.resetEyebrow">Password Recovery</span>
+          <h2 id="reset-password-title" data-i18n="auth.resetTitle">Reset Password</h2>
+          <p data-i18n="auth.resetDescription">Tumia reset code uliyopewa na mfumo/administrator.</p>
+        </div>
+
+        <form id="reset-password-form" novalidate>
+
+          <div class="form-field">
+            <label for="reset-target-user-id" data-i18n="auth.targetUserId">Target User ID</label>
+            <input id="reset-target-user-id"
+                   name="target_user_id"
+                   type="text"
+                   autocomplete="off"
+                   required>
+          </div>
+
+          <div class="form-field">
+            <label for="reset-code" data-i18n="auth.resetCode">Reset Code</label>
+            <input id="reset-code"
+                   name="reset_code"
+                   type="text"
+                   autocomplete="one-time-code"
+                   required>
+          </div>
+
+          <div class="form-field">
+            <label for="reset-new-password" data-i18n="auth.newPassword">New Password</label>
+            <div class="password-input-wrap">
+              <input id="reset-new-password"
+                     name="new_password"
+                     type="password"
+                     autocomplete="new-password"
+                     minlength="8"
+                     required>
+              <button type="button"
+                      class="password-toggle"
+                      data-action="toggle-password"
+                      data-target="reset-new-password"
+                      aria-label="Show password">
+                ◉
+              </button>
+            </div>
+          </div>
+
+          <div id="reset-password-message" class="form-message" hidden></div>
+
+          <button type="submit"
+                  class="btn btn-primary btn-block"
+                  data-action="reset-password"
+                  data-i18n="auth.resetButton">
+            Reset Password
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- =======================================================
+         CONFIRMATION MODAL
+         ======================================================= -->
+    <div id="confirm-modal"
+         class="modal"
+         role="dialog"
+         aria-modal="true"
+         aria-labelledby="confirm-title"
+         hidden>
+      <div class="modal-backdrop" data-action="close-confirm"></div>
+      <div class="modal-dialog confirm-dialog">
+        <button type="button" class="modal-close" data-action="close-confirm" aria-label="Close">×</button>
+
+        <div class="confirm-icon">!</div>
+        <div class="modal-header">
+          <h2 id="confirm-title" data-i18n="confirm.title">Thibitisha</h2>
+          <p id="confirm-message" data-i18n="confirm.defaultMessage">
+            Una uhakika unataka kuendelea?
+          </p>
+        </div>
+
+        <div class="form-actions confirm-actions">
+          <button type="button"
+                  class="btn btn-ghost"
+                  data-action="close-confirm"
+                  data-i18n="common.cancel">
+            Cancel
+          </button>
+          <button id="confirm-submit"
+                  type="button"
+                  class="btn btn-danger"
+                  data-action="confirm"
+                  data-i18n="common.confirm">
+            Confirm
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- =======================================================
+         GENERIC FORM MODAL
+         JS injects only the form body after verifying module.
+         ======================================================= -->
+    <div id="form-modal"
+         class="modal"
+         role="dialog"
+         aria-modal="true"
+         aria-labelledby="form-modal-title"
+         hidden>
+      <div class="modal-backdrop" data-action="close-form-modal"></div>
+      <div class="modal-dialog wide-dialog">
+        <button type="button"
+                class="modal-close"
+                data-action="close-form-modal"
+                aria-label="Close">
+          ×
+        </button>
+
+        <div class="modal-header">
+          <span id="form-modal-eyebrow" class="eyebrow">SGC SOFT DRINKS</span>
+          <h2 id="form-modal-title">Form</h2>
+          <p id="form-modal-description"></p>
+        </div>
+
+        <div id="form-modal-content" class="modal-content-area"></div>
+      </div>
+    </div>
+
+    <!-- =======================================================
+         DETAIL MODAL
+         ======================================================= -->
+    <div id="detail-modal"
+         class="modal"
+         role="dialog"
+         aria-modal="true"
+         aria-labelledby="detail-modal-title"
+         hidden>
+      <div class="modal-backdrop" data-action="close-detail-modal"></div>
+      <div class="modal-dialog wide-dialog">
+        <button type="button"
+                class="modal-close"
+                data-action="close-detail-modal"
+                aria-label="Close">
+          ×
+        </button>
+
+        <div class="modal-header">
+          <span id="detail-modal-eyebrow" class="eyebrow">SGC SOFT DRINKS</span>
+          <h2 id="detail-modal-title">Details</h2>
+          <p id="detail-modal-description"></p>
+        </div>
+
+        <div id="detail-modal-content" class="modal-content-area"></div>
+      </div>
+    </div>
+
+    <!-- =======================================================
+         FOOTER
+         ======================================================= -->
+    <footer id="site-footer" class="site-footer">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <img
+            src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgRsGllLOBF63Unp0kzICif6C1tapkNBLRntsN7FJJPLlytEa9m1uBi_CdMVtnA7HmE1niKAeRc7FaKka9HamTfaSy4Mp5V8jnfl0DJt12zb4S4WhtI3PSJH9mHkxhu65YXSVA7sD5b8sOfw8jakPYp3H8Um8qvyjlDzxWgNcdsH2qVTmnMbjsZF4TN/s1280/244759.png"
+            alt="SG COOPERATION logo"
+            class="footer-logo"
+            loading="lazy">
+          <div>
+            <strong>SGC COOPERATION</strong>
+            <p>SGC SOFT DRINKS MANAGEMENT</p>
+          </div>
+        </div>
+        <div class="footer-links">
+          <a href="#home" data-route="home" data-i18n="nav.home">Home</a>
+          <a href="#about" data-route="about" data-i18n="nav.about">Kuhusu</a>
+          <a href="#features" data-route="features" data-i18n="nav.features">Vipengele</a>
+          <a href="#contact" data-route="contact" data-i18n="nav.contact">Mawasiliano</a>
+        </div>
+        <div>
+          <small>© <span id="footer-year"></span> SGC COOPERATION</small>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <!--
+    app.js must be loaded AFTER the DOM so all stable elements above
+    already exist before JavaScript initializes.
+
+    Do not put server-only Supabase secret keys in app.js.
+  -->
+  <script src="app.js" defer></script>
+  <!-- RLS: ENABLED (KEEP ENABLED) -->
+
+<!-- PROFILE IMAGE CROP MODAL -->
+<div id="profile-crop-modal"
+     class="modal-backdrop"
+     hidden>
+
+  <div class="modal-dialog profile-crop-dialog">
+
+    <div class="modal-header">
+      <div>
+        <span class="eyebrow">
+          Crop
+        </span>
+
+        <h2>
+          <span data-i18n="profile.cropTitle">
+            Crop Profile Picture
+          </span>
+        </h2>
+
+        <p class="modal-description">
+          <span data-i18n="profile.cropDescription">
+            Adjust the image before saving your profile picture.
+          </span>
+        </p>
+      </div>
+
+      <button type="button"
+              class="modal-close"
+              data-action="cancel-profile-crop"
+              aria-label="Close">
+        &times;
+      </button>
+    </div>
+
+    <div class="profile-crop-body">
+
+      <div class="profile-crop-stage">
+        <canvas id="profile-crop-canvas"></canvas>
+      </div>
+
+      <div class="profile-crop-controls">
+
+        <label for="profile-crop-zoom">
+          <span data-i18n="profile.zoom">
+            Zoom
+          </span>
+        </label>
+
+        <input
+          id="profile-crop-zoom"
+          type="range"
+          min="1"
+          max="4"
+          step="0.05"
+          value="1"
+          aria-label="Zoom">
+
+        <div class="profile-crop-hint">
+          <span data-i18n="profile.cropHint">
+            Drag the image to adjust its position.
+          </span>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="modal-footer">
+
+      <button type="button"
+              class="btn secondary"
+              data-action="cancel-profile-crop">
+        <span data-i18n="common.cancel">
+          Cancel
+        </span>
+      </button>
+
+      <button type="button"
+              class="btn primary"
+              data-action="save-profile-crop">
+        <span data-i18n="common.save">
+          Save
+        </span>
+      </button>
+
+    </div>
+
+  </div>
+</div>
 </body>
 </html>
