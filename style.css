@@ -4103,3 +4103,41 @@ textarea:focus-visible{
     0 16px 36px rgba(0, 0, 0, 0.30),
     0 0 24px rgba(24, 191, 255, 0.08) !important;
 }
+
+/* BACK TO DASHBOARD BUTTON */
+.back-dashboard-button{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  min-height:42px;
+  padding:0 14px;
+  margin-left:10px;
+  border:1px solid rgba(24,191,255,.35);
+  border-radius:12px;
+  background:rgba(24,191,255,.08);
+  color:#ffffff;
+  font-size:14px;
+  font-weight:700;
+  cursor:pointer;
+  transition:.2s ease;
+}
+
+.back-dashboard-button:hover{
+  background:rgba(24,191,255,.18);
+  border-color:rgba(24,191,255,.65);
+  transform:translateY(-1px);
+}
+
+.back-dashboard-button:active{
+  transform:translateY(0);
+}
+
+@media (max-width:600px){
+  .back-dashboard-button{
+    min-height:40px;
+    padding:0 11px;
+    margin-left:7px;
+    font-size:13px;
+  }
+}
