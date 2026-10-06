@@ -1315,17 +1315,159 @@ async function supplierForm(s=null){openForm(s?txt('Hariri Supplier','Edit Suppl
 async function viewSupplier(id){const[a,b,c]=await Promise.all([S.sb.rpc('get_supplier_balance',{p_supplier_id:id}),S.sb.rpc('get_supplier_purchase_history',{p_supplier_id:id}),S.sb.rpc('get_supplier_payment_history',{p_supplier_id:id})]);if(a.error)throw a.error;if(b.error)throw b.error;if(c.error)throw c.error;const x=a.data?.[0]||{};openDetail(txt('Supplier Details','Supplier Details'),x.supplier_name||'',`<div class="info-list"><div class="info-row"><span class="info-label">Purchases</span><strong class="info-value">${esc(money(x.total_purchases))}</strong></div><div class="info-row"><span class="info-label">Paid</span><strong class="info-value">${esc(money(x.total_paid))}</strong></div><div class="info-row"><span class="info-label">Outstanding</span><strong class="info-value">${esc(money(x.outstanding_balance))}</strong></div></div><h3>Purchase History</h3>${table([{key:'invoice_receipt_no',label:'Invoice'},{key:'total_amount',label:'Total',render:r=>esc(money(r.total_amount))},{key:'outstanding_balance',label:'Outstanding',render:r=>esc(money(r.outstanding_balance))},{key:'verification_status',label:'Verification',render:r=>badge(r.verification_status)}],b.data||[])}<h3>Payment History</h3>${table([{key:'invoice_receipt_no',label:'Invoice'},{key:'amount',label:'Amount',render:r=>esc(money(r.amount))},{key:'payment_method',label:'Method'},{key:'created_at',label:'Date',render:r=>esc(date(r.created_at))}],c.data||[])}`)}
 
 async function viewSale(id){
-  const{data,error}=await S.sb.rpc('get_sale_details',{p_sale_id:id});
-  if(error)throw error;
-  const x=data?.[0]||{};openDetail('Sale Details',x.receipt_no||'',`
-    <div class="info-list"><div class="info-row"><span class="info-label">Customer</span><strong class="info-value">${esc(x.customer_name||'—')
-  }</strong></div><div class="info-row"><span class="info-label">Total</span>
-    <strong class="info-value">${esc(money(x.total_amount))}</strong></div><div class="info-row">
-    <span class="info-label">Paid</span><strong class="info-value">${esc(money(x.paid_amount))
-    }</strong></div><div class="info-row"><span class="info-label">Balance</span><strong class="info-value">
-      ${esc(money(x.balance))}</strong></div></div>${table([{key:'product_name',label:'Product'
-      },{key:'quantity',label:'Qty'},{key:'selling_price',label:'Price',render:r=>esc(money(r.selling_price))
-      },{key:'line_total',label:'Total',render:r=>esc(money(r.line_total))}],data||[])}`)}
+
+  const {
+    data,
+    error
+  } = await S.sb.rpc(
+    'get_sale_details',
+    {
+      p_sale_id: id
+    }
+  );
+
+  if(error) throw error;
+
+  const x =
+    data?.[0] || {};
+
+  const totalPrice =
+    Number(
+      x.total_amount || 0
+    );
+
+  const discount =
+    Number(
+      x.discount_amount || 0
+    );
+
+  const amountToPay =
+    Math.max(
+      totalPrice - discount,
+      0
+    );
+
+  openDetail(
+    'Sale Details',
+    x.receipt_no || '',
+    `
+      <div class="info-list">
+
+        <div class="info-row">
+          <span class="info-label">
+            Customer
+          </span>
+
+          <strong class="info-value">
+            ${esc(
+              x.customer_name || '—'
+            )}
+          </strong>
+        </div>
+
+
+        <div class="info-row">
+          <span class="info-label">
+            Total Price
+          </span>
+
+          <strong class="info-value">
+            ${esc(
+              money(totalPrice)
+            )}
+          </strong>
+        </div>
+
+
+        <div class="info-row">
+          <span class="info-label">
+            Discount
+          </span>
+
+          <strong class="info-value">
+            ${esc(
+              money(discount)
+            )}
+          </strong>
+        </div>
+
+
+        <div class="info-row">
+          <span class="info-label">
+            Amount to Pay
+          </span>
+
+          <strong class="info-value">
+            ${esc(
+              money(amountToPay)
+            )}
+          </strong>
+        </div>
+
+
+        <div class="info-row">
+          <span class="info-label">
+            Paid
+          </span>
+
+          <strong class="info-value">
+            ${esc(
+              money(x.paid_amount)
+            )}
+          </strong>
+        </div>
+
+
+        <div class="info-row">
+          <span class="info-label">
+            Balance
+          </span>
+
+          <strong class="info-value">
+            ${esc(
+              money(x.balance)
+            )}
+          </strong>
+        </div>
+
+      </div>
+
+      ${table(
+        [
+          {
+            key:'product_name',
+            label:'Product'
+          },
+          {
+            key:'quantity',
+            label:'Qty'
+          },
+          {
+            key:'selling_price',
+            label:'Price',
+            render:r =>
+              esc(
+                money(
+                  r.selling_price
+                )
+              )
+          },
+          {
+            key:'line_total',
+            label:'Total',
+            render:r =>
+              esc(
+                money(
+                  r.line_total
+                )
+              )
+          }
+        ],
+        data || []
+      )}
+    `
+  );
+}
   
 
 /* CUSTOMER SALES RECEIPT — HTML PREVIEW */
@@ -1469,25 +1611,102 @@ const beverageUrl =
       </table>
 
       <!-- PAYMENT SUMMARY -->
-      <section class="sales-receipt-totals">
+<section class="sales-receipt-totals">
 
-        <div class="sr-total-row sr-grand-total">
-          <span>${BI('JUMLA YA MAUZO', 'SALE TOTAL')}</span>
-          <strong>${esc(money(x.total_amount))}</strong>
-        </div>
+  <div class="sr-total-row sr-grand-total">
+    <span>
+      ${BI(
+        'JUMLA KABLA YA DISCOUNT',
+        'TOTAL PRICE'
+      )}
+    </span>
 
-        <div class="sr-total-row">
-          <span>${BI('Amelipa', 'Paid')}</span>
-          <strong>${esc(money(x.paid_amount))}</strong>
-        </div>
+    <strong>
+      ${esc(
+        money(
+          x.total_amount
+        )
+      )}
+    </strong>
+  </div>
 
-        <div class="sr-total-row sr-balance">
-          <span>${BI('Salio', 'Balance')}</span>
-          <strong>${esc(money(x.balance))}</strong>
-        </div>
 
-      </section>
+  <div class="sr-total-row">
+    <span>
+      ${BI(
+        'DISCOUNT',
+        'DISCOUNT'
+      )}
+    </span>
 
+    <strong>
+      ${esc(
+        money(
+          x.discount_amount || 0
+        )
+      )}
+    </strong>
+  </div>
+
+
+  <div class="sr-total-row sr-grand-total">
+    <span>
+      ${BI(
+        'KIASI CHA KULIPA',
+        'AMOUNT TO PAY'
+      )}
+    </span>
+
+    <strong>
+      ${esc(
+        money(
+          Math.max(
+            Number(x.total_amount || 0) -
+            Number(x.discount_amount || 0),
+            0
+          )
+        )
+      )}
+    </strong>
+  </div>
+
+
+  <div class="sr-total-row">
+    <span>
+      ${BI(
+        'Amelipa',
+        'Paid'
+      )}
+    </span>
+
+    <strong>
+      ${esc(
+        money(
+          x.paid_amount
+        )
+      )}
+    </strong>
+  </div>
+
+
+  <div class="sr-total-row sr-balance">
+    <span>
+      ${BI(
+        'Salio',
+        'Balance'
+      )}
+    </span>
+
+    <strong>
+      ${esc(
+        money(
+          x.balance
+        )
+      )}
+    </strong>
+  </div>
+
+</section>
      
         <strong>
           ${BI('Asante kwa kufanya biashara nasi!', 'Thank you for doing business with us!')}
@@ -8133,8 +8352,27 @@ if(profileCropZoom){
   );
 }
 
-  $('language-select')?.addEventListener('change',e=>{S.lang=e.target.value==='en'?'en':'sw';applyLang()});$('topbar-language')?.addEventListener('change',e=>{S.lang=e.target.value==='en'?'en':'sw';applyLang()});
-  $('mobile-menu-toggle')?.addEventListener('click',()=>$('main-navigation')?.classList.toggle('open'));$('sidebar-toggle')?.addEventListener('click',()=>$('app-sidebar')?.classList.toggle('open'));
+  $('language-select')?.addEventListener('change',e=>{S.lang=e.target.value==='en'?'en':'sw';applyLang()});
+  $('topbar-language')?.addEventListener('change',e=>{S.lang=e.target.value==='en'?'en':'sw';applyLang()});
+  $('mobile-menu-toggle')?.addEventListener('click',()=>
+    $('main-navigation')?.classList.toggle('open'));
+ 
+$('sidebar-toggle')?.addEventListener('click',e=>{
+  e.preventDefault();
+  e.stopPropagation();
+
+  const sidebar=$('app-sidebar');
+
+  if(!sidebar)return;
+
+  sidebar.classList.toggle('sidebar-open');
+ss
+  $('sidebar-toggle')?.setAttribute(
+    'aria-expanded',
+    sidebar.classList.contains('sidebar-open') ? 'true' : 'false'
+  );
+});
+
   $$('input[name="account_type"]').forEach(r=>r.addEventListener('change',()=>{if($('developer-signup-fields'))$('developer-signup-fields').hidden=r.value!=='developer'||!r.checked}));
   document.addEventListener('click',e=>{if(e.target.closest('.toast-close,.message-close')){e.target.closest('.toast,.message')?.remove()}});
 }
@@ -8715,6 +8953,44 @@ async function saleFormFinal(){
 
         <div class="sale-section-card">
 
+<div class="form-field">
+
+  <label>
+    ${BI(
+      'Discount (TSH)',
+      'Discount (TSH)'
+    )}
+  </label>
+
+  <input
+    id="sale-discount-final"
+    name="discount_amount"
+    type="number"
+    min="0"
+    step="0.01"
+    value="0"
+  >
+
+</div>
+
+<div class="form-field">
+
+  <label>
+    ${BI(
+      'Amount to Pay (TSH)',
+      'Amount to Pay (TSH)'
+    )}
+  </label>
+
+  <div
+    id="sale-amount-to-pay-final"
+    class="sale-amount-display"
+  >
+    0
+  </div>
+
+</div>
+
           <div class="form-field">
 
             <label>
@@ -8859,8 +9135,11 @@ async function saleFormFinal(){
   const itemsBody =
     $('sale-items-body');
 
-  const paidInput =
-    $('sale-paid-final');
+  const discountInput =
+  $('sale-discount-final');
+
+const paidInput =
+  $('sale-paid-final');
 
 
   function moneyValue(value){
@@ -9304,19 +9583,24 @@ async function saleFormFinal(){
     }
 
 
-    const { data, error } =
-      await S.sb.rpc(
-        'preview_sale_totals',
-        {
-          p_items:
-            items,
+   const { data, error } =
+  await S.sb.rpc(
+    'preview_sale_totals',
+    {
+      p_items:
+        items,
 
-          p_paid_amount:
-            Number(
-              paidInput.value || 0
-            )
-        }
-      );
+      p_paid_amount:
+        Number(
+          paidInput.value || 0
+        ),
+
+      p_discount_amount:
+        Number(
+          discountInput?.value || 0
+        )
+    }
+  );
 
 
     if(error){
@@ -9351,11 +9635,15 @@ async function saleFormFinal(){
       Number(
         data?.balance || 0
       );
-
+const amountToPay =
+  Number(
+    data?.amount_to_pay || 0
+  );
 
     $('sale-total-final').textContent =
       moneyValue(total);
-
+$('sale-amount-to-pay-final').textContent =
+  moneyValue(amountToPay);
 
     $('sale-balance-final').textContent =
       moneyValue(balance);
@@ -9852,6 +10140,11 @@ async function saleFormFinal(){
   );
 
 
+discountInput.addEventListener(
+  'input',
+  schedulePreview
+);
+
   /*
     PAID AMOUNT
   */
@@ -10002,6 +10295,11 @@ async function saleFormFinal(){
               p_paid_amount:
                 Number(
                   paidInput.value || 0
+                 ),
+
+              p_discount_amount:
+               Number(
+              discountInput?.value || 0
                 ),
 
               p_payment_method:
@@ -10015,8 +10313,9 @@ async function saleFormFinal(){
                   )?.value
                 ) || null,
 
-              p_items:
-                items
+          
+            p_items:
+             items
 
             }
           );
@@ -10375,4 +10674,3 @@ Object.assign(SW,{
 window.SGC={config:CFG,state:S,navigate:nav,toggleLanguage:()=>{S.lang=S.lang==='sw'?'en':'sw';applyLang()},setLanguage:v=>{S.lang=v==='en'?'en':'sw';applyLang()},login,signup,logout,deviceRegister,perm,loadProfile,updateChrome,renderPage,products:productsFinal,customers:customersFinal,suppliers:suppliersFinal,receivedStock:receivedFinal,stock:stockFinal,sales:salesFinal,expenses:expensesFinal,reports,audit,userManagement:userMgmtFinal,devices,salesReturns:salesReturnsFinal,settings:settingsFinal,profile:profileFinal,rpc:(name,args)=>S.sb.rpc(name,args)};document.readyState==='loading'
 ?document.addEventListener('DOMContentLoaded',init,{once:true}):init();
 })();
-
