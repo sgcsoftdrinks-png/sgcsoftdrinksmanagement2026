@@ -4141,3 +4141,98 @@ textarea:focus-visible{
     font-size:13px;
   }
 }
+
+/* =========================================================
+   SALES MODULE — DARK PRODUCT AREA ONLY
+   DO NOT AFFECT OTHER MODULES
+   ========================================================= */
+
+/* Sales product rows */
+.sale-form .sale-section-card .sale-items-table .sale-item-row{
+  background:#0f1d31 !important;
+  color:#ffffff !important;
+  border-color:rgba(148,163,184,.18) !important;
+}
+
+/* Line number */
+.sale-form .sale-section-card .sale-items-table .sale-line-number{
+  color:#ffffff !important;
+  background:rgba(255,255,255,.055) !important;
+}
+
+/* Product + Variant dropdowns */
+.sale-form .sale-section-card .sale-items-table .sale-row-product,
+.sale-form .sale-section-card .sale-items-table .sale-row-variant{
+  background:#0b192b !important;
+  color:#ffffff !important;
+  border-color:rgba(148,163,184,.30) !important;
+}
+
+/* Dropdown options */
+.sale-form .sale-section-card .sale-items-table .sale-row-product option,
+.sale-form .sale-section-card .sale-items-table .sale-row-variant option{
+  background:#0b192b !important;
+  color:#ffffff !important;
+}
+
+/* Product / variant focus */
+.sale-form .sale-section-card .sale-items-table .sale-row-product:focus,
+.sale-form .sale-section-card .sale-items-table .sale-row-variant:focus{
+  background:#0d1e33 !important;
+  color:#ffffff !important;
+  border-color:rgba(19,199,232,.65) !important;
+  box-shadow:0 0 0 3px rgba(19,199,232,.10) !important;
+}
+
+/* Stock text */
+.sale-form .sale-section-card .sale-items-table .sale-row-stock{
+  color:#ffffff !important;
+  opacity:.78 !important;
+}
+
+/* Quantity buttons */
+.sale-form .sale-section-card .sale-items-table .sale-qty-btn{
+  background:#12243b !important;
+  color:#ffffff !important;
+  border-color:rgba(148,163,184,.30) !important;
+}
+
+/* Quantity input */
+.sale-form .sale-section-card .sale-items-table .sale-row-quantity{
+  background:#0b192b !important;
+  color:#ffffff !important;
+  border-color:rgba(148,163,184,.30) !important;
+}
+
+/* Selling price */
+.sale-form .sale-section-card .sale-items-table .sale-row-price{
+  background:#091523 !important;
+  color:#ffffff !important;
+  border-color:rgba(148,163,184,.22) !important;
+}
+
+/* Total price */
+.sale-form .sale-section-card .sale-items-table .sale-row-total{
+  color:#ffffff !important;
+}
+
+/* Delete button remains red */
+.sale-form .sale-section-card .sale-items-table .sale-remove-row{
+  color:#ffffff !important;
+}
+
+/* Sales product area — mobile too */
+@media (max-width: 900px){
+  .sale-form .sale-section-card .sale-items-table .sale-item-row{
+    background:#0f1d31 !important;
+    color:#ffffff !important;
+  }
+
+  .sale-form .sale-section-card .sale-items-table .sale-row-product,
+  .sale-form .sale-section-card .sale-items-table .sale-row-variant,
+  .sale-form .sale-section-card .sale-items-table .sale-row-quantity,
+  .sale-form .sale-section-card .sale-items-table .sale-row-price{
+    background:#0b192b !important;
+    color:#ffffff !important;
+  }
+}
