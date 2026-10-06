@@ -4236,3 +4236,30 @@ textarea:focus-visible{
     color:#ffffff !important;
   }
 }
+
+/* =========================================================
+   SGC RECEIPT — FIX TOTAL PRICE / AMOUNT TO PAY VISIBILITY
+   ========================================================= */
+
+#sales-receipt .sales-receipt-totals .sr-grand-total{
+  background: #063968 !important;
+  color: #ffffff !important;
+
+  padding: 1.5mm 2mm !important;
+  margin: 1mm 0 !important;
+
+  border-radius: 1.5mm;
+}
+
+#sales-receipt .sales-receipt-totals .sr-grand-total span,
+#sales-receipt .sales-receipt-totals .sr-grand-total strong{
+  color: #ffffff !important;
+  background: transparent !important;
+
+  font-size: 8px !important;
+  font-weight: 900 !important;
+}
+
+#sales-receipt .sales-receipt-totals .sr-grand-total strong{
+  white-space: nowrap;
+}
