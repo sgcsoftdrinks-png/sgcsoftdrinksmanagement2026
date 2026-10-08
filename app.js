@@ -1809,7 +1809,7 @@ if (phoneError) {
             type="button"
             data-action="toggle-receipt-menu"
             data-menu="download">
-      ${BI('PAKUA AS','DOWNLOAD AS')} ▾
+      ${BI('PAKUA','DOWNLOAD')} ▾
     </button>
 
     <div class="receipt-menu"
@@ -1838,7 +1838,7 @@ if (phoneError) {
             type="button"
             data-action="toggle-receipt-menu"
             data-menu="share">
-      ${BI('SHIRIKI AS','SHARE AS')} ▾
+      ${BI('SHIRIKI ','SHARE ')} ▾
     </button>
 
     <div class="receipt-menu"
@@ -2861,16 +2861,50 @@ async function createSalesReceiptPNG() {
     );
   }
 
-  const canvas = await html2canvas(receipt, {
-    scale: Math.max(2, Math.min(window.devicePixelRatio || 1, 3)),
-    useCORS: true,
-    allowTaint: false,
-    backgroundColor: '#ffffff',
-    logging: false,
-    imageTimeout: 15000,
-    scrollX: 0,
-    scrollY: -window.scrollY
-  });
+  const originalReceiptStyle = {
+  height: receipt.style.height,
+  maxHeight: receipt.style.maxHeight,
+  overflow: receipt.style.overflow
+};
+
+receipt.style.setProperty(
+  'height',
+  'auto',
+  'important'
+);
+
+receipt.style.setProperty(
+  'max-height',
+  'none',
+  'important'
+);
+
+receipt.style.setProperty(
+  'overflow',
+  'visible',
+  'important'
+);
+
+const canvas = await html2canvas(receipt, {
+  scale: Math.max(2, Math.min(window.devicePixelRatio || 1, 3)),
+  useCORS: true,
+  allowTaint: false,
+  backgroundColor: '#ffffff',
+  logging: false,
+  imageTimeout: 15000,
+  scrollX: 0,
+  scrollY: -window.scrollY
+});
+
+receipt.style.height =
+  originalReceiptStyle.height;
+
+receipt.style.maxHeight =
+  originalReceiptStyle.maxHeight;
+
+receipt.style.overflow =
+  originalReceiptStyle.overflow;
+  
 
   return new Promise((resolve, reject) => {
     canvas.toBlob(
@@ -3228,153 +3262,206 @@ async function downloadSalesReceiptFormat(format){
 
     closeReceiptMenus();
 
+    const isMobile =
+      /Android|iPhone|iPad|iPod/i.test(
+        navigator.userAgent
+      );
+
+
+    /* =====================================================
+       CREATE FILE
+       ===================================================== */
+
+    let blob;
+    let fileName;
+    let mimeType;
+
     if(format === 'png'){
 
-      const { blob } =
+      const result =
         await createSalesReceiptPNG();
 
-      const url =
-        URL.createObjectURL(blob);
+      blob = result.blob;
 
-      const link =
-        document.createElement('a');
-
-      link.href = url;
-
-      link.download =
+      fileName =
         getSalesReceiptFileName('png');
 
-      document.body.appendChild(link);
+      mimeType =
+        'image/png';
 
-      link.click();
+    }else if(format === 'pdf'){
 
-      link.remove();
-
-      setTimeout(
-        () => URL.revokeObjectURL(url),
-        1500
-      );
-
-      toast(
-        BI(
-          'Risiti imepakuliwa kama PNG.',
-          'Receipt downloaded as PNG.'
-        ),
-        'success'
-      );
-
-      return;
-    }
-
-
-    if(format === 'pdf'){
-
-      const pdfBlob =
+      blob =
         await createSalesReceiptPDF();
 
-      const url =
-        URL.createObjectURL(pdfBlob);
-
-      const link =
-        document.createElement('a');
-
-      link.href = url;
-
-      link.download =
+      fileName =
         getSalesReceiptFileName('pdf');
 
-      document.body.appendChild(link);
+      mimeType =
+        'application/pdf';
 
-      link.click();
+    }else{
 
-      link.remove();
-
-      setTimeout(
-        () => URL.revokeObjectURL(url),
-        1500
-      );
-
-      toast(
+      throw new Error(
         BI(
-          'Risiti imepakuliwa kama PDF.',
-          'Receipt downloaded as PDF.'
-        ),
-        'success'
+          'Format haijatambuliwa.',
+          'Unsupported download format.'
+        )
       );
 
-      return;
     }
 
-    throw new Error(
+
+    /* =====================================================
+       MOBILE CHROME
+       Share the REAL file instead of downloading the
+       webpage as .mht.
+       ===================================================== */
+
+    if(
+      isMobile &&
+      navigator.share &&
+      typeof File !== 'undefined'
+    ){
+
+      const file =
+        new File(
+          [blob],
+          fileName,
+          {
+            type: mimeType
+          }
+        );
+
+
+      if(
+        !navigator.canShare ||
+        navigator.canShare({
+          files: [file]
+        })
+      ){
+
+        await navigator.share({
+
+          title:
+            BI(
+              'Risiti ya Mauzo',
+              'Sales Receipt'
+            ),
+
+          text:
+            BI(
+              'SGC SOFT DRINKS — Risiti ya Mauzo',
+              'SGC SOFT DRINKS — Sales Receipt'
+            ),
+
+          files: [file]
+
+        });
+
+        toast(
+          BI(
+            'Risiti imefunguliwa kwenye chaguo la kuhifadhi/kushiriki faili.',
+            'Receipt opened in the file save/share options.'
+          ),
+          'success'
+        );
+
+        return;
+      }
+
+    }
+
+
+    /* =====================================================
+       DESKTOP / NORMAL BROWSER DOWNLOAD
+       ===================================================== */
+
+    const url =
+      URL.createObjectURL(blob);
+
+    const link =
+      document.createElement('a');
+
+    link.href = url;
+    link.download = fileName;
+    link.rel = 'noopener';
+
+    document.body.appendChild(link);
+
+    link.click();
+
+    link.remove();
+
+    setTimeout(
+      () => {
+        URL.revokeObjectURL(url);
+      },
+      5000
+    );
+
+
+    toast(
       BI(
-        'Format ya kupakua si sahihi.',
-        'Invalid download format.'
-      )
+        `Risiti imepakuliwa kama ${format.toUpperCase()}.`,
+        `Receipt downloaded as ${format.toUpperCase()}.`
+      ),
+      'success'
     );
 
   }catch(error){
+
+    if(error?.name === 'AbortError'){
+      return;
+    }
 
     console.error(
       'downloadSalesReceiptFormat error:',
       error
     );
 
-    important(err(error));
+    toast(
+      error?.message ||
+      BI(
+        'Imeshindikana kupakua risiti.',
+        'Failed to download receipt.'
+      ),
+      'error'
+    );
 
   }
-
 }
-   
 
 
 /* ---------------------------------------------------------
    SHARE RECEIPT AS REAL FILE
    PNG or PDF — NOT TEXT
    --------------------------------------------------------- */
+async function shareSalesReceiptOption(option){
 
-async function shareSalesReceiptOption(option) {
+  try{
 
-  try {
+    closeReceiptMenus();
 
     const receiptNo =
       activeSalesReceiptContext.receiptNo ||
       getSalesReceiptFileName('pdf')
-        .replace(/\.pdf$/i, '');
+        .replace(/\.pdf$/i,'');
 
     const customerPhone =
       activeSalesReceiptContext.customerPhone;
 
-    const message =
-      BI(
-        `Habari, hii ni risiti yako ya SGC SOFT DRINKS ${receiptNo}. Unaweza kuifungua kupitia link hii:`,
-        `Hello, this is your SGC SOFT DRINKS receipt ${receiptNo}. You can open it using this link:`
-      );
-
-    /* =====================================================
-       CREATE REAL PDF LINK
-       ===================================================== */
-
-    const pdfUrl =
-      await createSalesReceiptPDFLink();
-
-    const fullMessage =
-      `${message}\n${pdfUrl}`;
-
-
-    /* =====================================================
-       NORMALIZE CUSTOMER PHONE
-       ===================================================== */
-
     let phone = '';
 
-    if (customerPhone) {
+    if(customerPhone){
 
       phone =
         String(customerPhone)
-          .replace(/\D/g, '');
+          .replace(/\D/g,'');
 
-      if (phone.startsWith('0')) {
-        phone = `255${phone.substring(1)}`;
+      if(phone.startsWith('0')){
+        phone =
+          `255${phone.substring(1)}`;
       }
 
     }
@@ -3384,25 +3471,37 @@ async function shareSalesReceiptOption(option) {
        WHATSAPP
        ===================================================== */
 
-    if (option === 'whatsapp') {
+    if(option === 'whatsapp'){
 
-      if (!phone) {
+      if(!phone){
+
         throw new Error(
           BI(
             'Namba ya simu ya mteja haipo kwenye risiti.',
             'Customer phone number is not available.'
           )
         );
+
       }
 
-      const whatsappUrl =
-        `https://wa.me/${phone}?text=${encodeURIComponent(fullMessage)}`;
+      const pdfUrl =
+        await createSalesReceiptPDFLink();
 
-      window.open(
-        whatsappUrl,
-        '_blank',
-        'noopener,noreferrer'
-      );
+      const message =
+        BI(
+          `Habari, hii ni risiti yako ya SGC SOFT DRINKS ${receiptNo}. Unaweza kuifungua kupitia link hii:`,
+          `Hello, this is your SGC SOFT DRINKS receipt ${receiptNo}. You can open it using this link:`
+        );
+
+      const fullMessage =
+        `${message}\n${pdfUrl}`;
+
+      const whatsappUrl =
+        `https://wa.me/${phone}` +
+        `?text=${encodeURIComponent(fullMessage)}`;
+
+      window.location.href =
+        whatsappUrl;
 
       return;
     }
@@ -3412,21 +3511,37 @@ async function shareSalesReceiptOption(option) {
        SMS
        ===================================================== */
 
-    if (option === 'sms') {
+    if(option === 'sms'){
 
-      if (!phone) {
+      if(!phone){
+
         throw new Error(
           BI(
             'Mteja hana namba ya simu. SMS haijafunguliwa.',
             'Customer phone number is missing. SMS was not opened.'
           )
         );
+
       }
 
-      const smsUrl =
-        `sms:${phone}?body=${encodeURIComponent(fullMessage)}`;
+      const pdfUrl =
+        await createSalesReceiptPDFLink();
 
-      window.location.href = smsUrl;
+      const message =
+        BI(
+          `Habari, hii ni risiti yako ya SGC SOFT DRINKS ${receiptNo}. Unaweza kuifungua kupitia link hii:`,
+          `Hello, this is your SGC SOFT DRINKS receipt ${receiptNo}. You can open it using this link:`
+        );
+
+      const fullMessage =
+        `${message}\n${pdfUrl}`;
+
+      const smsUrl =
+        `sms:${phone}` +
+        `?body=${encodeURIComponent(fullMessage)}`;
+
+      window.location.href =
+        smsUrl;
 
       return;
     }
@@ -3436,7 +3551,7 @@ async function shareSalesReceiptOption(option) {
        EMAIL
        ===================================================== */
 
-    if (option === 'email') {
+    if(option === 'email'){
 
       const email =
         window.prompt(
@@ -3446,9 +3561,12 @@ async function shareSalesReceiptOption(option) {
           )
         );
 
-      if (!email?.trim()) {
+      if(!email?.trim()){
         return;
       }
+
+      const pdfUrl =
+        await createSalesReceiptPDFLink();
 
       const subject =
         BI(
@@ -3456,12 +3574,22 @@ async function shareSalesReceiptOption(option) {
           `Sales Receipt ${receiptNo} - SGC SOFT DRINKS`
         );
 
+      const message =
+        BI(
+          `Habari, hii ni risiti yako ya SGC SOFT DRINKS ${receiptNo}. Unaweza kuifungua kupitia link hii:`,
+          `Hello, this is your SGC SOFT DRINKS receipt ${receiptNo}. You can open it using this link:`
+        );
+
+      const fullMessage =
+        `${message}\n${pdfUrl}`;
+
       const mailtoUrl =
         `mailto:${email.trim()}` +
         `?subject=${encodeURIComponent(subject)}` +
         `&body=${encodeURIComponent(fullMessage)}`;
 
-      window.location.href = mailtoUrl;
+      window.location.href =
+        mailtoUrl;
 
       return;
     }
@@ -3471,34 +3599,46 @@ async function shareSalesReceiptOption(option) {
        COPY LINK
        ===================================================== */
 
-    if (option === 'copy') {
+    if(option === 'copy'){
 
-      if (
+      const pdfUrl =
+        await createSalesReceiptPDFLink();
+
+      if(
         navigator.clipboard &&
         navigator.clipboard.writeText
-      ) {
+      ){
 
         await navigator.clipboard.writeText(
           pdfUrl
         );
 
-      } else {
+      }else{
 
         const textarea =
           document.createElement('textarea');
 
-        textarea.value = pdfUrl;
+        textarea.value =
+          pdfUrl;
 
-        textarea.style.position = 'fixed';
-        textarea.style.opacity = '0';
+        textarea.style.position =
+          'fixed';
 
-        document.body.appendChild(textarea);
+        textarea.style.opacity =
+          '0';
+
+        document.body.appendChild(
+          textarea
+        );
 
         textarea.select();
 
-        document.execCommand('copy');
+        document.execCommand(
+          'copy'
+        );
 
         textarea.remove();
+
       }
 
       toast(
@@ -3520,9 +3660,10 @@ async function shareSalesReceiptOption(option) {
       )
     );
 
-  } catch (error) {
 
-    if (error?.name === 'AbortError') {
+  }catch(error){
+
+    if(error?.name === 'AbortError'){
       return;
     }
 
@@ -3539,187 +3680,10 @@ async function shareSalesReceiptOption(option) {
       ),
       'error'
     );
+
   }
+
 }
-
-async function shareSalesReceipt() {
-  try {
-    const receipt =
-      document.getElementById('sales-receipt');
-
-    if (!receipt) {
-      throw new Error(
-        BI(
-          'Risiti haijafunguliwa.',
-          'Receipt is not open.'
-        )
-      );
-    }
-
-    if (!navigator.share) {
-      throw new Error(
-        BI(
-          'Browser hii haiungi mkono kushiriki faili moja kwa moja. Tumia Download.',
-          'This browser does not support direct file sharing. Use Download.'
-        )
-      );
-    }
-
-
-    /* ---------------------------------------------
-       CHOOSE FORMAT
-       --------------------------------------------- */
-
-    const choice = window.prompt(
-      BI(
-        'Chagua format ya kushiriki:\n\n1 = PNG\n2 = PDF',
-        'Choose sharing format:\n\n1 = PNG\n2 = PDF'
-      ),
-      'PNG'
-    );
-
-    if (choice === null) {
-      return;
-    }
-
-    const format =
-      String(choice).trim().toLowerCase();
-
-
-    /* ---------------------------------------------
-       SHARE PNG
-       --------------------------------------------- */
-
-    if (
-      format === '1' ||
-      format === 'png'
-    ) {
-
-      const { blob } =
-        await createSalesReceiptPNG();
-
-      const file =
-        new File(
-          [blob],
-          getSalesReceiptFileName('png'),
-          {
-            type: 'image/png'
-          }
-        );
-
-      if (
-        !navigator.canShare ||
-        !navigator.canShare({
-          files: [file]
-        })
-      ) {
-        throw new Error(
-          BI(
-            'Device/browser hii haiwezi kushiriki PNG kama attachment.',
-            'This device/browser cannot share the PNG as an attachment.'
-          )
-        );
-      }
-
-      await navigator.share({
-        title: BI(
-          'Risiti ya Mauzo',
-          'Sales Receipt'
-        ),
-        text: BI(
-          'Risiti ya Mauzo ya SGC SOFT DRINKS',
-          'SGC SOFT DRINKS Sales Receipt'
-        ),
-        files: [file]
-      });
-
-      return;
-    }
-
-
-    /* ---------------------------------------------
-       SHARE PDF
-       --------------------------------------------- */
-
-    if (
-      format === '2' ||
-      format === 'pdf'
-    ) {
-
-      const pdfBlob =
-        await createSalesReceiptPDF();
-
-      const file =
-        new File(
-          [pdfBlob],
-          getSalesReceiptFileName('pdf'),
-          {
-            type: 'application/pdf'
-          }
-        );
-
-      if (
-        !navigator.canShare ||
-        !navigator.canShare({
-          files: [file]
-        })
-      ) {
-        throw new Error(
-          BI(
-            'Device/browser hii haiwezi kushiriki PDF kama attachment.',
-            'This device/browser cannot share the PDF as an attachment.'
-          )
-        );
-      }
-
-      await navigator.share({
-        title: BI(
-          'Risiti ya Mauzo',
-          'Sales Receipt'
-        ),
-        text: BI(
-          'Risiti ya Mauzo ya SGC SOFT DRINKS',
-          'SGC SOFT DRINKS Sales Receipt'
-        ),
-        files: [file]
-      });
-
-      return;
-    }
-
-
-    /* ---------------------------------------------
-       INVALID FORMAT
-       --------------------------------------------- */
-
-    throw new Error(
-      BI(
-        'Chaguo si sahihi. Tumia PNG au PDF.',
-        'Invalid choice. Use PNG or PDF.'
-      )
-    );
-
-  } catch (error) {
-
-    /*
-      User cancelling the native share sheet
-      is not treated as a system error.
-    */
-    if (
-      error?.name === 'AbortError'
-    ) {
-      return;
-    }
-
-    console.error(
-      'shareSalesReceipt error:',
-      error
-    );
-
-    throw error;
-  }
-}
-
 
 async function rejectReceipt(id){const reason=prompt(txt('Sababu ya rejection:','Rejection reason:'));if(!reason?.trim())return;const{error}=await S.sb.rpc('reject_stock_receipt',{p_stock_receipt_id:id,p_reason:reason.trim()});if(error)throw error;toast(txt('Receipt imekataliwa.','Receipt rejected.'),'success');await received()}
 
