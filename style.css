@@ -4263,3 +4263,92 @@ textarea:focus-visible{
 #sales-receipt .sales-receipt-totals .sr-grand-total strong{
   white-space: nowrap;
 }
+/* =========================================================
+   RECEIPT DOWNLOAD / SHARE DROPDOWNS
+   ========================================================= */
+
+.receipt-actions{
+  position:relative;
+  display:flex;
+  align-items:flex-start;
+  justify-content:flex-end;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-bottom:14px;
+}
+
+.receipt-action-dropdown{
+  position:relative;
+  display:inline-flex;
+}
+
+.receipt-menu-button{
+  white-space:nowrap;
+}
+
+.receipt-menu{
+  position:absolute;
+  top:calc(100% + 6px);
+  right:0;
+  min-width:170px;
+  display:none;
+  z-index:9999;
+
+  padding:6px;
+
+  background:#071a2d;
+  border:1px solid rgba(148,163,184,.28);
+  border-radius:10px;
+
+  box-shadow:0 16px 35px rgba(0,0,0,.35);
+}
+
+.receipt-menu.is-open{
+  display:flex;
+  flex-direction:column;
+}
+
+.receipt-menu button{
+  width:100%;
+  padding:10px 12px;
+
+  border:0;
+  border-radius:7px;
+
+  background:transparent;
+  color:#ffffff;
+
+  text-align:left;
+  font:inherit;
+
+  cursor:pointer;
+}
+
+.receipt-menu button:hover{
+  background:rgba(19,199,232,.14);
+}
+
+.receipt-menu button:active{
+  background:rgba(19,199,232,.22);
+}
+
+@media(max-width:600px){
+
+  .receipt-actions{
+    justify-content:flex-start;
+  }
+
+  .receipt-action-dropdown{
+    flex:1 1 auto;
+  }
+
+  .receipt-menu-button{
+    width:100%;
+  }
+
+  .receipt-menu{
+    left:0;
+    right:auto;
+    width:100%;
+  }
+}
